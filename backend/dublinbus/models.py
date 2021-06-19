@@ -31,7 +31,7 @@ class StopTime(models.Model):
     arrival_time = models.TimeField()
     departure_time = models.TimeField()
     stop_id = models.CharField(max_length=120)
-    stop_sequence = models.CharField(max_length=120)
+    stop_sequence = models.IntegerField()
     stop_headsign = models.CharField(max_length=120)
     pickup_type = models.IntegerField()
     drop_off_type = models.IntegerField()

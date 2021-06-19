@@ -114,7 +114,7 @@ with open('./data/DublinBusStaticGTFS/stop_times.txt', 'r') as stop_times_file:
             arrival_time = arrival_time,
             departure_time = departure_time,
             stop_id = row[3],
-            stop_sequence = row[4],
+            stop_sequence = int(row[4]),
             stop_headsign = row[5],
             pickup_type = int(row[6]),
             drop_off_type = int(row[7]),
