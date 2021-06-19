@@ -7,7 +7,7 @@ class Stop(models.Model):
     stop_lon = models.FloatField()
 
     def __str__(self):
-        return self.stop_name
+        return str(self.stop_name)
 
 
 class Route(models.Model):
@@ -28,8 +28,8 @@ class Trip(models.Model):
 
 
 class StopTime(models.Model):
-    arrival_time = models.CharField(max_length=120)
-    departure_time = models.CharField(max_length=120)
+    arrival_time = models.TimeField()
+    departure_time = models.TimeField()
     stop_id = models.CharField(max_length=120)
     stop_sequence = models.CharField(max_length=120)
     stop_headsign = models.CharField(max_length=120)
@@ -37,4 +37,3 @@ class StopTime(models.Model):
     drop_off_type = models.IntegerField()
     shape_dist_traveled = models.FloatField()
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
-
