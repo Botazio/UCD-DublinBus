@@ -1,0 +1,37 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  margin: 0 auto;
+  border-bottom: 2px solid #B82025;
+  padding: 0vh 5vh;
+}
+.navbar_logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 10vh;
+}
+.navbar_logo svg {
+  margin-right: 10px;
+}
+.list_icon,
+.login_icon {
+  cursor: pointer;
+}
+.list_icon {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .navbar_logo {
+    padding: 0vh;
+  }
+  .navbar_logo svg {
+    display: none;
+  }
+  .list_icon {
+    display: block;
+  }
+}
