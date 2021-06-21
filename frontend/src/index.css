@@ -7,3 +7,8 @@
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
+
+/* To take out google logo*/
+.gm-style-cc {
+  display: none;
+}

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
-import NavBar from './components/navbar/NavBar';
+import BusPage from './pages/BusPage';
 import NotFound from './components/notfound/NotFound';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <Router>
       <Switch>
         <Route exact path="/">
-          <NavBar />
+          <BusPage />
         </Route>
         <Route path="*">
           <NotFound />
