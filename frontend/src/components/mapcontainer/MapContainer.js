@@ -1,6 +1,7 @@
 import React from 'react';
 import { GoogleMap, useLoadScript } from '@react-google-maps/api';
 import MapContainerCSS from './MapContainer.module.css';
+import mapStyles from '../../fixtures/map-styles/mapStyles';
 
 const libraries = ["places"];
 const containerStyle = {
@@ -10,6 +11,7 @@ const containerStyle = {
 };
 
 const options = {
+   styles: mapStyles,
    mapTypeControl: false,
    fullscreenControl: false
 }
