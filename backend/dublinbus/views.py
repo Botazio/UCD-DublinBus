@@ -1,21 +1,24 @@
 from datetime import datetime, timedelta, timezone
 import requests
-import os
 from django.shortcuts import render
-from django.http import JsonResponse
 from django.conf import settings
+from django.http import JsonResponse, Http404
 
-from .models import Route, Stop, Trip, StopTime
+from dublinbus.models import Route, Stop, Trip, StopTime
 
 
 def index(request):
+    """Temporary homepage for the application"""
     return render(request, 'dublinbus/index.html')
 
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
     any delays to those schedules from the real-time data."""
 
-    stop_details = Stop.objects.get(stop_id=stop_id)
+    try:
+        stop_details = Stop.objects.get(stop_id=stop_id)
+    except Stop.DoesNotExist as stop_not_exist:
+        raise Http404("Invalid Stop ID") from stop_not_exist
 
     result = {
         'stop_name': stop_details.stop_name,
@@ -34,7 +37,7 @@ def stop(request, stop_id):
     )
 
     # Get realtime data from NTA API
-    realtime_updates = request_realtime_NTA_data()
+    realtime_updates = request_realtime_nta_data()
 
     for stop_time in stop_time_details:
         result['arrivals'].append({
@@ -65,11 +68,11 @@ def route(request, route_id):
         trip_output['stops'] = []
 
         stop_times = StopTime.objects.filter(trip_id=trip.trip_id)
-        for stop in stop_times:
+        for stop_time in stop_times:
             trip_output['stops'].append({
-                'stop_id': stop.stop_id,
-                'arrival_time': stop.arrival_time,
-                'departure_time': stop.departure_time
+                'stop_id': stop_time.stop_id,
+                'arrival_time': stop_time.arrival_time,
+                'departure_time': stop_time.departure_time
             })
         trips_simple.append(trip_output)
 
@@ -81,7 +84,7 @@ def route(request, route_id):
 
     return JsonResponse(response)
 
-def request_realtime_NTA_data():
+def request_realtime_nta_data():
     """
     Make a request to the NTA realtime API
     """

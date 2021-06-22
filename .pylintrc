@@ -1,0 +1,5 @@
+[MASTER]
+ignore=admin.py,apps.py,manage.py
+disable=C0114
+load-plugins=pylint_django
+django-settings-module=backend.settings

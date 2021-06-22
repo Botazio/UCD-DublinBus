@@ -1,3 +1,9 @@
 from django.test import TestCase
 
-# Create your tests here.
+class DublinBusTests(TestCase):
+    """Class for tests for Dublin Bus app"""
+
+    def test_404(self):
+        """Test 404 responses from invalid IDs"""
+        response = self.client.get('/dublinbus/stop/abc/')
+        self.assertEqual(response.status_code, 404)
