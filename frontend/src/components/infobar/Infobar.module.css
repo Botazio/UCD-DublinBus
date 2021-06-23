@@ -16,9 +16,10 @@
 }
 .close_button {
   position: absolute;
-  right: 10px;
-  top: 10px;
-  padding: 7px;
+  right: 15px;
+  top: 15px;
+  height: 30px;
+  width: 30px;
   cursor: pointer;
   background-color: white;
   border-radius: 50%;
@@ -30,6 +31,9 @@
 .close_button:hover {
   background-color: #E8E7E2;
 }
+.map_switcher {
+  display: none;
+}
 
 @media screen and (max-width: 600px) {
   .infobar {
@@ -38,5 +42,13 @@
   }
   .infobar_sidebar_inactive {
     transform: translateX(0px);
+  }
+  .map_switcher {
+    position: absolute;
+    top: 90px;
+    z-index: 50;
+    right: 50%;
+    transform: translateX(50%);
+    display: block;
   }
 }

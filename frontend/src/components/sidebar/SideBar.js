@@ -56,6 +56,7 @@ const SideBar = () => {
             sideBar={sideBar}
             infoBar={infoBar}
             setInfoBar={setInfoBar}
+            buttonActive={buttonActive}
             setButtonActive={setButtonActive}
          />
       </>

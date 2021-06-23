@@ -22,7 +22,6 @@ const StopSearchBar = ({ placeholder }) => {
 
    return (
       <Combobox
-         className={StopSearchBarCSS.combobox}
          onSelect={(address) => {
             setTerm(address);
          }}>
