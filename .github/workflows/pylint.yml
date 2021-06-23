@@ -25,10 +25,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Create mock API keys to avoid errors
       - name: Create Mock API keys
         run: |
           touch backend/backend/.env
-          echo "NTA_DEVELOPER_KEY='ABC'" > backend/backend/.env
+          echo "NTA_DEVELOPER_KEY=ABC" > backend/backend/.env
+          echo "AWS_MYSQL_PASSWORD=ABC" >> backend/backend/.env
+          echo "LOCAL_MYSQL_PASSWORD=ABC" >> backend/backend/.env
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v1

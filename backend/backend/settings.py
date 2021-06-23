@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,12 +80,30 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Set the environment variable DB to 'local' if you want to use the local mySQL DB
+if os.environ.get('DB') == 'local':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'dublinbus',
+            'USER': 'student',
+            'PASSWORD': env('LOCAL_MYSQL_PASSWORD'),
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+        },
     }
-}
+# The default is the AWS mySQL DB
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'dublinbus',
+            'USER': 'admin',
+            'PASSWORD': env('AWS_MYSQL_PASSWORD'),
+            'HOST': 'dublin-bus.caghf9c2wznv.eu-west-1.rds.amazonaws.com',
+            'PORT': '3306',
+        }
+    }
 
 
 # Password validation
@@ -126,7 +149,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Initialise environment variables
-env = environ.Env()
-environ.Env.read_env()
 NTA_DEVELOPER_KEY = env('NTA_DEVELOPER_KEY')
