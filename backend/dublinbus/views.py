@@ -11,6 +11,15 @@ def index(request):
     """Temporary homepage for the application"""
     return render(request, 'dublinbus/index.html')
 
+def stops(request):
+    """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
+
+    stops = list(Stop.objects.values())
+    for stop in stops:
+        stop['stop_number'] = stop['stop_name'].split("stop ")[-1]
+
+    return JsonResponse(stops, safe=False)
+    
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
     any delays to those schedules from the real-time data."""
@@ -105,7 +114,6 @@ def get_realtime_dublin_bus_delay(realtime_updates, trip_id, stop_sequence):
     """
     Get the current delay for a particular trip from the response from the
     realtime NTA API.
-
     Args
     ---
         realtime_updates: list
@@ -114,7 +122,6 @@ def get_realtime_dublin_bus_delay(realtime_updates, trip_id, stop_sequence):
             The ID for the trip we want to get the delay for
         stop_sequence: int
             The stop sequence number for this stop in this trip
-
     Returns
     ---
         The current delay for the trip in seconds. 0 means there is no delay and a negative
