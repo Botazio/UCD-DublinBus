@@ -14,19 +14,11 @@ def index(request):
 def stops(request):
     """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
 
-    result = []
-    distinct_stop_ids = Stop.objects.values_list('stop_id', flat=True) # .distinct()
-    for stop_id in distinct_stop_ids:
-    
-        stop_details = Stop.objects.get(stop_id=stop_id)
-        result.append({
-                'stop_name': stop_details.stop_name, # .split(",")[0],
-                'stop_number': stop_details.stop_name.split("stop ")[-1],
-                'stop_lat': stop_details.stop_lat,
-                'stop_lon': stop_details.stop_lon
-                })
+    stops = list(Stop.objects.values())
+    for stop in stops:
+        stop['stop_number'] = stop['stop_name'].split("stop ")[-1]
 
-    return JsonResponse(result, safe=False)
+    return JsonResponse(stops, safe=False)
 
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
