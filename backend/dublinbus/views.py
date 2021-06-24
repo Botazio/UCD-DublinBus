@@ -11,6 +11,16 @@ def index(request):
     """Temporary homepage for the application"""
     return render(request, 'dublinbus/index.html')
 
+def stops(request):
+    """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
+
+    stops = list(Stop.objects.values())
+    for stop in stops:
+        stop['stop_number'] = stop['stop_name'].split("stop ")[-1]
+
+    return JsonResponse(stops, safe=False)
+
+
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
     any delays to those schedules from the real-time data."""
@@ -52,8 +62,7 @@ def stop(request, stop_id):
             'scheduled_departure_time': stop_time.departure_time,
             'stop_sequence': stop_time.stop_sequence,
             'delay_sec': delay,
-            #'due_in_sec': get_due_in_time(current_time, stop_time.arrival_time, delay, "sec"),
-            'due_in_min': get_due_in_time(current_time, stop_time.arrival_time, delay, "min")
+            'due_in_min': get_due_in_time(current_time, stop_time.arrival_time, delay)
         })
 
     return JsonResponse(result)
@@ -147,7 +156,7 @@ def get_realtime_dublin_bus_delay(realtime_updates, trip_id, stop_sequence):
     return 0
 
 
-def get_due_in_time(current_time, scheduled_arrival_time, delay, unit_time):
+def get_due_in_time(current_time, scheduled_arrival_time, delay):
     """
     Calculate the expected due time from now for a particular trip.
 
@@ -159,11 +168,9 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay, unit_time):
             The time the bus is scheduled to arrive at the stopid in UTC.
         delay: int
             The current delay for the trip in seconds.
-        unit_time: str
-            Either "sec" or "min" to specify the unit of time the function is to return the due time in.
     Returns
     ---
-        The expected due time for trip in seconds or minutes as an int.
+        The expected due time for trip in minutes as an int.
     """
 
     # extract date from curr_time and concatenate to scheduled_arrival_time (time past midnight) e.g. "23/06/21 " + "12:04:25" = "23/06/21 12:04:25"
@@ -176,8 +183,4 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay, unit_time):
     time_delta = scheduled_arrival_datetime_obj - current_time.replace(microsecond=0)
     # add delay to due time
     time_delta_seconds = time_delta.total_seconds() + delay
-
-    if unit_time == "sec":
-        return int(time_delta_seconds)
-    elif unit_time == "min":
-        return round(time_delta_seconds / 60)  # important decision for display - round(), math.floor() or math.ceil()
+    return round(time_delta_seconds / 60)
