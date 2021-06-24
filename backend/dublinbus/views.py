@@ -51,8 +51,8 @@ def stop(request, stop_id):
             'scheduled_arrival_time': stop_time.arrival_time,
             'scheduled_departure_time': stop_time.departure_time,
             'stop_sequence': stop_time.stop_sequence,
-            'delay': delay,
-            'due_in_sec': get_due_in_time(current_time, stop_time.arrival_time, delay, "sec"),
+            'delay_sec': delay,
+            #'due_in_sec': get_due_in_time(current_time, stop_time.arrival_time, delay, "sec"),
             'due_in_min': get_due_in_time(current_time, stop_time.arrival_time, delay, "min")
         })
 
@@ -166,7 +166,6 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay, unit_time):
         The expected due time for trip in seconds or minutes as an int.
     """
 
-    print('delay', type(delay))
     # extract date from curr_time and concatenate to scheduled_arrival_time (time past midnight) e.g. "23/06/21 " + "12:04:25" = "23/06/21 12:04:25"
     scheduled_arrival_datetime_str = current_time.strftime("%d/%m/%y ") + str(scheduled_arrival_time)
     # create datetime object for scheduled_arrival_datetime
