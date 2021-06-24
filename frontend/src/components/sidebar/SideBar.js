@@ -1,20 +1,25 @@
+import ReactDOM from 'react-dom'
 import SidebarCSS from './Sidebar.module.css';
-import { ReactComponent as List } from './fixtures/icon-list.svg';
 import InfoBar from "../infobar/InfoBar";
 import { useState } from 'react';
+import SideBarSwitch from '../sidebar-switch/SideBarSwitch';
 
 const SideBar = () => {
+   // States to control when to display the sideBar and the infoBar
    const [sideBar, setSideBar] = useState(true);
    const [infoBar, setInfoBar] = useState(false);
+
+   // buttonActive allows to navigate around the different side bar features
    const [buttonActive, setButtonActive] = useState('');
+
+   // We need to create a portal for the list icon that control the visibility of the sidebar.
+   // This is because the list icon is in the navbar
+   const domNode = document.getElementById("list_icon");
 
    return (
       <>
-         <div
-            className={SidebarCSS.list_icon + " " + (sideBar ? SidebarCSS.list_icon_active : SidebarCSS.list_icon_inactive)}
-            onClick={() => setSideBar(!sideBar)}>
-            <List height={'25'} />
-         </div>
+         {ReactDOM.createPortal(<SideBarSwitch sideBar={sideBar} setSideBar={setSideBar} />, domNode)}
+
          <div className={SidebarCSS.sidebar + " " + (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)}>
             <div
                className={SidebarCSS.button + " " + (buttonActive === 'directions' ? SidebarCSS.active : '')}
@@ -52,6 +57,7 @@ const SideBar = () => {
                <p>&#10095;</p>
             </div>
          </div>
+
          <InfoBar
             sideBar={sideBar}
             infoBar={infoBar}
@@ -65,9 +71,10 @@ const SideBar = () => {
    function handleClick(value) {
       setInfoBar(true);
       setButtonActive(value);
+
+      // Close the side bar on click for phone view
       if (window.innerWidth < 600) {
          setSideBar(false);
-         console.log('hi');
       }
    }
 }

@@ -21,12 +21,14 @@ const center = {
    lng: -6.26031
 };
 
-export default function MapContainer() {
+
+
+export default function MapContainer(props) {
    // Loads the map
    const { isLoaded, loadError } = useLoadScript({
       googleMapsApiKey: "AIzaSyCLGkrQoHNmMyhdvwl0wmron1ndtREM0zM",
       libraries,
-      version: "3.42"
+      version: "3.44"
    });
 
    // mapRef to use in other parts of the code without triggering rerenders
@@ -40,15 +42,19 @@ export default function MapContainer() {
    if (!isLoaded) return "Loading Maps";
 
    return (
-      <div className={MapContainerCSS.map_container}>
-         <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={13}
-            options={options}
-            onLoad={onMapLoad}
-         >
-         </GoogleMap>
-      </div>
+      <>
+         <div className={MapContainerCSS.map_container}>
+            <GoogleMap
+               mapContainerStyle={containerStyle}
+               center={center}
+               zoom={13}
+               options={options}
+               onLoad={onMapLoad}
+            >
+               {/* GoogleMap component works as a context around the children */}
+               {props.children}
+            </GoogleMap>
+         </div>
+      </>
    );
 }

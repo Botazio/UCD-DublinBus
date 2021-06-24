@@ -5,7 +5,8 @@ const Navbar = () => {
 
    return (
       <nav className={NavbarCSS.navbar}>
-         <div className={NavbarCSS.empty_div}></div>
+         {/* We use this div to insert the list icon */}
+         <div id="list_icon"></div>
          <div className={NavbarCSS.navbar_logo}>
             <h2 id="logo-navbar">DUBLIN BUS</h2>
          </div>

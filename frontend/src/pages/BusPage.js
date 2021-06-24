@@ -3,11 +3,14 @@ import SideBar from "../components/sidebar/SideBar";
 import MapContainer from "../components/mapcontainer/MapContainer";
 
 const BusPage = () => {
+
    return (
       <>
          <NavBar />
-         <SideBar />
-         <MapContainer />
+         {/* MapContainer is a context where all the childs can access the map property */}
+         <MapContainer>
+            <SideBar />
+         </MapContainer>
       </>
    );
 }
