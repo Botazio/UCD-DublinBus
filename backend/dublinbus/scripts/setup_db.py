@@ -48,17 +48,20 @@ with open('./data/DublinBusStaticGTFS/trips.txt', 'r') as trips_file:
 
     for row in csv_reader:
         print(row)
-        t = Trip(
-            trip_id=row[2],
-            service_id=row[1],
-            shape_id=row[3],
-            trip_headsign=row[4],
-            direction_id=int(row[5])
-        )
 
-        t.route = Route.objects.get(route_id=row[0])
+        # Only use valid service IDs
+        # Service IDs "2" and "3" have an end date of 20210612
+        if row[1] in ["y1004", "y1005", "y1006"]:
+            t = Trip(
+                trip_id=row[2],
+                service_id=row[1],
+                shape_id=row[3],
+                trip_headsign=row[4],
+                direction_id=int(row[5]),
+                route=Route.objects.get(route_id=row[0])
+            )
 
-        t.save()
+            t.save()
 
 
 with open('./data/DublinBusStaticGTFS/stop_times.txt', 'r') as stop_times_file:
@@ -110,16 +113,23 @@ with open('./data/DublinBusStaticGTFS/stop_times.txt', 'r') as stop_times_file:
         if r.match(row[2]):
             departure_time = row[2].replace("29", "05", 1)
 
-        st = StopTime(
-            arrival_time = arrival_time,
-            departure_time = departure_time,
-            stop_id = row[3],
-            stop_sequence = int(row[4]),
-            stop_headsign = row[5],
-            pickup_type = int(row[6]),
-            drop_off_type = int(row[7]),
-            shape_dist_traveled = float(row[8]),
+        try:
             trip = Trip.objects.get(trip_id=row[0])
-        )
+            st = StopTime(
+                arrival_time = arrival_time,
+                departure_time = departure_time,
+                stop_id = row[3],
+                stop_sequence = int(row[4]),
+                stop_headsign = row[5],
+                pickup_type = int(row[6]),
+                drop_off_type = int(row[7]),
+                shape_dist_traveled = float(row[8]),
+                trip = trip
+            )
 
-        st.save()
+            st.save()
+
+        except Trip.DoesNotExist as trip_not_exist:
+            continue
+
+

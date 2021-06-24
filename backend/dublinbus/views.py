@@ -37,12 +37,13 @@ def stop(request, stop_id):
     }
 
     # Timezone aware current time
-    current_time = datetime.now(timezone(timedelta(hours=1)))
+    current_date = datetime.now(timezone(timedelta(hours=1)))
+
     stop_time_details = StopTime.objects.filter(
         stop_id=stop_id,
         # Get all arrival times in the next hour
-        arrival_time__gte=current_time.time(),
-        arrival_time__lte=(current_time + timedelta(hours=1)).time()
+        arrival_time__gte=current_date.time(),
+        arrival_time__lte=(current_date + timedelta(hours=1)).time()
     )
 
     # Get realtime data from NTA API
@@ -50,20 +51,26 @@ def stop(request, stop_id):
 
     for stop_time in stop_time_details:
 
-        delay = get_realtime_dublin_bus_delay(realtime_updates,
-                                              stop_time.trip.trip_id,
-                                              stop_time.stop_sequence)
+        # Only get details for trips that operate on the current day
+        if stop_time.trip.service_id in date_to_service_ids(current_date):
 
-        result['arrivals'].append({
-            'route_id': stop_time.trip.route.route_id,
-            'trip_id': stop_time.trip.trip_id,
-            'scheduled_arrival_time': stop_time.arrival_time,
-            'scheduled_departure_time': stop_time.departure_time,
-            'stop_sequence': stop_time.stop_sequence,
-            'delay_sec': delay,
-            'due_in_min': get_due_in_time(current_time, stop_time.arrival_time, delay)
-        })
+            delay = get_realtime_dublin_bus_delay(realtime_updates,
+                                                    stop_time.trip.trip_id,
+                                                    stop_time.stop_sequence)
 
+            result['arrivals'].append({
+                'route_id': stop_time.trip.route.route_id,
+                'trip_id': stop_time.trip.trip_id,
+                'direction': stop_time.trip.direction_id,
+                'service_id': stop_time.trip.service_id,
+                'scheduled_arrival_time': stop_time.arrival_time,
+                'scheduled_departure_time': stop_time.departure_time,
+                'stop_sequence': stop_time.stop_sequence,
+                'delay_sec': delay,
+                'due_in_min': get_due_in_time(current_date, stop_time.arrival_time, delay)
+            })
+
+    result['arrivals'] = sorted(result['arrivals'], key = lambda arrival: arrival['scheduled_arrival_time'])
     return JsonResponse(result)
 
 def route(request, route_id):
@@ -192,3 +199,32 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
     # add delay to due time
     time_delta_seconds = time_delta.total_seconds() + delay
     return round(time_delta_seconds / 60)
+
+def date_to_service_ids(current_date):
+    """
+    A function which returns which service IDs are valid on the given date.
+    This is taken from the calendar.txt file from the static GTFS Dublin Bus data.
+
+    Args
+    ---
+        current_date: datetime
+            A datetime object for the current day
+    """
+
+    # Get the day of the week
+    day = current_date.strftime("%A")
+
+    # A mapping from days to service IDs from calendar.txt
+    # Service IDs "2" and "3" have an end date of 20210612
+    # and are therefore not included
+    days_to_service_ids_mapping = {
+        "Monday": ["y1004", "y1005"],
+        "Tuesday": ["y1005"],
+        "Wednesday": ["y1005"],
+        "Thursday": ["y1005"],
+        "Friday": ["y1005"],
+        "Saturday": ["y1006"],
+        "Sunday": ["y1004"]
+    }
+
+    return days_to_service_ids_mapping[day]
