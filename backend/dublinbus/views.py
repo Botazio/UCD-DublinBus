@@ -20,7 +20,6 @@ def stops(request):
 
     return JsonResponse(stops, safe=False)
 
-
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
     any delays to those schedules from the real-time data."""
@@ -175,7 +174,7 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
 
     # extract date from curr_time and concatenate to scheduled_arrival_time (time past midnight) e.g. "23/06/21 " + "12:04:25" = "23/06/21 12:04:25"
     scheduled_arrival_datetime_str = current_time.strftime("%d/%m/%y ") + str(scheduled_arrival_time)
-    # create datetime object for scheduled_arrival_datetime
+    # create datetime object for scheduled_arrival_datetime.
     scheduled_arrival_datetime_obj = datetime.strptime(scheduled_arrival_datetime_str, '%d/%m/%y %H:%M:%S').replace(
         tzinfo=timezone(timedelta(hours=1)))  # tzinfo=timezone.utc
     # subtract current_time from scheduled_arrival_datetime_obj
