@@ -179,6 +179,7 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
     scheduled_arrival_datetime_obj = datetime.strptime(scheduled_arrival_datetime_str, '%d/%m/%y %H:%M:%S').replace(
         tzinfo=timezone(timedelta(hours=1)))  # tzinfo=timezone.utc
     # subtract current_time from scheduled_arrival_datetime_obj
+    # To be able to subtract, both scheduled_arrival_datetime_obj and current_time must be datetime objects and in the same timezone
     # scheduled_arrival_time given to second precision so removing microsecond precision from current_time
     time_delta = scheduled_arrival_datetime_obj - current_time.replace(microsecond=0)
     # add delay to due time
