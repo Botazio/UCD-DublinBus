@@ -3,6 +3,7 @@ import { ReactComponent as Close } from './fixtures/icon-close.svg';
 import Directions from '../directions/Directions';
 import Stops from '../stops/Stops';
 import MapSwitch from '../map-switch/MapSwitch';
+import WeatherInfo from '../weather-info/WeatherInfo';
 
 // InfoBar is a subcomponent of SideBar
 const InfoBar = ({ sideBar, setInfoBar, infoBar, buttonActive, setButtonActive }) => {
@@ -20,8 +21,11 @@ const InfoBar = ({ sideBar, setInfoBar, infoBar, buttonActive, setButtonActive }
             <div className={InfobarCSS.close_button} onClick={() => handleClose()}>
                <Close height={'15'} />
             </div>
+
+            {/* Render a section depending on which button is active */}
             {buttonActive === 'directions' && <Directions />}
             {buttonActive === 'stops' && <Stops />}
+            {buttonActive === 'weather' && <WeatherInfo />}
          </div>
       </>
    );

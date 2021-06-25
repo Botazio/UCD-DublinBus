@@ -10,6 +10,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .infobar_sidebar_inactive {
   transform: translateX(-150px);
@@ -33,6 +35,17 @@
 }
 .map_switcher {
   display: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.infobar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.infobar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 @media screen and (max-width: 600px) {
