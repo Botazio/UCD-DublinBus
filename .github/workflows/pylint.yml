@@ -43,4 +43,4 @@ jobs:
 
       # --check returns 0 if there's no modifications needed or 1 if there's linting issues
       - name: Run pylint
-        run: pylint **/*.py
+        run: find . -type f -name "*.py" | xargs pylint
