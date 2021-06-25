@@ -124,8 +124,7 @@ export default function WeatherInfo() {
                <p>Min<br />{Math.round(weatherData.daily[i].temp.min)}º</p>
             </div>
             <div className={WeatherInfoCSS.weather_items}>
-               {weatherData.daily[i].rain && <p>Rain<br />{Math.round(weatherData.daily[i].rain)}%</p>}
-               {!weatherData.daily[i].rain && <p>Rain<br />?</p>}
+               <p>Rain<br />{Math.round(weatherData.daily[i].pop * 100)}%</p>
             </div>
             <div className={WeatherInfoCSS.weather_items}>
                {i === 0 && (<p>Wind<br />{Math.round(weatherData.current.wind_speed)} mph</p>)}
@@ -159,7 +158,7 @@ export default function WeatherInfo() {
             {hourlyIcon}
          </div>
          <div className={WeatherInfoCSS.hourly_pop}>
-            <p>&#127778;{Math.round(weatherData.hourly[x].pop)}%</p>
+            <p>&#127778;{Math.round(weatherData.hourly[x].pop * 100)}%</p>
          </div>
          <div className={WeatherInfoCSS.hourly_temp}>
             <p>{Math.round(weatherData.hourly[x].temp)}º</p>
