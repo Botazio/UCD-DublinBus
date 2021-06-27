@@ -1,6 +1,7 @@
 from csv import reader
 import re
-from dublinbus.models import Stop, Route, Trip, StopTime
+import pandas as pd
+from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
 
 with open('./google_transit_dublinbus/stops.txt', 'r') as stops_file:
     csv_reader = reader(stops_file)
@@ -140,3 +141,25 @@ with open('./google_transit_dublinbus/stop_times.txt', 'r') as stop_times_file:
 
         except Trip.DoesNotExist as trip_not_exist:
             continue
+
+def get_lines(stop_id):
+    """
+    Args
+        stop_id
+    Returns
+        List of distinct bus lines that pass through given stop.
+    """
+    print(stop_id)
+    trip_ids = pd.DataFrame(list(StopTime.objects.filter(stop_id=stop_id).values('trip__route__route_short_name')))
+    return trip_ids["trip__route__route_short_name"].unique()
+
+stops = list(Stop.objects.values())
+
+for stop in stops:
+    lines = get_lines(stop['stop_id'])
+    for line in lines:
+        l = Line(
+            stop=Stop.objects.get(stop_id=stop['stop_id']),
+            line=line
+        )
+        l.save()
