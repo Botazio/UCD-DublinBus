@@ -2,7 +2,7 @@ from csv import reader
 import re
 from dublinbus.models import Stop, Route, Trip, StopTime
 
-with open('./data/DublinBusStaticGTFS/stops.txt', 'r') as stops_file:
+with open('./google_transit_dublinbus/stops.txt', 'r') as stops_file:
     csv_reader = reader(stops_file)
 
     # skip header
@@ -19,7 +19,7 @@ with open('./data/DublinBusStaticGTFS/stops.txt', 'r') as stops_file:
 
         s.save()
 
-with open('./data/DublinBusStaticGTFS/routes.txt', 'r') as routes_file:
+with open('./google_transit_dublinbus/routes.txt', 'r') as routes_file:
 
     csv_reader = reader(routes_file)
 
@@ -39,7 +39,7 @@ with open('./data/DublinBusStaticGTFS/routes.txt', 'r') as routes_file:
         r.save()
 
 
-with open('./data/DublinBusStaticGTFS/trips.txt', 'r') as trips_file:
+with open('./google_transit_dublinbus/trips.txt', 'r') as trips_file:
 
     csv_reader = reader(trips_file)
 
@@ -51,7 +51,7 @@ with open('./data/DublinBusStaticGTFS/trips.txt', 'r') as trips_file:
 
         # Only use valid service IDs
         # Service IDs "2" and "3" have an end date of 20210612
-        if row[1] in ["y1004", "y1005", "y1006"]:
+        if row[1] in ["y1003", "y1004", "y1005#1"]:
             t = Trip(
                 trip_id=row[2],
                 service_id=row[1],
@@ -64,7 +64,7 @@ with open('./data/DublinBusStaticGTFS/trips.txt', 'r') as trips_file:
             t.save()
 
 
-with open('./data/DublinBusStaticGTFS/stop_times.txt', 'r') as stop_times_file:
+with open('./google_transit_dublinbus/stop_times.txt', 'r') as stop_times_file:
 
     csv_reader = reader(stop_times_file)
 
@@ -131,5 +131,3 @@ with open('./data/DublinBusStaticGTFS/stop_times.txt', 'r') as stop_times_file:
 
         except Trip.DoesNotExist as trip_not_exist:
             continue
-
-

@@ -70,7 +70,8 @@ def stop(request, stop_id):
                 'due_in_min': get_due_in_time(current_date, stop_time.arrival_time, delay)
             })
 
-    result['arrivals'] = sorted(result['arrivals'], key = lambda arrival: arrival['scheduled_arrival_time'])
+    result['arrivals'] = sorted(result['arrivals'],
+                                key=lambda arrival: arrival['scheduled_arrival_time'])
     return JsonResponse(result)
 
 def route(request, route_id):
@@ -218,12 +219,12 @@ def date_to_service_ids(current_date):
     # Service IDs "2" and "3" have an end date of 20210612
     # and are therefore not included
     days_to_service_ids_mapping = {
-        "Monday": ["y1004", "y1005"],
-        "Tuesday": ["y1005"],
-        "Wednesday": ["y1005"],
-        "Thursday": ["y1005"],
-        "Friday": ["y1005"],
-        "Saturday": ["y1006"],
+        "Monday": ["y1003", "y1004"],
+        "Tuesday": ["y1003"],
+        "Wednesday": ["y1003"],
+        "Thursday": ["y1003"],
+        "Friday": ["y1003"],
+        "Saturday": ["y1005#1"],
         "Sunday": ["y1004"]
     }
 
