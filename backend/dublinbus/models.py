@@ -18,7 +18,7 @@ class Stop(models.Model):
     """
 
     stop_id = models.CharField(max_length=120, primary_key=True)
-    stop_name= models.CharField(max_length=120)
+    stop_name = models.CharField(max_length=120)
     stop_lat = models.FloatField()
     stop_lon = models.FloatField()
 
