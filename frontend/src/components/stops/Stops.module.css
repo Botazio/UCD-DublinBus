@@ -1,0 +1,8 @@
+.searchbar {
+   margin-top: 60px;
+}
+.searchbar > div > input {
+   padding: 8px 15px;
+   font-size: 1rem;
+   border-radius: 20px;
+}

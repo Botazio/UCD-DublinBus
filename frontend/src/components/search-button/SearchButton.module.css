@@ -1,0 +1,11 @@
+.search_button {
+   position: absolute;
+   width: 100%;
+   bottom: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 55px;
+   background-color: lightgray;
+   cursor: pointer;
+}

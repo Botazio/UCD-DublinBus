@@ -1,0 +1,14 @@
+  @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+/* base styles */
+* {
+  margin: 0;
+  border: 0;
+  font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
+}
+
+/* To take out google logo*/
+.gm-style-cc {
+  display: none;
+}

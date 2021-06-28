@@ -1,0 +1,17 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 75px;
+  margin: 0 auto;
+  border-bottom: 2px solid #B82025;
+  padding: 0vh 5vh;
+}
+.navbar_logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login_icon {
+  cursor: pointer;
+}
