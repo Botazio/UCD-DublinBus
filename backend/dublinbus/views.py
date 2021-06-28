@@ -14,11 +14,11 @@ def index(request):
 def stops(request):
     """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
 
-    stops = list(Stop.objects.values())
-    for stop in stops:
-        stop['stop_number'] = stop['stop_name'].split("stop ")[-1]
+    stops_list = list(Stop.objects.values())
+    for stop_detail in stops_list:
+        stop_detail['stop_number'] = stop_detail['stop_name'].split("stop ")[-1]
 
-    return JsonResponse(stops, safe=False)
+    return JsonResponse(stops_list, safe=False)
 
 def stop(request, stop_id):
     """Returns all of the scheduled arrivals for a particular stop within the next hour and
@@ -124,7 +124,7 @@ def get_realtime_dublin_bus_delay(realtime_updates, trip_id, stop_sequence):
             The ID for the trip we want to get the delay for
         stop_sequence: int
             The stop sequence number for this stop in this trip
-            
+
     Returns
     ---
         The current delay for the trip in seconds. 0 means there is no delay and a negative
@@ -172,15 +172,23 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
         The expected due time for trip in minutes as an int.
     """
 
-    # extract date from curr_time and concatenate to scheduled_arrival_time (time past midnight) e.g. "23/06/21 " + "12:04:25" = "23/06/21 12:04:25"
-    scheduled_arrival_datetime_str = current_time.strftime("%d/%m/%y ") + str(scheduled_arrival_time)
+    # extract date from curr_time and concatenate to scheduled_arrival_time (time past midnight)
+    # e.g. "23/06/21 " + "12:04:25" = "23/06/21 12:04:25"
+    scheduled_arrival_datetime_str = current_time.strftime("%d/%m/%y ") + \
+        str(scheduled_arrival_time)
+
     # create datetime object for scheduled_arrival_datetime.
-    scheduled_arrival_datetime_obj = datetime.strptime(scheduled_arrival_datetime_str, '%d/%m/%y %H:%M:%S').replace(
-        tzinfo=timezone(timedelta(hours=1)))  # tzinfo=timezone.utc
+    scheduled_arrival_datetime_obj = datetime.strptime(
+        scheduled_arrival_datetime_str,
+        '%d/%m/%y %H:%M:%S'
+        ).replace(tzinfo=timezone(timedelta(hours=1)))
+
     # subtract current_time from scheduled_arrival_datetime_obj
-    # To be able to subtract, both scheduled_arrival_datetime_obj and current_time must be datetime objects and in the same timezone
-    # scheduled_arrival_time given to second precision so removing microsecond precision from current_time
+    # To be able to subtract, both scheduled_arrival_datetime_obj and current_time
+    # must be datetime objects and in the same timezone
+    # scheduled_arrival_time in second precision so removing microseconds from current_time
     time_delta = scheduled_arrival_datetime_obj - current_time.replace(microsecond=0)
+
     # add delay to due time
     time_delta_seconds = time_delta.total_seconds() + delay
     return round(time_delta_seconds / 60)
