@@ -15,7 +15,6 @@ def stops(request):
 
     stops_list = list(Stop.objects.values())
     for stop_detail in stops_list:
-        # print(StopTime.objects.filter(stop_id=stop_detail['stop_id']).values('trip_id'))
         stop_detail['stop_number'] = stop_detail['stop_name'].split("stop ")[-1]
 
     return JsonResponse(stops_list, safe=False)
