@@ -105,6 +105,7 @@
   white-space: nowrap;
   width: 90%;
   border-radius: 20px;
+  margin-top: 5px;
 }
 .hourly_slide {
   display: flex;
@@ -112,6 +113,9 @@
   align-items: center;
   justify-content: center;
   padding: 0px 5px;
+}
+.hourly_time {
+  margin-bottom: 5px;
 }
 .hourly_pop {
   font-size: 0.8rem;
@@ -132,6 +136,7 @@
 }
 .weather_chart_wrapper > p {
   margin-left: 10%;
+  margin-bottom: 5px;
   font-weight: bold;
   align-self: flex-start;
 }
@@ -139,4 +144,43 @@
   width: 90%;
   border-radius: 20px;
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Styles for the details */
+.details_wrapper {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.details_wrapper > p {
+  margin-left: 10%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.details_slide {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+}
+.details_items {
+  display: flex;
+  width: 90%;
+  align-items: center;
+  justify-content: space-between;
+}
+.details_items > div {
+  display: flex;
+  width: 85%;
+  justify-content: space-between;
+  padding: 10px 0px;
+  border-bottom: 2px solid black;
 }

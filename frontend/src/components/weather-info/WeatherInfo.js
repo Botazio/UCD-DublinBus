@@ -3,6 +3,10 @@ import useFetch from '../../helpers/useFetch';
 import { Chart } from "react-google-charts";
 import WeatherInfoCSS from './WeatherInfo.module.css';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
+import { ReactComponent as Humidity } from './fixtures/icon-humidity.svg';
+import { ReactComponent as Sunset } from './fixtures/icon-sunset.svg';
+import { ReactComponent as Sunrise } from './fixtures/icon-sunrise.svg';
+import { ReactComponent as Ultraviolet } from './fixtures/icon-ultraviolet.svg';
 
 // Styles for the graph
 const options = {
@@ -46,12 +50,7 @@ const options = {
       fontName: "Roboto, sans-serif",
       color: "black",
    },
-   legend: {
-      textStyle: {
-         color: "black",
-      },
-   },
-   title: "Forecast Weather",
+   legend: 'none',
 };
 
 export default function WeatherInfo() {
@@ -66,8 +65,6 @@ export default function WeatherInfo() {
 
    // Wait for the data
    if (isPendingWeather) return null;
-
-   console.log(weatherData)
 
    // Get the data in a google data table
    const forecastWeather = [];
@@ -146,10 +143,10 @@ export default function WeatherInfo() {
             alt="weather-icon"
             src={"http://openweathermap.org/img/w/" + weatherData.hourly[x].weather[0]["icon"] + ".png"} />);
 
-      // hourly dates
+      // Hourly dates
       var date = new Date(weatherData.hourly[x].dt * 1000);
 
-      // hourly slides
+      // Hourly slides
       hourlySlides.push(<div key={"hourly-slide" + x} className={WeatherInfoCSS.hourly_slide}>
          <div className={WeatherInfoCSS.hourly_time}>
             <p>{date.getHours() + ":00"}</p>
@@ -166,6 +163,49 @@ export default function WeatherInfo() {
       </div>)
    }
 
+   // Details slide
+   // UV Index
+   const uvIndex = handleUVLevel(weatherData.current.uvi);
+   // Sunrise time
+   const sunrise = handleTime(new Date(weatherData.current.sunrise * 1000));
+   // Sunset time
+   const sunset = handleTime(new Date(weatherData.current.sunset * 1000));
+
+   const detailsSlide = (
+      <div className={WeatherInfoCSS.details_wrapper}>
+         <p>Details</p>
+         <div className={WeatherInfoCSS.details_slide}>
+            <div className={WeatherInfoCSS.details_items}>
+               <Ultraviolet height={'22'} fill='yellow' />
+               <div>
+                  <p>UV index</p>
+                  <p>{uvIndex}</p>
+               </div>
+            </div>
+            <div className={WeatherInfoCSS.details_items}>
+               <Sunrise height={'22'} fill='red' />
+               <div>
+                  <p>Sunrise</p>
+                  <p>{sunrise}</p>
+               </div>
+            </div>
+            <div className={WeatherInfoCSS.details_items}>
+               <Sunset height={'22'} fill='rgb(79, 83, 162)' />
+               <div>
+                  <p>Sunset</p>
+                  <p>{sunset}</p>
+               </div>
+            </div>
+            <div className={WeatherInfoCSS.details_items}>
+               <Humidity height={'22'} fill='lightblue' />
+               <div>
+                  <p>Humidiy</p>
+                  <p>{weatherData.current.humidity}%</p>
+               </div>
+            </div>
+         </div>
+      </div>)
+
    return (
       <>
          <div className={WeatherInfoCSS.weather_wrapper}>
@@ -176,6 +216,7 @@ export default function WeatherInfo() {
                {weatherSlides[currentSlide]}
             </div>
 
+            {/* Display the hourly slides */}
             <div className={WeatherInfoCSS.hourly_outside_wrapper}>
                <p>Hourly</p>
                <div className={WeatherInfoCSS.hourly_inner_wrapper}>
@@ -213,10 +254,14 @@ export default function WeatherInfo() {
                      ]} />
                </div>
             </div>
+
+            {/* Display the details slide */}
+            {detailsSlide}
          </div>
       </>
    )
 
+   // Function that allows the user to navigate through the daily slides using arrow buttons
    function handleCurrentSlide(n) {
       if (n > weatherSlides.length - 1) {
          setCurrentSlide(0);
@@ -227,5 +272,38 @@ export default function WeatherInfo() {
       else {
          setCurrentSlide(n)
       }
+   }
+
+   // Function that handles the UVIndex from the weather API
+   function handleUVLevel(uvIndex) {
+      if (!uvIndex) {
+         return 'Unavailable';
+      }
+      else if (0 <= uvIndex && uvIndex < 2) {
+         return 'Low';
+      }
+      else if (2 <= uvIndex && uvIndex < 5) {
+         return 'Moderate';
+      }
+      else if (5 <= uvIndex && uvIndex < 7) {
+         return 'High';
+      }
+      else if (7 <= uvIndex && uvIndex < 10) {
+         return 'Very High';
+      }
+      else if (uvIndex >= 10) {
+         return 'Extreme';
+      }
+   }
+
+   // Function that handles the symbol for the minutes. Adds a 0 if the minutes are less than 10
+   function handleTime(dayTime) {
+      var symbol;
+      if (dayTime.getMinutes < 10) {
+         symbol = ':0';
+      }
+      else symbol = ':';
+
+      return dayTime.getHours() + symbol + dayTime.getMinutes();
    }
 }
