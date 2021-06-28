@@ -7,6 +7,7 @@ import { ReactComponent as Humidity } from './fixtures/icon-humidity.svg';
 import { ReactComponent as Sunset } from './fixtures/icon-sunset.svg';
 import { ReactComponent as Sunrise } from './fixtures/icon-sunrise.svg';
 import { ReactComponent as Ultraviolet } from './fixtures/icon-ultraviolet.svg';
+import Waiting from '../waiting/Waiting';
 
 // Styles for the graph
 const options = {
@@ -64,7 +65,7 @@ export default function WeatherInfo() {
    if (error) return (<div className={WeatherInfoCSS.weather_wrapper}>Unable to get the weather data"</div>)
 
    // Wait for the data
-   if (isPendingWeather) return null;
+   if (isPendingWeather) return <Waiting />;
 
    // Get the data in a google data table
    const forecastWeather = [];
