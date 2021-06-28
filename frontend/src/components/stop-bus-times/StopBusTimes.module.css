@@ -1,0 +1,23 @@
+.wrapper {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.wrapper > p {
+  margin-left: 10%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.slide {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+}

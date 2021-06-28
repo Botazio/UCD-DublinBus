@@ -300,7 +300,7 @@ export default function WeatherInfo() {
    // Function that handles the symbol for the minutes. Adds a 0 if the minutes are less than 10
    function handleTime(dayTime) {
       var symbol;
-      if (dayTime.getMinutes < 10) {
+      if (dayTime.getMinutes() < 10) {
          symbol = ':0';
       }
       else symbol = ':';
