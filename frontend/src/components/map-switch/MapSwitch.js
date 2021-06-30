@@ -12,7 +12,7 @@ const MapSwitcher = ({ buttonActive }) => {
    useEffect(() => {
       map.getDiv().firstChild.style.zIndex = 0;
       setMapView(false);
-   }, [buttonActive])
+   }, [buttonActive, map])
 
    // We change the z-index of the map depending if the mapView is active
    useEffect(() => {

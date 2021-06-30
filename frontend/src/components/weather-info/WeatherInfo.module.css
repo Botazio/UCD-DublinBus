@@ -1,0 +1,186 @@
+.weather_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+.weather_slides_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+.weather_slide {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+}
+.weather_header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.weather_header {
+  text-transform: capitalize;
+}
+.weather_header p {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.weather_main_info,
+.weather_secondary_info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.weather_items {
+  text-align: center;
+} 
+/* Next & previous buttons */
+.prev_weather,
+.next_weather {
+  cursor: pointer;
+  position: absolute;
+  width: 5%;
+  padding: 5px;
+  color: black;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: 0.3s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* Position the "prev button" to the left */
+.prev_weather {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+/* Position the "next button" to the right */
+.next_weather {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+/* On hover, add a black background color with a little bit see-through */
+.prev_weather:hover,
+.next_weather:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+/* Styles for the hourly card */
+.hourly_outside_wrapper {
+  width: 100%;
+  margin-top: 15px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.hourly_outside_wrapper > p {
+  margin-left: 10%;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.hourly_inner_wrapper {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  width: 90%;
+  border-radius: 20px;
+  margin-top: 5px;
+}
+.hourly_slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 5px;
+}
+.hourly_time {
+  margin-bottom: 5px;
+}
+.hourly_pop {
+  font-size: 0.8rem;
+}
+.hourly_temp {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+/* Styles for the chart */
+.weather_chart_wrapper {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.weather_chart_wrapper > p {
+  margin-left: 10%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+#weather_chart {
+  width: 90%;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Styles for the details */
+.details_wrapper {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.details_wrapper > p {
+  margin-left: 10%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.details_slide {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+}
+.details_items {
+  display: flex;
+  width: 90%;
+  align-items: center;
+  justify-content: space-between;
+}
+.details_items > div {
+  display: flex;
+  width: 85%;
+  justify-content: space-between;
+  padding: 10px 0px;
+  border-bottom: 2px solid black;
+}

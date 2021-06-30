@@ -56,6 +56,13 @@ const SideBar = () => {
                <p>Favorites</p>
                <p>&#10095;</p>
             </div>
+            <div
+               className={SidebarCSS.button + " " + (buttonActive === 'weather' ? SidebarCSS.active : '')}
+               value={'favorites'}
+               onClick={() => handleClick('weather')}>
+               <p>Weather</p>
+               <p>&#10095;</p>
+            </div>
          </div>
 
          <InfoBar

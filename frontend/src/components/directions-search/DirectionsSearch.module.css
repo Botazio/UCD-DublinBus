@@ -1,7 +1,7 @@
 .container {
-   width: 80%;
+   width: 90%;
    padding: 20px 0px;
-   background-color: white;
+   background-color: rgba(255, 255, 255, 0.3);
    margin-top: 60px;
    border-radius: 10px;
    display: flex;
@@ -10,15 +10,14 @@
    justify-content: center;
 }
 .subcontainer {
-   border: 2px solid #E8E7E2;
-   width: 80%;
+   width: 70%;
    margin: 5px 0px;
    border-radius: 15px;
 }
 .hour_container {
-   width: 80%;
+   width: 90%;
    padding: 12px 20px;
-   background-color: white;
+   background-color: rgba(255, 255, 255, 0.3);
    margin-top: 20px;
    border-radius: 10px;
    display: flex;
@@ -32,6 +31,5 @@
    padding: 4px 15px;
    outline: none;
    cursor: pointer;
-   border: 2px solid #E8E7E2;
    margin-top: 5px;
 }
