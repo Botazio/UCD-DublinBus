@@ -106,14 +106,14 @@ def route(request, route_id):
 
 def predict(request):
     """
-    Predict between two stops on the same route/trip. These stops do not need to necessarily be
-    adjacent.
+    Predict travel time in seconds between two stops on the same route/trip. 
+    These stops do not need to necessarily be adjacent.
 
-    Takes two query parameters: depature_stop_id and arrival_stop_id
+    Takes three query parameters: trip_id, depature_stop_id and arrival_stop_id
 
     Example:
 
-    /dublinbus/predict?departure_stop_id=<stop_A>&arrival_stop_id=<stop_B>
+    /dublinbus/predict?trip_id=<trip_A>&departure_stop_id=<stop_A>&arrival_stop_id=<stop_B>
     """
 
     trip_id = request.GET["trip_id"]
