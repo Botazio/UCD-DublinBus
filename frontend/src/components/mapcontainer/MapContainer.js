@@ -28,7 +28,7 @@ export default function MapContainer(props) {
    const { isLoaded, loadError } = useLoadScript({
       googleMapsApiKey: "AIzaSyCLGkrQoHNmMyhdvwl0wmron1ndtREM0zM",
       libraries,
-      version: "3.44"
+      version: "3.46"
    });
 
    // mapRef to use in other parts of the code without triggering rerenders

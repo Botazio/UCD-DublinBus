@@ -7,6 +7,10 @@ const useFetch = (url) => {
    const [error, setError] = useState(null);
 
    useEffect(() => {
+      // restore the values in each call
+      setIsPending(true);
+      setError(null);
+
       const abortCont = new AbortController();
 
       fetch(url, { signal: abortCont.signal })

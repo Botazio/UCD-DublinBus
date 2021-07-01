@@ -1,11 +1,23 @@
 .search_button {
-   position: absolute;
-   width: 100%;
-   bottom: 0;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   height: 55px;
-   background-color: lightgray;
-   cursor: pointer;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  background-color: lightgray;
+  z-index: 100;
 }
+.active {
+  animation: pulse 2s infinite;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(135, 206, 235, 0.5);
+  background-color: lightblue; 
+}
+
+@keyframes pulse {
+   100% {
+     box-shadow: 0px 0px 0px 20px rgba(135, 206, 235,0);
+   }
+ }

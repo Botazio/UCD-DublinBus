@@ -1,5 +1,5 @@
 import StopSearchBarCSS from './StopSearchBar.module.css';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useThrottle } from 'react-use';
 import { matchSorter } from 'match-sorter';
 import {
@@ -11,21 +11,22 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
-const StopSearchBar = ({ placeholder }) => {
+const StopSearchBar = ({ placeholder, stops, setSelectedStop }) => {
+   // States
    const [term, setTerm] = React.useState("");
    const results = usePlaceMatch(term);
-   const handleChange = (e) => setTerm(e.target.value);
 
-   useEffect(() => {
-      setTerm("")
-   }, []);
+   // Function that controls wheter the user enters new input
+   const handleChange = (e) => setTerm(e.target.value);
 
    return (
       <Combobox
-         onSelect={(address) => {
-            setTerm(address);
+         onSelect={(stop_name) => {
+            setTerm(stop_name);
+            // Search for the station name and pass the full stop object to the function
+            const selectedStop = stops.find((stop) => stop.stop_name === stop_name);
+            handleSubmit(selectedStop);
          }}>
-
          <ComboboxInput
             className={StopSearchBarCSS.search_input}
             placeholder={placeholder}
@@ -33,22 +34,37 @@ const StopSearchBar = ({ placeholder }) => {
             value={term}
             onChange={handleChange}
          />
-         <ComboboxPopover style={{ zIndex: 100000 }}>
-            <ComboboxList>
-            </ComboboxList>
-         </ComboboxPopover>
+         {results && (<ComboboxPopover style={{ zIndex: 10000 }}>
+            {results.length > 0 ? (
+               <ComboboxList>
+                  {results.slice(0, 5).map((result) => (
+                     <ComboboxOption
+                        key={"suggestion" + result.stop_number}
+                        value={result.stop_name}
+                     />
+                  ))}
+               </ComboboxList>) : (
+               <span style={{ display: "block", margin: 8 }}>
+                  No results found
+               </span>
+            )}
+         </ComboboxPopover>)}
       </Combobox>
    );
 
-   function handleSubmit(result) {
+   // When the user selects an option sets the state of the search to active
+   function handleSubmit(stop) {
+      setSelectedStop(stop);
    }
 
+   // Filter that return recommended options
    function usePlaceMatch() {
+      // Waits 0.1s before giving another prediction
       const throttledTerm = useThrottle(term, 100);
       /* eslint-disable */
       return useMemo(() =>
          term === "" ? null :
-            matchSorter(stations, term, { keys: ['address'] }, { threshold: matchSorter.rankings.STARTS_WITH }),
+            matchSorter(stops, term, { keys: ['stop_name', 'stop_number'] }, { threshold: matchSorter.rankings.STARTS_WITH }),
          [throttledTerm]);
    }
 }

@@ -12,3 +12,9 @@
 .gm-style-cc {
   display: none;
 }
+
+/* Styles for the comboboxes */
+[data-reach-combobox-option]  {
+  padding: 5px 5px !important;
+  text-transform: capitalize;
+}
