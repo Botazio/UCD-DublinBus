@@ -10,9 +10,18 @@ with open('./google_transit_dublinbus/stops.txt', 'r') as stops_file:
 
     for row in csv_reader:
         print(row)
+
+        try:
+            stop_num = int(row[1].split(" ")[-1])
+        except ValueError:
+            # stop number isn't in the name
+            # try parse out of ID instead
+            stop_num = int(row[0].split("DB")[-1])
+
         s = Stop(
             stop_id=row[0],
             stop_name=row[1],
+            stop_num=stop_num,
             stop_lat=float(row[2]),
             stop_lon=float(row[3])
         )
