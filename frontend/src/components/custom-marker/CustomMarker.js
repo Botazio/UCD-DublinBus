@@ -23,8 +23,28 @@ const CustomMarker = ({ selectedStop, mapRef }) => {
          options={{
             map: mapRef,
             zIndex: 1000
-         }} />
+         }}
+         onClick={() => handleClick()} />
    );
+
+   // zoom the view if the user clicks on the marker
+   function handleClick() {
+      const zoom = mapRef.getZoom();
+
+      // zooms more the higher is the view
+      if (zoom <= 13) {
+         mapRef.setZoom(zoom + 2);
+      }
+      else if (13 < zoom && zoom <= 16) {
+         mapRef.setZoom(zoom + 1);
+      }
+
+      // pans the view to the marker
+      mapRef.panTo({
+         lat: selectedStop.stop_lat,
+         lng: selectedStop.stop_lon
+      });
+   }
 }
 
 export default CustomMarker;
