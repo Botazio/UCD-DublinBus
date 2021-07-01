@@ -15,6 +15,7 @@ const StopBusTimes = ({ selectedStop }) => {
    return (
       <div className={StopBusTimesCSS.wrapper}>
          <div className={StopBusTimesCSS.slide}>
+            <p id={StopBusTimesCSS.stop_name}>{fetchedStop.stop_name}</p>
             {handleTimes()}
          </div>
       </div>
@@ -24,7 +25,7 @@ const StopBusTimes = ({ selectedStop }) => {
    function handleTimes() {
       // If there is no arrivals
       if (fetchedStop.arrivals.length === 0) {
-         return <p>No scheduled buses</p>
+         return <div className={StopBusTimesCSS.arrival_slides}><p>No scheduled buses</p></div>
       }
 
       // Order the arrivals

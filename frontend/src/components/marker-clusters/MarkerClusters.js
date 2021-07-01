@@ -23,7 +23,6 @@ const MarkerClusters = ({ stops, mapRef }) => {
    // map event listeners. We add them the first time the component renders
    useEffect(() => {
       mapRef.addListener('zoom_changed', () => {
-         console.log('helo')
          setZoom(mapRef.getZoom());
          const b = mapRef.getBounds();
          setBounds([
@@ -61,11 +60,11 @@ const MarkerClusters = ({ stops, mapRef }) => {
    }));
 
    // get clusters
-   const { clusters } = useSupercluster({
+   const { clusters, supercluster } = useSupercluster({
       points,
       bounds,
       zoom,
-      options: { radius: 120, maxZoom: 16 }
+      options: { radius: 100, maxZoom: 16 }
    });
 
 
@@ -93,9 +92,18 @@ const MarkerClusters = ({ stops, mapRef }) => {
                         label: {
                            className: "labelMarker",
                            text: "" + pointCount + "",
-                           fontSize: "12px",
+                           fontSize: "14px",
+                           fontWeight: "500",
                            fontFamily: "Roboto, sans-serif",
                         }
+                     }}
+                     onClick={() => {
+                        const expansionZoom = Math.min(
+                           supercluster.getClusterExpansionZoom(cluster.id),
+                           17 // max zoom
+                        );
+                        mapRef.setZoom(expansionZoom);
+                        mapRef.panTo({ lat: latitude, lng: longitude });
                      }}>
                   </Marker>
                )

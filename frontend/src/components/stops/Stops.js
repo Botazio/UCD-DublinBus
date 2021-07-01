@@ -6,12 +6,15 @@ import { useState } from 'react';
 import StopBusTimes from '../stop-bus-times/StopBusTimes';
 import MarkerClusters from '../marker-clusters/MarkerClusters';
 import { useGoogleMap } from '@react-google-maps/api';
+import MarkersSwitch from '../markers-switch/MarkersSwitch';
 
 // This component is the main component for the stops system.
 // The subcomponents are inserted in this component
 const Stops = () => {
    // State to select a stop. It is handled by the StopSearchBar component
    const [selectedStop, setSelectedStop] = useState(null);
+   // State for the button that controls if the markers should be displayed
+   const [displayMarkers, setDisplayMarkers] = useState(true);
 
    // reference to the map
    const mapRef = useGoogleMap();
@@ -32,8 +35,11 @@ const Stops = () => {
             <StopSearchBar placeholder={'Search Stop...'} stops={stops} setSelectedStop={setSelectedStop} />
          </div>
 
+         {/* Display the button that controls when to display the markers */}
+         {stops && <MarkersSwitch displayMarkers={displayMarkers} setDisplayMarkers={setDisplayMarkers} />}
+
          {/* Display the markers */}
-         <MarkerClusters stops={stops} mapRef={mapRef} />
+         {displayMarkers && <MarkerClusters stops={stops} mapRef={mapRef} />}
 
          {/* If there is a stop selected display the next buses */}
          {selectedStop && <StopBusTimes selectedStop={selectedStop} setSelectedStop={setSelectedStop} />}
