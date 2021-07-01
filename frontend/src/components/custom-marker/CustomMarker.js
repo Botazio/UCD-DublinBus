@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 // if I need something similar later I will create an independent component
 const CustomMarker = ({ selectedStop, mapRef }) => {
    useEffect(() => {
-      // move the map to the center of the marker
+      // move the map view to the center of the marker
       mapRef.panTo({
          lat: selectedStop.stop_lat,
          lng: selectedStop.stop_lon
