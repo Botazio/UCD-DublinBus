@@ -13,7 +13,8 @@ const containerStyle = {
 const options = {
    styles: mapStyles,
    mapTypeControl: false,
-   fullscreenControl: false
+   fullscreenControl: true,
+   streetViewControl: false
 }
 
 const center = {
