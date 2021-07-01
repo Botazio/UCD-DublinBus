@@ -1,6 +1,7 @@
 import NavBar from "../components/navbar/NavBar";
 import SideBar from "../components/sidebar/SideBar";
 import MapContainer from "../components/mapcontainer/MapContainer";
+import MapCustomButtons from "../components/map-custom-buttons/MapCustomButtons";
 
 const BusPage = () => {
 
@@ -10,6 +11,7 @@ const BusPage = () => {
          {/* MapContainer is a context where all the childs can access the map property */}
          <MapContainer>
             <SideBar />
+            <MapCustomButtons />
          </MapContainer>
       </>
    );
