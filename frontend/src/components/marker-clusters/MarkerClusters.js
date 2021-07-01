@@ -23,7 +23,6 @@ const MarkerClusters = ({ stops, mapRef }) => {
    // map event listeners. We add them the first time the component renders
    useEffect(() => {
       mapRef.addListener('idle', () => {
-         console.log("heelo");
          setZoom(mapRef.getZoom());
          const b = mapRef.getBounds();
          setBounds([
