@@ -31,10 +31,10 @@ const StopBusTimes = ({ selectedStop }) => {
       fetchedStop.arrivals.sort(compare);
 
       // Return an array of HTML elements
-      const arrayArrivals = (fetchedStop.arrivals.map(arrival => {
-         return (<div className={StopBusTimesCSS.arrival_slides}>
-            <p>Line ID</p>
-            <p>{arrival.due_in_min}</p>
+      const arrayArrivals = (fetchedStop.arrivals.slice(0, 15).map(arrival => {
+         return (<div key={arrival.trip_id} className={StopBusTimesCSS.arrival_slides}>
+            <p>{arrival.route_id}</p>
+            <p><b>{arrival.due_in_min} min</b></p>
          </div>)
       }));
 
