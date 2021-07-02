@@ -159,12 +159,12 @@ stops = list(Stop.objects.values())
 for stop in stops:
 
     lines = get_lines(stop['stop_id'])
-    
+
     for line in lines:
         l = Line(
             stop=Stop.objects.get(stop_id=stop['stop_id']),
             line=line
         )
-        
+
         l.save()
         
