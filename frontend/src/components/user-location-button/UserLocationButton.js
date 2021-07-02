@@ -1,11 +1,18 @@
 import UserLocationButtonCSS from './UserLocationButton.module.css';
 import iconPosition from './fixtures/icon-position.png';
 import { useState } from 'react';
-import { Marker } from '@react-google-maps/api';
+import CustomMarker from '../custom-marker/CustomMarker';
+import userPosition from './fixtures/user-position.png';
 
 // Displays a marker at the user location when it is clicked
 const UserLocationButton = ({ mapRef }) => {
    const [position, setPosition] = useState(false);
+
+   const customIcon = {
+      url: userPosition,
+      origin: new window.google.maps.Point(0, 0),
+      anchor: new window.google.maps.Point(26, 26)
+   }
 
    return (
       <>
@@ -17,15 +24,7 @@ const UserLocationButton = ({ mapRef }) => {
          </div>
 
          {/* Display a marker if we get the position back */}
-         {position && (
-            <Marker
-               key='marker user location'
-               position={position}
-               options={{
-                  map: mapRef,
-               }}
-               onClick={() => { mapRef.setZoom(14); mapRef.panTo(position); }} />
-         )}
+         {position && <CustomMarker id="user-position" position={position} iconType={customIcon} mapRef={mapRef} />}
       </>
    );
 
