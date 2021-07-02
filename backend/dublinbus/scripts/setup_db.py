@@ -1,4 +1,7 @@
-import os, re, subprocess
+import os
+import re
+import subprocess
+import sys
 from datetime import datetime
 from csv import reader
 import pandas as pd
@@ -14,20 +17,18 @@ os.system('touch {}/calendar.txt'.format(GTFS_STATIC_DIR))
 GTFS_STATIC_ZIP = "https://www.transportforireland.ie/transitData/google_transit_dublinbus.zip"
 os.system('wget {0} -P {1}/'.format(GTFS_STATIC_ZIP, GTFS_STATIC_DIR))
 
-unzip = "unzip -p {0}/google_transit_dublinbus.zip calendar.txt > {0}/calendar_tmp.txt"
-os.system(unzip.format(GTFS_STATIC_DIR))
+UNZIP = "unzip -p {0}/google_transit_dublinbus.zip calendar.txt > {0}/calendar_tmp.txt"
+os.system(UNZIP.format(GTFS_STATIC_DIR))
 
-diff = "diff {0}/calendar.txt {0}/calendar_tmp.txt; exit 0"
-
-compare_calendars = subprocess.check_output(diff.format(GTFS_STATIC_DIR),
+DIFF = "diff {0}/calendar.txt {0}/calendar_tmp.txt; exit 0"
+compare_calendars = subprocess.check_output(DIFF.format(GTFS_STATIC_DIR),
                                     stderr=subprocess.STDOUT,
                                     shell=True)
 
-# if there is no difference between the newly downloaded calendar.txt file and the previous one then exit
+# exit if no diff between calendar.txt files
 if len(compare_calendars) == 0:
     os.system('rm {0}/calendar_tmp.txt {0}/google_transit_dublinbus.zip'.format(GTFS_STATIC_DIR))
-    print("No update to calendar.txt file - exiting")
-    exit()
+    sys.exit("No update to calendar.txt file - exiting")
 
 print("Update to calendar.txt file - (re-)writing database")
 os.system('unzip {0}/google_transit_dublinbus.zip -d {0}/data/'.format(GTFS_STATIC_DIR))
@@ -233,9 +234,9 @@ for stop in stops:
         )
 
         l.save()
-        
-        
-# iv. Delete raw txt files after ingestion 
+
+
+# iv. Delete raw txt files after ingestion
 print("Deleting all GTFS static files except calendar.txt")
 # Move the calendar.txt file into the gtfs_static directory for tomorrow's comparison
 os.system('mv {0}/data/calendar.txt {0}/'.format(GTFS_STATIC_DIR))
