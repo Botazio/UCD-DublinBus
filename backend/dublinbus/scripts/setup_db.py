@@ -1,9 +1,66 @@
+import sys, os, django, re, subprocess
+from pathlib import Path
+from datetime import datetime
 from csv import reader
-import re
 import pandas as pd
-from dublinbus.models import Stop, Route, Trip, StopTime, Line
 
-with open('./google_transit_dublinbus/stops.txt', 'r') as stops_file:
+from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
+
+# i. compare calendar.txt files
+GTFS_STATIC_DIR = os.path.abspath(os.path.dirname(__name__)) + "/dublinbus/scripts/gtfs_static"
+os.system('mkdir -p {}'.format(GTFS_STATIC_DIR))
+os.system('touch {}/calendar.txt'.format(GTFS_STATIC_DIR))
+os.system('wget https://www.transportforireland.ie/transitData/google_transit_dublinbus.zip -P {}/'.format(GTFS_STATIC_DIR))
+os.system('unzip -p {0}/google_transit_dublinbus.zip calendar.txt > {0}/calendar_tmp.txt'.format(GTFS_STATIC_DIR))
+compare_calendars = subprocess.check_output("diff {0}/calendar.txt {0}/calendar_tmp.txt; exit 0".format(GTFS_STATIC_DIR),stderr=subprocess.STDOUT,shell=True)
+
+# if there is no difference between the newly downloaded calendar.txt file and the previous one then exit
+if len(compare_calendars) == 0:
+    os.system('rm {0}/calendar_tmp.txt {0}/google_transit_dublinbus.zip'.format(GTFS_STATIC_DIR))
+    print("No update to calendar.txt file - exiting")
+    exit()
+
+print("Update to calendar.txt file - (re-)writing database")
+os.system('unzip {0}/google_transit_dublinbus.zip -d {0}/data/'.format(GTFS_STATIC_DIR))
+
+# ii. Deleting all records in database (without violation / integrity checks foreign keys, order of deletion matters, delete FK first)
+Line.objects.all().delete() # FK stop
+StopTime.objects.all().delete() # FK trip, FK stop
+Trip.objects.all().delete() # PK trip_id , FK route, FK calendar
+Calendar.objects.all().delete() # PK service_id
+Stop.objects.all().delete() # PK stop_id
+Route.objects.all().delete() # PK route_id
+
+# iii. Ingest GTFS-static data
+# order of ingestion the inverse to deletion - populate tables with PKs first before ones with FKs
+# Calendar -> Stop -> Route -> Trip -> StopTime -> Line
+# a. Save raw txt files into database
+with open('{}/data/calendar.txt'.format(GTFS_STATIC_DIR), 'r') as calendar_file:
+
+    csv_reader = reader(calendar_file)
+
+    # skip header
+    next(csv_reader, None)
+
+    for row in csv_reader:
+        print(row)
+        c = Calendar(
+            service_id=row[0],
+            monday=True if row[1] == "1" else False,
+            tuesday=True if row[2] == "1" else False,
+            wednesday=True if row[3] == "1" else False,
+            thursday=True if row[4] == "1" else False,
+            friday=True if row[5] == "1" else False,
+            saturday=True if row[6] == "1" else False,
+            sunday=True if row[7] == "1" else False,
+            start_date=datetime.strptime(row[8], '%Y%m%d'),
+            end_date=datetime.strptime(row[9], '%Y%m%d')
+        )
+
+        c.save()
+
+    
+with open('{}/data/stops.txt'.format(GTFS_STATIC_DIR), 'r') as stops_file:
     csv_reader = reader(stops_file)
 
     # skip header
@@ -29,7 +86,7 @@ with open('./google_transit_dublinbus/stops.txt', 'r') as stops_file:
 
         s.save()
 
-with open('./google_transit_dublinbus/routes.txt', 'r') as routes_file:
+with open('{}/data/routes.txt'.format(GTFS_STATIC_DIR), 'r') as routes_file:
 
     csv_reader = reader(routes_file)
 
@@ -49,7 +106,7 @@ with open('./google_transit_dublinbus/routes.txt', 'r') as routes_file:
         r.save()
 
 
-with open('./google_transit_dublinbus/trips.txt', 'r') as trips_file:
+with open('{}/data/trips.txt'.format(GTFS_STATIC_DIR), 'r') as trips_file:
 
     csv_reader = reader(trips_file)
 
@@ -59,22 +116,19 @@ with open('./google_transit_dublinbus/trips.txt', 'r') as trips_file:
     for row in csv_reader:
         print(row)
 
-        # Only use valid service IDs
-        # Service IDs "2" and "3" have an end date of 20210612
-        if row[1] in ["y1003", "y1004", "y1005#1"]:
-            t = Trip(
-                trip_id=row[2],
-                service_id=row[1],
-                shape_id=row[3],
-                trip_headsign=row[4],
-                direction_id=int(row[5]),
-                route=Route.objects.get(route_id=row[0])
-            )
+        t = Trip(
+            trip_id=row[2],
+            shape_id=row[3],
+            trip_headsign=row[4],
+            direction_id=int(row[5]),
+            route=Route.objects.get(route_id=row[0]),
+            calendar=Calendar.objects.get(service_id=row[1])
+        )
 
-            t.save()
+        t.save()
 
 
-with open('./google_transit_dublinbus/stop_times.txt', 'r') as stop_times_file:
+with open('{}/data/stop_times.txt'.format(GTFS_STATIC_DIR), 'r') as stop_times_file:
 
     csv_reader = reader(stop_times_file)
 
@@ -124,17 +178,16 @@ with open('./google_transit_dublinbus/stop_times.txt', 'r') as stop_times_file:
             departure_time = row[2].replace("29", "05", 1)
 
         try:
-            trip = Trip.objects.get(trip_id=row[0])
             st = StopTime(
                 arrival_time = arrival_time,
                 departure_time = departure_time,
-                stop_id = row[3],
                 stop_sequence = int(row[4]),
                 stop_headsign = row[5],
                 pickup_type = int(row[6]),
                 drop_off_type = int(row[7]),
                 shape_dist_traveled = float(row[8]),
-                trip = trip
+                trip = Trip.objects.get(trip_id=row[0]),
+                stop = Stop.objects.get(stop_id=row[3])
             )
 
             st.save()
@@ -142,6 +195,10 @@ with open('./google_transit_dublinbus/stop_times.txt', 'r') as stop_times_file:
         except Trip.DoesNotExist as trip_not_exist:
             continue
 
+
+# b. creating tables from database data
+# def create_lines():
+# Line depends on Stop, StopTime, Trip and Route data
 def get_lines(stop_id):
     """
     Args
@@ -168,3 +225,11 @@ for stop in stops:
 
         l.save()
         
+        
+# iv. Delete raw txt files after ingestion 
+print("Deleting all GTFS static files except calendar.txt")
+# Move the calendar.txt file into the gtfs_static directory for tomorrow's comparison
+os.system('mv {0}/data/calendar.txt {0}/'.format(GTFS_STATIC_DIR))
+# Remove raw csv files from server after being saved into database
+os.system('rm -r {}/data/'.format(GTFS_STATIC_DIR))
+os.system('rm {0}/calendar_tmp.txt {0}/google_transit_dublinbus.zip'.format(GTFS_STATIC_DIR))
