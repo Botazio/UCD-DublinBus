@@ -46,7 +46,10 @@ const Stops = () => {
          {selectedStop && <StopBusTimes selectedStop={selectedStop} setSelectedStop={setSelectedStop} />}
 
          {/* If there is a stop selected display a marker at that stop */}
-         {selectedStop && <CustomMarker selectedStop={selectedStop} mapRef={mapRef} />}
+         {selectedStop && <CustomMarker
+            id={selectedStop.stop_id}
+            position={{ lat: selectedStop.stop_lat, lng: selectedStop.stop_lon }}
+            mapRef={mapRef} />}
       </>
    );
 

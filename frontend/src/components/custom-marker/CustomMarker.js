@@ -1,26 +1,20 @@
 import { Marker } from '@react-google-maps/api';
 import { useEffect } from 'react';
 
-// small component that creates a marker and centers the view at that position
-// if I need something similar later I will create an independent component
-const CustomMarker = ({ selectedStop, mapRef }) => {
+// cutomizable small component that creates a marker and centers the view at that position
+const CustomMarker = ({ id, position, iconType, mapRef }) => {
    useEffect(() => {
       // move the map view to the center of the marker
-      mapRef.panTo({
-         lat: selectedStop.stop_lat,
-         lng: selectedStop.stop_lon
-      });
+      mapRef.panTo(position);
 
-   }, [selectedStop, mapRef])
+   }, [position, mapRef])
 
    return (
       <Marker
-         key={'selected-stop-marker'}
-         position={{
-            lat: selectedStop.stop_lat,
-            lng: selectedStop.stop_lon
-         }}
+         key={id}
+         position={position}
          options={{
+            icon: (iconType ? iconType : null),
             map: mapRef,
             zIndex: 1000
          }}
@@ -40,10 +34,7 @@ const CustomMarker = ({ selectedStop, mapRef }) => {
       }
 
       // pans the view to the marker
-      mapRef.panTo({
-         lat: selectedStop.stop_lat,
-         lng: selectedStop.stop_lon
-      });
+      mapRef.panTo(position);
    }
 }
 
