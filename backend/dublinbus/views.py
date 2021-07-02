@@ -17,6 +17,9 @@ def stops(request):
     for stop_detail in stops_list:
         # print(StopTime.objects.filter(stop_id=stop_detail['stop_id']).values('trip_id'))
         stop_detail['stop_number'] = stop_detail['stop_name'].split("stop ")[-1]
+        stop_id=stop_detail['stop_id']
+        lines = Stop.objects.get(stop_id=stop_id).line_set.all().values_list('line', flat=True)
+        stop_detail['stop_lines'] = list(lines)
 
     return JsonResponse(stops_list, safe=False)
 
