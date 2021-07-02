@@ -119,12 +119,12 @@ class StopTime(models.Model):
     drop_off_type = models.IntegerField()
     shape_dist_traveled = models.FloatField()
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
-    
+
 class Line(models.Model):
     """
     A class to represents the bus lines that run through all Dublin bus stops.
     1-to-many relationship with Stop class.
-    
+
     Attributes
     ---
         stop: Stop
