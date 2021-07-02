@@ -22,17 +22,8 @@ const MarkerClusters = ({ stops, mapRef }) => {
 
    // map event listeners. We add them the first time the component renders
    useEffect(() => {
-      mapRef.addListener('zoom_changed', () => {
+      mapRef.addListener('idle', () => {
          setZoom(mapRef.getZoom());
-         const b = mapRef.getBounds();
-         setBounds([
-            b.getSouthWest().lng(),
-            b.getSouthWest().lat(),
-            b.getNorthEast().lng(),
-            b.getNorthEast().lat()
-         ]);
-      });
-      mapRef.addListener('dragend', () => {
          const b = mapRef.getBounds();
          setBounds([
             b.getSouthWest().lng(),
@@ -120,6 +111,8 @@ const MarkerClusters = ({ stops, mapRef }) => {
                      map: mapRef,
                      icon: {
                         url: iconType,
+                        origin: new window.google.maps.Point(0, 0),
+                        anchor: new window.google.maps.Point(10, 10),
                      }
                   }} />
             )

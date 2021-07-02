@@ -7,6 +7,7 @@ import StopBusTimes from '../stop-bus-times/StopBusTimes';
 import MarkerClusters from '../marker-clusters/MarkerClusters';
 import { useGoogleMap } from '@react-google-maps/api';
 import MarkersSwitch from '../markers-switch/MarkersSwitch';
+import CustomMarker from '../custom-marker/CustomMarker';
 
 // This component is the main component for the stops system.
 // The subcomponents are inserted in this component
@@ -41,8 +42,11 @@ const Stops = () => {
          {/* Display the markers */}
          {displayMarkers && <MarkerClusters stops={stops} mapRef={mapRef} />}
 
-         {/* If there is a stop selected display the next buses */}
+         {/* If there is a stop selected display the next buses*/}
          {selectedStop && <StopBusTimes selectedStop={selectedStop} setSelectedStop={setSelectedStop} />}
+
+         {/* If there is a stop selected display a marker at that stop */}
+         {selectedStop && <CustomMarker selectedStop={selectedStop} mapRef={mapRef} />}
       </>
    );
 
