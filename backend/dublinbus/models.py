@@ -63,7 +63,8 @@ class Calendar(models.Model):
             Uniquely identifies a set of dates when service is available for one or more routes.
             Each service_id value can appear at most once in a calendar.txt file.
         monday: bool
-            Indicates whether the service operates on all Mondays in the date range specified by the start_date and end_date fields.
+            Indicates whether the service operates on all Mondays 
+            in the date range specified by the start_date and end_date fields.
             1 - Service is available for all Mondays in the date range.
             0 - Service is not available for Mondays in the date range.
         tuesday: bool
@@ -97,7 +98,7 @@ class Calendar(models.Model):
 
     def __str__(self):
         return str(self.service_id)
-        
+   
 class Trip(models.Model):
     """
     A class to represent a Dublin Bus trip. A trip is a specific
@@ -173,7 +174,7 @@ class Line(models.Model):
     """
     A class to represents the bus lines that run through all Dublin bus stops.
     1-to-many relationship with Stop class.
-    
+
     Attributes
     ---
         stop: Stop

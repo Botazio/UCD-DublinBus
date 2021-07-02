@@ -1,5 +1,4 @@
-import sys, os, django, re, subprocess
-from pathlib import Path
+import os, re, subprocess
 from datetime import datetime
 from csv import reader
 import pandas as pd
@@ -8,11 +7,21 @@ from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
 
 # i. compare calendar.txt files
 GTFS_STATIC_DIR = os.path.abspath(os.path.dirname(__name__)) + "/dublinbus/scripts/gtfs_static"
+
 os.system('mkdir -p {}'.format(GTFS_STATIC_DIR))
 os.system('touch {}/calendar.txt'.format(GTFS_STATIC_DIR))
-os.system('wget https://www.transportforireland.ie/transitData/google_transit_dublinbus.zip -P {}/'.format(GTFS_STATIC_DIR))
-os.system('unzip -p {0}/google_transit_dublinbus.zip calendar.txt > {0}/calendar_tmp.txt'.format(GTFS_STATIC_DIR))
-compare_calendars = subprocess.check_output("diff {0}/calendar.txt {0}/calendar_tmp.txt; exit 0".format(GTFS_STATIC_DIR),stderr=subprocess.STDOUT,shell=True)
+
+GTFS_STATIC_ZIP = "https://www.transportforireland.ie/transitData/google_transit_dublinbus.zip"
+os.system('wget {0} -P {1}/'.format(GTFS_STATIC_ZIP, GTFS_STATIC_DIR))
+
+unzip = "unzip -p {0}/google_transit_dublinbus.zip calendar.txt > {0}/calendar_tmp.txt"
+os.system(unzip.format(GTFS_STATIC_DIR))
+
+diff = "diff {0}/calendar.txt {0}/calendar_tmp.txt; exit 0"
+
+compare_calendars = subprocess.check_output(diff.format(GTFS_STATIC_DIR),
+                                    stderr=subprocess.STDOUT,
+                                    shell=True)
 
 # if there is no difference between the newly downloaded calendar.txt file and the previous one then exit
 if len(compare_calendars) == 0:
@@ -23,7 +32,7 @@ if len(compare_calendars) == 0:
 print("Update to calendar.txt file - (re-)writing database")
 os.system('unzip {0}/google_transit_dublinbus.zip -d {0}/data/'.format(GTFS_STATIC_DIR))
 
-# ii. Deleting all records in database (without violation / integrity checks foreign keys, order of deletion matters, delete FK first)
+# ii. Deleting all records in database, order of deletion matters
 Line.objects.all().delete() # FK stop
 StopTime.objects.all().delete() # FK trip, FK stop
 Trip.objects.all().delete() # PK trip_id , FK route, FK calendar
@@ -45,21 +54,21 @@ with open('{}/data/calendar.txt'.format(GTFS_STATIC_DIR), 'r') as calendar_file:
     for row in csv_reader:
         print(row)
         c = Calendar(
-            service_id=row[0],
-            monday=True if row[1] == "1" else False,
-            tuesday=True if row[2] == "1" else False,
-            wednesday=True if row[3] == "1" else False,
-            thursday=True if row[4] == "1" else False,
-            friday=True if row[5] == "1" else False,
-            saturday=True if row[6] == "1" else False,
-            sunday=True if row[7] == "1" else False,
+            service_id = row[0],
+            monday = row[1] == "1",
+            tuesday = row[2] == "1",
+            wednesday = row[3] == "1",
+            thursday = row[4] == "1",
+            friday = row[5] == "1",
+            saturday = row[6] == "1",
+            sunday = row[7] == "1",
             start_date=datetime.strptime(row[8], '%Y%m%d'),
             end_date=datetime.strptime(row[9], '%Y%m%d')
         )
 
         c.save()
 
-    
+
 with open('{}/data/stops.txt'.format(GTFS_STATIC_DIR), 'r') as stops_file:
     csv_reader = reader(stops_file)
 
