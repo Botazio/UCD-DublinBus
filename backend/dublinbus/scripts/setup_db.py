@@ -5,12 +5,14 @@ import sys
 from datetime import datetime
 from csv import reader
 import pandas as pd
-
+from pathlib import Path
 from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
 
-# i. compare calendar.txt files
-GTFS_STATIC_DIR = os.path.abspath(os.path.dirname(__name__)) + "/dublinbus/scripts/gtfs_static"
+PYTHON_EXE = Path(sys.executable).as_posix() 
+BASE_DIR = os.environ.get('DJANGO_BACKEND')
+GTFS_STATIC_DIR = BASE_DIR + "/dublinbus/scripts/gtfs_static"
 
+# Compare calendar.txt files
 os.system('mkdir -p {}'.format(GTFS_STATIC_DIR))
 os.system('touch {}/calendar.txt'.format(GTFS_STATIC_DIR))
 
@@ -25,7 +27,7 @@ compare_calendars = subprocess.check_output(DIFF.format(GTFS_STATIC_DIR),
                                     stderr=subprocess.STDOUT,
                                     shell=True)
 
-# exit if no diff between calendar.txt files
+# Exit if no diff between calendar.txt files
 if len(compare_calendars) == 0:
     os.system('rm {0}/calendar_tmp.txt {0}/google_transit_dublinbus.zip'.format(GTFS_STATIC_DIR))
     sys.exit("No update to calendar.txt file - exiting")
@@ -33,7 +35,10 @@ if len(compare_calendars) == 0:
 print("Update to calendar.txt file - (re-)writing database")
 os.system('unzip {0}/google_transit_dublinbus.zip -d {0}/data/'.format(GTFS_STATIC_DIR))
 
-# ii. Deleting all records in database, order of deletion matters
+# Take a backup (.dump) of the current database 
+os.system('{0} {1}/manage.py dbbackup'.format(PYTHON_EXE, BASE_DIR))
+
+# Deleting all records in database, order of deletion matters
 Line.objects.all().delete() # FK stop
 StopTime.objects.all().delete() # FK trip, FK stop
 Trip.objects.all().delete() # PK trip_id , FK route, FK calendar
@@ -41,7 +46,7 @@ Calendar.objects.all().delete() # PK service_id
 Stop.objects.all().delete() # PK stop_id
 Route.objects.all().delete() # PK route_id
 
-# iii. Ingest GTFS-static data
+# Ingest GTFS-static data
 # order of ingestion the inverse to deletion - populate tables with PKs first before ones with FKs
 # Calendar -> Stop -> Route -> Trip -> StopTime -> Line
 # a. Save raw txt files into database
@@ -236,7 +241,7 @@ for stop in stops:
         l.save()
 
 
-# iv. Delete raw txt files after ingestion
+# Delete raw txt files after ingestion
 print("Deleting all GTFS static files except calendar.txt")
 # Move the calendar.txt file into the gtfs_static directory for tomorrow's comparison
 os.system('mv {0}/data/calendar.txt {0}/'.format(GTFS_STATIC_DIR))

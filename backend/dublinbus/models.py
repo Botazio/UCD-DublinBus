@@ -146,7 +146,7 @@ class StopTime(models.Model):
         departure_time: timestamp
             The time that the bus is scheduled to leave
         stop: Stop
-            The Stop that this Trip is associated with.
+            The Stop that this StopTime is associated with.
         stop_sequence: int
             The stop number for this stop on this trip starting
             from 1. For example, 3 is the third stop on this trip.
