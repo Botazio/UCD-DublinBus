@@ -10,7 +10,7 @@ import iconClusterYellow from './fixtures/icon-cluster-yellow.png';
 import iconClusterBlue from './fixtures/icon-cluster-blue.png';
 import iconClusterWhite from './fixtures/icon-cluster-white.png';
 
-const MarkerClusters = ({ stops, mapRef }) => {
+const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
    // initial states that change when the user moves around the map
    const [zoom, setZoom] = useState(mapRef.getZoom());
    const [bounds, setBounds] = useState([
@@ -33,7 +33,6 @@ const MarkerClusters = ({ stops, mapRef }) => {
          ]);
       });
    }, [mapRef]);
-
 
    // convert stops to the proper format for supercluster
    const points = stops.map(stop => ({
@@ -114,7 +113,8 @@ const MarkerClusters = ({ stops, mapRef }) => {
                         origin: new window.google.maps.Point(0, 0),
                         anchor: new window.google.maps.Point(10, 10),
                      }
-                  }} />
+                  }}
+                  onClick={() => handleStopClick(cluster.properties.stopId)} />
             )
 
          })}
@@ -155,7 +155,11 @@ const MarkerClusters = ({ stops, mapRef }) => {
          iconType = iconClusterWhite;
          return iconType
       }
+   }
 
+   function handleStopClick(stopId) {
+      const selectedStop = stops.find((stop) => stop.stop_id === stopId);
+      setSelectedStop(selectedStop);
    }
 }
 
