@@ -2,7 +2,7 @@
 Run preprocessing on the data using this script. The preprocessing is broken up into two stages.
 
 1. Matching Adjacent Pairs of Stops: This step matches up pairs of adjacent stops
-for each day in the 2018 data and saves them as separate CSV files.
+for each day in the 2018 data and saves them as separate parquet files.
 
     nohup python -u data-analytics/preprocessing/run_preprocessing.py create_adjacent_stop_pairs &
 
@@ -26,6 +26,7 @@ import sys
 import glob
 import pandas as pd
 import numpy as np
+from . import utils
 
 logging.basicConfig(
     filename=f"/home/team13/logs/preprocessing/{sys.argv[1]}_{datetime.datetime.now()}",
@@ -65,7 +66,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
         leavetimes_trips = RT_Leavetimes.join(
             RT_Trips.set_index('TRIPID'), on='TRIPID')
 
-        stop_pairs_df = create_adjacent_stop_pairs(leavetimes_trips)
+        stop_pairs_df = utils.create_adjacent_stop_pairs(leavetimes_trips)
 
         for dep_stop, arr_stop in list(
                 stop_pairs_df.groupby(['DEPARTURE_STOP', 'ARRIVAL_STOP'])[
@@ -80,91 +81,52 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
                 os.mkdir(path)
 
             file_name = f'{int(dep_stop)}_to_{int(arr_stop)}_{query_date}'
-            res.sort_values('TIME_DEPARTURE').to_csv(
-                path + f'{file_name}.csv', index=False)
+            res.sort_values('TIME_DEPARTURE').to_parquet(
+                path + f'{file_name}.parquet', index=False)
 
 elif sys.argv[1] == "features":
     for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs/*"):
 
-        stop_pair = stop_pair.split("/")[-1]
-        logging.info(f"Creating features for {stop_pair}")
-
         dfs = []
-        for c in glob.glob(f"{stop_pair}/*"):
-            dfs.append(pd.read_csv(c))
+        for parquet_file in glob.glob(f"{stop_pair}/*"):
+            dfs.append(pd.read_parquet(parquet_file))
 
-        if len(dfs) > 0:
+        stop_pair = stop_pair.split("/")[-1]
 
-            stop_pair_df = pd.concat(dfs)
+        stop_pair_df = pd.concat(dfs)
 
-            stop_pair_df['HOUR'] = stop_pair_df['TIME_DEPARTURE'] / (60 * 60)
+        logging.info(f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
-            SECONDS_IN_DAY = 24 * 60 * 60
-            stop_pair_df['COS_TIME'] = np.cos(
-                stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
-            stop_pair_df['SIN_TIME'] = np.sin(
-                stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
+        # Add time features
+        SECONDS_IN_DAY = 24 * 60 * 60
+        stop_pair_df['COS_TIME'] = np.cos(
+            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
+        stop_pair_df['SIN_TIME'] = np.sin(
+            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
 
-            stop_pair_df['DAY'] = pd.to_datetime(
-                stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
-            stop_pair_df['COS_DAY'] = np.cos(
-                stop_pair_df['DAY'] * (2 * np.pi / 7))
-            stop_pair_df['SIN_DAY'] = np.sin(
-                stop_pair_df['DAY'] * (2 * np.pi / 7))
+        stop_pair_df['DAY'] = pd.to_datetime(
+            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
+        stop_pair_df['COS_DAY'] = np.cos(
+            stop_pair_df['DAY'] * (2 * np.pi / 7))
+        stop_pair_df['SIN_DAY'] = np.sin(
+            stop_pair_df['DAY'] * (2 * np.pi / 7))
 
-            file_path = f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.csv"
+        # Add weather features
+        weather_df = pd.read_csv(
+            "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv")
+        weather_df['date'] = pd.to_datetime(
+            weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
+        weather_df['DATE'] = weather_df['date'].dt.date
+        weather_df['HOUR'] = weather_df['date'].dt.hour
 
-            stop_pair_df.sort_values(['DAYOFSERVICE', 'TIME_DEPARTURE']).to_csv(
-                file_path, index=False)
+        stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
+            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
+        stop_pair_df['DATE'] = stop_pair_df['DAYOFSERVICE'].dt.date
+        stop_pair_df['HOUR'] = stop_pair_df['DAYOFSERVICE'].dt.hour
 
+        stop_pair_df = pd.merge(stop_pair_df, weather_df, on=[
+                                'DATE', 'HOUR'], how='left')
+        file_path = f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
 
-def create_adjacent_stop_pairs(trips):
-    """
-    Takes a DataFrame of trips from the 2018 data
-    and returns each pair of adjacent stops for each
-    trip separately in a DataFrame
-    """
-
-    sorted_trips = trips.sort_values(
-        ['TRIPID', 'PROGRNUMBER']).reset_index(drop=True)
-
-    stop_pairs = pd.DataFrame({
-        'TRIPID': [],
-        'ROUTEID': [],
-        'DAYOFSERVICE': [],
-        'DEPARTURE_STOP': [],
-        'TIME_DEPARTURE': [],
-        'ARRIVAL_STOP': [],
-        'TIME_ARRIVAL': [],
-        'TRAVEL_TIME': []
-    })
-
-    # For each trip match up pairs of adjacent stops and calculate how long it
-    # took to travel between them
-    for trip_id in sorted_trips['TRIPID'].unique():
-
-        # Filter down to just this trip
-        trip = sorted_trips[sorted_trips['TRIPID'] ==
-                            trip_id].sort_values(['TRIPID', 'PROGRNUMBER'])
-
-        # Get info on all pairs of stops for this trip
-        stop_pairs_trip = pd.DataFrame()
-        stop_pairs_trip['TRIPID'] = trip['TRIPID']
-        stop_pairs_trip['ROUTEID'] = trip['ROUTEID']
-        stop_pairs_trip['DAYOFSERVICE'] = trip['DAYOFSERVICE']
-        stop_pairs_trip.loc[:, 'DEPARTURE_STOP'] = trip.loc[:, 'STOPPOINTID']
-        stop_pairs_trip.loc[:,
-                            'TIME_DEPARTURE'] = trip.loc[:, 'ACTUALTIME_DEP']
-        stop_pairs_trip.loc[:,
-                            'ARRIVAL_STOP'] = trip.shift(-1).loc[:, 'STOPPOINTID']
-        stop_pairs_trip.loc[:,
-                            'TIME_ARRIVAL'] = trip.shift(-1).loc[:, 'ACTUALTIME_ARR']
-        stop_pairs_trip['TRAVEL_TIME'] = stop_pairs_trip["TIME_ARRIVAL"] - \
-            stop_pairs_trip["TIME_DEPARTURE"]
-
-        stop_pairs_trip[['HOUR', 'DAY']] = trip[['HOUR', 'DAY']]
-
-        # Add it to the DF of all stop pairs
-        stop_pairs = stop_pairs.append(stop_pairs_trip)
-
-    return stop_pairs
+        stop_pair_df.sort_values(['DAYOFSERVICE', 'TIME_DEPARTURE']).to_parquet(
+            file_path, index=False)
