@@ -26,7 +26,7 @@ import sys
 import glob
 import pandas as pd
 import numpy as np
-from . import utils
+from .utils import create_adjacent_stop_pairs
 
 logging.basicConfig(
     filename=f"/home/team13/logs/preprocessing/{sys.argv[1]}_{datetime.datetime.now()}",
@@ -66,7 +66,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
         leavetimes_trips = RT_Leavetimes.join(
             RT_Trips.set_index('TRIPID'), on='TRIPID')
 
-        stop_pairs_df = utils.create_adjacent_stop_pairs(leavetimes_trips)
+        stop_pairs_df = create_adjacent_stop_pairs(leavetimes_trips)
 
         for dep_stop, arr_stop in list(
                 stop_pairs_df.groupby(['DEPARTURE_STOP', 'ARRIVAL_STOP'])[
@@ -113,7 +113,8 @@ elif sys.argv[1] == "features":
 
         # Add weather features
         weather_df = pd.read_csv(
-            "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv")
+            "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv",
+            usecols=['date', 'rain', 'temp'])
         weather_df['date'] = pd.to_datetime(
             weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
         weather_df['DATE'] = weather_df['date'].dt.date
