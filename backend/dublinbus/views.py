@@ -15,10 +15,8 @@ def stops(request):
 
     stops_list = list(Stop.objects.values())
     for stop_detail in stops_list:
-        stop_detail['stop_number'] = stop_detail['stop_name'].split("stop ")[-1]
-        stop_id=stop_detail['stop_id']
-        lines = Stop.objects.get(stop_id=stop_id).line_set.all().values_list('line', flat=True)
-        stop_detail['stop_lines'] = list(lines)
+        stop_detail['stop_lines'] = list(Stop.objects.get(stop_id=stop_detail['stop_id'])  \
+                                           .line_set.all().values_list('line', flat=True))
 
     return JsonResponse(stops_list, safe=False)
 
@@ -64,6 +62,10 @@ def stop(request, stop_id):
                 'route_id': stop_time.trip.route.route_id,
                 'trip_id': stop_time.trip.trip_id,
                 'direction': stop_time.trip.direction_id,
+                'destination_stop_name': StopTime.objects.filter(trip_id=stop_time.trip.trip_id) \
+                                                          .order_by('-stop_sequence')[:1] \
+                                                          .first().stop.stop_name,
+                'line': stop_time.trip.route.route_short_name,
                 'service_id': stop_time.trip.service_id,
                 'scheduled_arrival_time': stop_time.arrival_time,
                 'scheduled_departure_time': stop_time.departure_time,
