@@ -4,11 +4,11 @@ import subprocess
 import sys
 from datetime import datetime
 from csv import reader
-import pandas as pd
 from pathlib import Path
+import pandas as pd
 from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
 
-PYTHON_EXE = Path(sys.executable).as_posix() 
+PYTHON_EXE = Path(sys.executable).as_posix()
 BASE_DIR = os.environ.get('DJANGO_BACKEND')
 GTFS_STATIC_DIR = BASE_DIR + "/dublinbus/scripts/gtfs_static"
 
@@ -35,7 +35,7 @@ if len(compare_calendars) == 0:
 print("Update to calendar.txt file - (re-)writing database")
 os.system('unzip {0}/google_transit_dublinbus.zip -d {0}/data/'.format(GTFS_STATIC_DIR))
 
-# Take a backup (.dump) of the current database 
+# Take a backup (.dump) of the current database
 os.system('{0} {1}/manage.py dbbackup'.format(PYTHON_EXE, BASE_DIR))
 
 # Deleting all records in database, order of deletion matters
