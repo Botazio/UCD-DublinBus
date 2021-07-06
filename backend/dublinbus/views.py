@@ -54,7 +54,7 @@ def stop(request, stop_id):
     for stop_time in stop_time_details:
 
         # Only get details for trips that operate on the current day
-        if stop_time.trip.service_id in utils.date_to_service_ids(current_date):
+        if stop_time.trip.calendar.service_id in utils.date_to_service_ids(current_date):
 
             delay = utils.get_realtime_dublin_bus_delay(realtime_updates,
                                                     stop_time.trip.trip_id,
@@ -64,7 +64,7 @@ def stop(request, stop_id):
                 'route_id': stop_time.trip.route.route_id,
                 'trip_id': stop_time.trip.trip_id,
                 'direction': stop_time.trip.direction_id,
-                'service_id': stop_time.trip.service_id,
+                'service_id': stop_time.trip.calendar.service_id,
                 'scheduled_arrival_time': stop_time.arrival_time,
                 'scheduled_departure_time': stop_time.departure_time,
                 'stop_sequence': stop_time.stop_sequence,
