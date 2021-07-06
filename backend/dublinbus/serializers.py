@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
     class Meta:
-        model = User
+        model = django.contrib.auth.get_user_model() # User
         fields = ('username',)
 
 
@@ -19,7 +19,8 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
 
-    def get_token(self, obj):
+    @staticmethod
+    def get_token(obj): # self,
         ''' Method which handles the manual creation of a new token '''
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -39,5 +40,5 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = User
+        model = django.contrib.auth.get_user_model() # User
         fields = ('token', 'username', 'email', 'password')
