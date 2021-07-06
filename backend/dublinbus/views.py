@@ -172,12 +172,14 @@ class UserList(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        '''When a request is routed to this view, a UserSerializerWithToken serializer object is instantiated with the data the user entered into the signup form'''
+        '''When a request is routed to this view, a UserSerializerWithToken serializer object
+        is instantiated with the data the user entered into the signup form'''
         serializer = UserSerializerWithToken(data=request.data)
         #  The serializer checks whether or not the data is valid
         if serializer.is_valid():
-            # if it is, it’ll save the new user and return that user’s data in the response including the token
+            # if it is, save the new user
             serializer.save()
+            # and return that user’s data in the response including the token
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         

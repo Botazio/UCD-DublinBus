@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dublinbus',
     'dbbackup',
-    'rest_framework', 
-    'corsheaders', 
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
