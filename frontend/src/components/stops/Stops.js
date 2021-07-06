@@ -37,7 +37,7 @@ const Stops = () => {
          </div>
 
          {/* Display the button that controls when to display the markers */}
-         {stops && <MarkersSwitch displayMarkers={displayMarkers} setDisplayMarkers={setDisplayMarkers} />}
+         {stops && <MarkersSwitch displayMarkers={displayMarkers} setDisplayMarkers={setDisplayMarkers} mapRef={mapRef} />}
 
          {/* Display the markers and clusters */}
          {displayMarkers && <MarkerClusters stops={stops} mapRef={mapRef} setSelectedStop={setSelectedStop} />}

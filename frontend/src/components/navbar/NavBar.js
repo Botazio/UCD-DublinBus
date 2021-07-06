@@ -11,7 +11,7 @@ const Navbar = () => {
             <h2 id="logo-navbar">DUBLIN BUS</h2>
          </div>
          <div className={NavbarCSS.login_icon}>
-            <Login height={'30'} />
+            <Login height={'25'} />
          </div>
       </nav>
    );
