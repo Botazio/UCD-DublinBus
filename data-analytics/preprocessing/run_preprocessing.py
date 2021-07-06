@@ -4,7 +4,7 @@ Run preprocessing on the data using this script. The preprocessing is broken up 
 1. Matching Adjacent Pairs of Stops: This step matches up pairs of adjacent stops
 for each day in the 2018 data and saves them as separate parquet files.
 
-    nohup python -u data-analytics/preprocessing/run_preprocessing.py create_adjacent_stop_pairs &
+    nohup python -u -m preprocessing.run_preprocessing create_adjacent_stop_pairs &
 
 It saves the output to /home/team13/data/adjacent_stop_pairs/. Timestampted logs are available in
 /home/team13/logs/preprocessing/.
@@ -12,7 +12,7 @@ It saves the output to /home/team13/data/adjacent_stop_pairs/. Timestampted logs
 2. Feature Engineering: This stage takes the input of the previous stage and combines all the
 CSVs files for a particular stop pair together and adds features.
 
-    nohup python -u data-analytics/preprocessing/run_preprocessing.py features &
+    nohup python -u -m preprocessing.run_preprocessing features &
 
 It saves the output to /home/team13/data/adjacent_stop_pairs_with_features/.
 Timestampted logs are available in /home/team13/logs/preprocessing/.
@@ -26,7 +26,7 @@ import sys
 import glob
 import pandas as pd
 import numpy as np
-from .utils import create_adjacent_stop_pairs
+from .utils import create_adjacent_stop_pairs, bank_holidays_2018
 
 logging.basicConfig(
     filename=f"/home/team13/logs/preprocessing/{sys.argv[1]}_{datetime.datetime.now()}",
@@ -128,6 +128,10 @@ elif sys.argv[1] == "features":
         stop_pair_df = pd.merge(stop_pair_df, weather_df, on=[
                                 'DATE', 'HOUR'], how='left')
         file_path = f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
+
+        # bank holiday features
+        stop_pair_df['BANK_HOLIDAY'] = 0
+        stop_pair_df.loc[stop_pair_df['DAYOFSERVICE'].isin(bank_holidays_2018), 'BANK_HOLIDAY'] = 1
 
         stop_pair_df.sort_values(['DAYOFSERVICE', 'TIME_DEPARTURE']).to_parquet(
             file_path, index=False)

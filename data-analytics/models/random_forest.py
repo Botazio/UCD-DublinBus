@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestRegressor
 
-from .utils import train_model
+from .utils import train_stop_pairs_models
 
-train_model(RandomForestRegressor())
+train_stop_pairs_models(RandomForestRegressor())
