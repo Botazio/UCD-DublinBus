@@ -8,6 +8,6 @@ urlpatterns = [
     path('route/<str:route_id>/', views.route, name='route'),
     path('stops/', views.stops, name='stops'),
     path('predict/', views.predict, name='predict'),
-    path('current_user/', current_user), 
+    path('current_user/', current_user),
     path('users/', UserList.as_view()),
 ]

@@ -155,6 +155,7 @@ def predict(request):
 @api_view(['GET'])
 def current_user(request):
     """
+    Function-based view.
     Determine the current user by their token, and return their data
     """
 
@@ -164,14 +165,18 @@ def current_user(request):
 
 class UserList(APIView):
     """
-    Create a new user. 
+    Class-based view.
+    Create a new user.
     """
 
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request):
+        '''When a request is routed to this view, a UserSerializerWithToken serializer object is instantiated with the data the user entered into the signup form'''
         serializer = UserSerializerWithToken(data=request.data)
+        #  The serializer checks whether or not the data is valid
         if serializer.is_valid():
+            # if it is, it’ll save the new user and return that user’s data in the response including the token
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
