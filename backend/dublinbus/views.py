@@ -5,6 +5,11 @@ from django.http import JsonResponse, Http404
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
 
+from rest_framework import permissions, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import UserSerializer, UserSerializerWithToken
 
 def index(request):
     """Temporary homepage for the application"""
@@ -52,7 +57,7 @@ def stop(request, stop_id):
     for stop_time in stop_time_details:
 
         # Only get details for trips that operate on the current day
-        if stop_time.trip.service_id in utils.date_to_service_ids(current_date):
+        if stop_time.trip.calendar.service_id in utils.date_to_service_ids(current_date):
 
             delay = utils.get_realtime_dublin_bus_delay(realtime_updates,
                                                     stop_time.trip.trip_id,
@@ -149,3 +154,35 @@ def predict(request):
                 ) from exc
 
     return JsonResponse({"prediction": total_time})
+
+@api_view(['GET'])
+def current_user(request):
+    """
+    Function-based view.
+    Determine the current user by their token, and return their data
+    """
+
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+class UserList(APIView):
+    """
+    Class-based view.
+    Create a new user.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        '''When a request is routed to this view, a UserSerializerWithToken serializer object
+        is instantiated with the data the user entered into the signup form'''
+        serializer = UserSerializerWithToken(data=request.data)
+        #  The serializer checks whether or not the data is valid
+        if serializer.is_valid():
+            # if it is, save the new user
+            serializer.save()
+            # and return that user’s data in the response including the token
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

@@ -16,6 +16,12 @@ export DB='local'
 ```
 This requires that the MySQL database is setup correctly on the local host.
 
+### Database Creation
+Before running the setup_db.py script, the DJANGO_BACKEND environmental variable must be set, which specifies the path to the django project root directory e.g.
+```bash
+export DJANGO_BACKEND='/home/team13/UCD-DublinBus/backend'
+```
+
 ## Data Analytics
 The data analytics part of the project is divided into two stages:
 

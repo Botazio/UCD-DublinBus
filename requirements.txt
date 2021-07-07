@@ -14,8 +14,11 @@ common-cmplr-lic-rt==2021.2.0
 decorator==5.0.9
 defusedxml==0.7.1
 Django==3.2.4
+django-dbbackup==3.3.0
 django-environ==0.4.5
 djangorestframework==3.12.4
+djangorestframework-jwt==1.11.0
+django-cors-headers==3.7.0
 dpcpp-cpp-rt==2021.2.0
 entrypoints==0.3
 idna==2.10

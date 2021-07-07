@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 import pickle
 import requests
 from django.conf import settings
+from dublinbus.models import Calendar
 
 def request_realtime_nta_data():
     """
@@ -115,22 +116,8 @@ def date_to_service_ids(current_date):
     """
 
     # Get the day of the week
-    day = current_date.strftime("%A")
-
-    # A mapping from days to service IDs from calendar.txt
-    # Service IDs "2" and "3" have an end date of 20210612
-    # and are therefore not included
-    days_to_service_ids_mapping = {
-        "Monday": ["y1003", "y1004"],
-        "Tuesday": ["y1003"],
-        "Wednesday": ["y1003"],
-        "Thursday": ["y1003"],
-        "Friday": ["y1003"],
-        "Saturday": ["y1005#1"],
-        "Sunday": ["y1004"]
-    }
-
-    return days_to_service_ids_mapping[day]
+    day = current_date.strftime("%A").lower()
+    return list(Calendar.objects.filter(**{day: True}).values_list('service_id', flat=True))
 
 def predict_adjacent_stop(departure_stop_num, arrival_stop_num):
     """
