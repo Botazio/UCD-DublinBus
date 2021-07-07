@@ -59,12 +59,19 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
         WHERE DAYOFSERVICE == "{query_date}"
         """
 
-        # Join leavetimes and trips
-        RT_Leavetimes = pd.read_sql(
+        leavetimes = pd.read_sql(
             LEAVTIMES_QUERY.format(query_date=query_date), conn)
-        RT_Trips = pd.read_sql(TRIPS_QUERY.format(query_date=query_date), conn)
-        leavetimes_trips = RT_Leavetimes.join(
-            RT_Trips.set_index('TRIPID'), on='TRIPID')
+        trips = pd.read_sql(TRIPS_QUERY.format(query_date=query_date), conn)
+
+        # Data quality checks
+        # Remove any rows from leavetimes where the ACTUALTIME_ARR is greater than
+        # the ACTUALTIME_DEP (i.e., a bus cannot arrive at a stop after it's
+        # already supposed to have departed)
+        leavetimes = leavetimes[leavetimes['ACTUALTIME_ARR'] <= leavetimes['ACTUALTIME_DEP']]
+
+        # Join leavetimes and trips
+        leavetimes_trips = leavetimes.join(
+            trips.set_index('TRIPID'), on='TRIPID')
 
         stop_pairs_df = create_adjacent_stop_pairs(leavetimes_trips)
 
@@ -96,6 +103,14 @@ elif sys.argv[1] == "features":
         stop_pair_df = pd.concat(dfs)
 
         logging.info(f"{stop_pair_df.shape[0]} rows for {stop_pair}")
+
+        # Data quality checks
+        if (stop_pair_df[stop_pair_df['TRAVEL_TIME'] < 0].shape[0]) > 0:
+            invalid_rows = stop_pair_df[stop_pair_df['TRAVEL_TIME'] < 0].index
+            logging.info(f"Dropping {len(invalid_rows)} rows where calculated travel" +
+                            "time is < 0")
+
+            stop_pair_df = stop_pair_df.drop(invalid_rows)
 
         # Add time features
         SECONDS_IN_DAY = 24 * 60 * 60
