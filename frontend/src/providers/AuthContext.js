@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
   function signup(username, email, password) {
     console.log(username, email, password)
 
-    fetch('http://localhost:8000/core/users/', {
+    fetch('http://csi420-02-vm6.ucd.ie/token-auth/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

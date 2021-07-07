@@ -1,0 +1,91 @@
+.icon {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   background-color: rgb(182, 53, 92);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: white;
+}
+.pointer {
+   cursor: pointer;
+}
+.popover {
+   position: absolute;
+   z-index: 1;
+   top: 70px;
+   right: 0;
+   display: none;
+   overflow: visible;
+   width: 225px;
+   margin-right: 10px;
+   border: 1px solid #e3e9ed;
+   border-radius: 3px;
+   background: #fff;
+   box-shadow: 0 0 60px rgb(14 42 71 / 25%);
+   animation: popover .2s ease-in-out;
+}
+.popover:before {
+   position: absolute;
+   z-index: -1;
+   content: "";
+   right: calc(5vh - 2.5px);
+   top: -8px;
+   border-style: solid;
+   box-shadow: 0 0 60px rgb(14 42 71 / 25%);
+   border-width: 0 10px 10px 10px;
+   border-color: transparent transparent white transparent;
+ }
+.popover_active {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+/* Stops being able to select the text inside the icon */
+.noselect {
+   -webkit-touch-callout: none; /* iOS Safari */
+     -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+         -ms-user-select: none; /* Internet Explorer/Edge */
+             user-select: none; /* Non-prefixed version, currently
+                                   supported by Chrome and Opera */
+}
+.popover_header {
+   display: flex;
+   align-items: center;
+   justify-content: flex-start;
+   width: 90%;
+   padding: 5px;
+   margin: 5px;
+}
+.popover_items {
+   margin-left: 15px;
+}
+.popover_items > a > button {
+   padding: 5px 10px;
+   margin: 2px 0px;
+   border-radius: 3px;
+   background-color: skyblue;
+   cursor: pointer;
+}
+.popover_items > a> button:hover {
+   background-color: rgb(68, 181, 226);
+}
+.popover_items > h4 {
+   margin: 2px 0px;
+}
+.popover_logout_wrapper {
+   width: 100%;
+   border-top: 1px solid #ccc;
+   padding: 10px 15px;
+}
+.popover_logout_wrapper > div {
+   cursor: pointer;
+   display: flex;
+   font-size: 15px;
+}
+.popover_logout_wrapper > div > p {
+   margin-left: 10px;
+}

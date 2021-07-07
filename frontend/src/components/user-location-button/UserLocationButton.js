@@ -19,7 +19,7 @@ const UserLocationButton = ({ mapRef }) => {
          <div className={UserLocationButtonCSS.button} onClick={() => getUserPosition()}>
             <img
                src={iconPosition}
-               style={{ "width": "21px", "height": "21px" }}
+               style={{ "width": "20px", "height": "20px" }}
                alt={'icon position'} />
          </div>
 
@@ -33,8 +33,6 @@ const UserLocationButton = ({ mapRef }) => {
          alert("Geolocation is not supported by your browser");
          return;
       }
-
-      console.log(typeof position.lat)
 
       navigator.geolocation.getCurrentPosition((position) => {
          setPosition({
