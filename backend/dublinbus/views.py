@@ -62,9 +62,10 @@ def stop(request, stop_id):
                 'route_id': stop_time.trip.route.route_id,
                 'trip_id': stop_time.trip.trip_id,
                 'direction': stop_time.trip.direction_id,
-                'final_destination_stop_name': StopTime.objects.filter(trip_id=stop_time.trip.trip_id) \
-                                                          .order_by('-stop_sequence')[:1] \
-                                                          .first().stop.stop_name,
+                'final_destination_stop_name': StopTime.objects \
+                                            .filter(trip_id=stop_time.trip.trip_id) \
+                                            .order_by('-stop_sequence')[:1] \
+                                            .first().stop.stop_name,
                 'line': stop_time.trip.route.route_short_name,
                 'service_id': stop_time.trip.calendar.service_id,
                 'scheduled_arrival_time': stop_time.arrival_time,
