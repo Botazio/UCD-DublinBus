@@ -11,6 +11,7 @@ const Navbar = () => {
 
    useEffect(() => {
       isAuthenticated();
+      // eslint-disable-next-line
    }, [])
 
    return (
