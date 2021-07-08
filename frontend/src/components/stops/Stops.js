@@ -2,6 +2,7 @@ import StopSearchBar from '../stop-searchbar/StopSearchBar';
 import StopsCSS from './Stops.module.css';
 import useFetch from '../../helpers/useFetch'
 import Waiting from '../waiting/Waiting';
+import FetchError from '../fetch-error/FetchError';
 import { useState } from 'react';
 import StopBusTimes from '../stop-bus-times/StopBusTimes';
 import MarkerClusters from '../marker-clusters/MarkerClusters';
@@ -24,7 +25,7 @@ const Stops = () => {
    const { data: stops, isPending, error } = useFetch('http://csi420-02-vm6.ucd.ie/dublinbus/stops/');
 
    // Error handling when fetching for the data
-   if (error) return (<div>Unable to get the stops data</div>)
+   if (error) return (<FetchError height="60" message="Unable to fetch the data" />)
 
    // Wait for the data
    if (isPending) return <Waiting />;
@@ -40,7 +41,7 @@ const Stops = () => {
          {stops && <MarkersSwitch displayMarkers={displayMarkers} setDisplayMarkers={setDisplayMarkers} mapRef={mapRef} />}
 
          {/* Display the markers and clusters */}
-         {displayMarkers && <MarkerClusters stops={stops} mapRef={mapRef} setSelectedStop={setSelectedStop} />}
+         {displayMarkers && stops && <MarkerClusters stops={stops} mapRef={mapRef} setSelectedStop={setSelectedStop} />}
 
          {/* If there is a stop selected display the next buses*/}
          {selectedStop && <StopBusTimes selectedStop={selectedStop} setSelectedStop={setSelectedStop} />}

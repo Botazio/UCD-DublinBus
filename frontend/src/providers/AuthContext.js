@@ -10,18 +10,16 @@ export function useAuth() {
 
 // This components provides a context to share the user across the different components in the application
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState({ name: 'alvaro' });
 
   // function to sign up
   function signup(username, email, password) {
-    console.log(username, email, password)
-
-    fetch('http://csi420-02-vm6.ucd.ie/token-auth/', {
+    fetch('http://csi420-02-vm6.ucd.ie/users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(username, email, password)
+      body: JSON.stringify(username, password)
     })
       .then(res => res.json())
       .then(json => {

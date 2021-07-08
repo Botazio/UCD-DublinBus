@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import BusPage from './pages/BusPage';
-import Authentication from './components/authentication/Authentication';
+import AuthenticationPage from './pages/AuthenticationPage';
 import PrivateRoute from './helpers/PrivateRoute';
 import UserPage from './pages/UserPage';
 import NotFound from './components/notfound/NotFound';
@@ -14,7 +14,7 @@ function App() {
           <BusPage />
         </Route>
         <Route exact path="/login">
-          <Authentication />
+          <AuthenticationPage />
         </Route>
         <PrivateRoute exact path="/user">
           <UserPage />
