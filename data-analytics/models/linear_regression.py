@@ -1,5 +1,5 @@
 from sklearn.linear_model import LinearRegression
 
-from .utils import train_model
+from .utils import train_stop_pairs_models
 
-train_model(LinearRegression())
+train_stop_pairs_models(LinearRegression())

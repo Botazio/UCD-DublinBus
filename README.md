@@ -27,27 +27,31 @@ The data analytics part of the project is divided into two stages:
 
 ### Stage 1: Pre-processing
 1. Matching Adjacent Pairs of Stops: This step matches up pairs of adjacent stops
-for each day in the 2018 data and saves them as separate CSV files. It saves the output to 
+for each day in the 2018 data and saves them as separate CSV files. Run it from the ``data-analytics``
+folder as follows:
 
 ```bash
-nohup python -u data-analytics/preprocessing/run_preprocessing.py create_adjacent_stop_pairs &
+nohup python -u -m preprocessing.run_preprocessing create_adjacent_stop_pairs &
 ```
 
-It saves the output to ``/home/team13/data/adjacent_stop_pairs/``. Timestampted logs are available in 
+It saves the output to ``/home/team13/data/adjacent_stop_pairs/``. Timestampted logs are available in
 ``/home/team13/logs/preprocessing/``.
 
 2. Feature Engineering: This stage takes the input of the previous stage and combines all the
-CSVs files for a particular stop pair together and adds features.
+CSVs files for a particular stop pair together and adds features. Run it from the ``data-analytics`` folder
+as follows:
 
 ```bash
-nohup python -u data-analytics/preprocessing/run_preprocessing.py features &
+nohup python -u -m preprocessing.run_preprocessing features &
 ```
 
-It saves the output to ``/home/team13/data/adjacent_stop_pairs_with_features/``. Timestampted logs are available in 
+It saves the output to ``/home/team13/data/adjacent_stop_pairs_with_features/``. Timestampted logs are available in
 ``/home/team13/logs/preprocessing/``.
 
 ### Stage 2: Model Fitting
-To run a model use:
+To run a model run a command such as:
 ```bash
-nohup python -u data-analytics/models/linear_regression.py &
+nohup python -u -m models.linear_regression &
 ```
+
+from the ``data-analytics`` folder.
