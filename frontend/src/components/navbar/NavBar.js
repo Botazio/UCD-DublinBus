@@ -19,7 +19,8 @@ const Navbar = () => {
          {/* We use this div to insert the list icon */}
          <div id="list_icon"></div>
          <div className={NavbarCSS.navbar_logo}>
-            <h2 id="logo-navbar">DUBLIN BUS</h2>
+            <h2 className={NavbarCSS.logo_navbar_phone} id="logo_navbar_phone"> </h2>
+            <h2 className={NavbarCSS.logo_navbar_desktop} id="logo_navbar_desktop">DUBLIN BUS</h2>
          </div>
          <div className={NavbarCSS.login_icon}>
             {/* Change the icon logo if there is a user log in*/}

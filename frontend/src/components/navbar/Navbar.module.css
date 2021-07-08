@@ -20,3 +20,17 @@
   align-items: center;
   justify-content: center;
 }
+.logo_navbar_phone {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .logo_navbar_phone {
+    display: block;
+    text-transform: uppercase;
+  }
+  .logo_navbar_desktop {
+    display: none;
+  }
+
+}
