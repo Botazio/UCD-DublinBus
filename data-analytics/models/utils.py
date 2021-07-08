@@ -50,32 +50,16 @@ def train_all_stop_pair_models(model):
 
         if stop_pair_df.shape[0] > 50:
 
-            y_full = stop_pair_df['TRAVEL_TIME']
-            x_full = stop_pair_df[
-                ['BANK_HOLIDAY', 'COS_TIME', 'SIN_TIME', 'COS_DAY', 'SIN_DAY', 'rain', 'temp']
-            ]
+            # Train model
+            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model)
 
-            x_train, x_test, y_train, y_test = train_test_split(
-                x_full,
-                y_full,
-                test_size=0.20,
-                # Don't shuffle because time-series data that's already been sorted
-                shuffle=False
-            )
+            # Add metrics for this stop pair
+            metrics['average_cv_rmse'] = average_cv_rmse
+            metrics['test_rmse'] = test_rmse
+            stop_pairs_metrics.append(metrics)
 
-            # Perform cross-validation
-            metrics['average_cv_rmse'] = time_series_cross_validate(x_train, y_train, model)
-            logging.info(f"Average 5-Fold Cross-Validation RMSE: {metrics['average_cv_rmse']}")
-
-            # Train on full training set now and calculate unseen test set metrics
-            metrics['test_rmse'] = mean_squared_error(
-                y_test,
-                model.fit(x_train, y_train).predict(x_test),
-                squared=False
-            )
-            logging.info(f"Unseen Test Set RMSE: {metrics['test_rmse']}\n")
-
-            trained_models[stop_pair] = model_output['trained_model']
+            # Add trained model to dict
+            trained_models[stop_pair.split('/')[-1]] = trained_model
 
     logging.info(
         "Model training complete. Writing out metrics and pickle files for each" +
@@ -146,11 +130,7 @@ def train_model(stop_pair_df, model):
     # Train on full data (train and test) before finally saving
     trained_model = model.fit(x_full, y_full)
 
-    return {
-        'average_cv_rmse': average_cv_rmse,
-        'test_rmse': test_rmse,
-        'trained_model': trained_model
-    }
+    return average_cv_rmse, test_rmse, trained_model
 
 def time_series_cross_validate(x_train, y_train, model):
     """
