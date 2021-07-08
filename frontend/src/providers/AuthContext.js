@@ -88,7 +88,7 @@ export function AuthProvider({ children }) {
   }
 
   // function to check if the user is authenticated
-  function userAuthenticated() {
+  function isAuthenticated() {
     // if there is a token in the local storage try to log in
     if (localStorage.getItem('token')) {
       fetch('http://csi420-02-vm6.ucd.ie/dublinbus/current_user/', {
@@ -121,7 +121,7 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     signin,
-    userAuthenticated,
+    isAuthenticated,
     logout,
     errorMessage
   }

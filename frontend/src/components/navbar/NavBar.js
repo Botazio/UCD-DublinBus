@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 
 const Navbar = () => {
    // change the user icon if there is a current user
-   const { currentUser, logout, userAuthenticated } = useAuth();
+   const { currentUser, logout, isAuthenticated } = useAuth();
 
    useEffect(() => {
-      userAuthenticated();
+      isAuthenticated();
    }, [])
 
    return (
