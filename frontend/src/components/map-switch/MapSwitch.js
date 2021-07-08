@@ -6,23 +6,23 @@ import MapSwitchCSS from './MapSwitch.module.css';
 // Allows the user to switch between the map and the info bar.
 const MapSwitcher = ({ buttonActive }) => {
    const [mapView, setMapView] = useState(false);
-   const map = useGoogleMap();
+   const mapRef = useGoogleMap();
 
    // We change the z-index of the map to its initial state every rerender
    useEffect(() => {
-      map.getDiv().firstChild.style.zIndex = 0;
+      mapRef.getDiv().firstChild.style.zIndex = 0;
       setMapView(false);
-   }, [buttonActive, map])
+   }, [buttonActive, mapRef])
 
    // We change the z-index of the map depending if the mapView is active
    useEffect(() => {
       if (mapView) {
-         map.getDiv().firstChild.style.zIndex = 10;
+         mapRef.getDiv().firstChild.style.zIndex = 10;
       }
       if (!mapView) {
-         map.getDiv().firstChild.style.zIndex = 0;
+         mapRef.getDiv().firstChild.style.zIndex = 0;
       }
-   }, [map, mapView])
+   }, [mapRef, mapView])
 
    return (
       <div className={MapSwitchCSS.container}>

@@ -64,7 +64,7 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
             const [longitude, latitude] = cluster.geometry.coordinates;
             const { cluster: isCluster, point_count: pointCount } = cluster.properties;
 
-            const iconType = handleIconType(isCluster, pointCount);
+            const customIcon = handleIcon(isCluster, pointCount);
 
             if (isCluster) {
                return (
@@ -76,9 +76,7 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
                      }}
                      options={{
                         map: mapRef,
-                        icon: {
-                           url: iconType,
-                        },
+                        icon: customIcon,
                         label: {
                            className: "labelMarker",
                            text: "" + pointCount + "",
@@ -108,11 +106,7 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
                   }}
                   options={{
                      map: mapRef,
-                     icon: {
-                        url: iconType,
-                        origin: new window.google.maps.Point(0, 0),
-                        anchor: new window.google.maps.Point(10, 10),
-                     }
+                     icon: customIcon
                   }}
                   onClick={() => handleStopClick(cluster.properties.stopId)} />
             )
@@ -122,38 +116,65 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
    );
 
    // function to handle the icon type for the clusters and stops
-   function handleIconType(isCluster, pointCount) {
-      var iconType = iconStop;
+   function handleIcon(isCluster, pointCount) {
+      var customIcon = {
+         url: iconStop,
+         origin: new window.google.maps.Point(0, 0),
+         anchor: new window.google.maps.Point(10, 10),
+      };
       // if it is not a cluster return a bus stop marker
       if (!isCluster) {
-         iconType = iconStop;
-         return iconType
+         return customIcon;
       }
 
       // if it is a cluster the icon depends on the point count
       if (pointCount >= 2000) {
-         iconType = iconClusterPurple;
-         return iconType;
+         customIcon = {
+            url: iconClusterPurple,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(28, 28),
+         };
+         return customIcon;
       }
       else if (700 <= pointCount && pointCount < 2000) {
-         iconType = iconClusterRed;
-         return iconType
+         customIcon = {
+            url: iconClusterRed,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(26, 26),
+         };
+         return customIcon;
       }
       else if (300 <= pointCount && pointCount < 700) {
-         iconType = iconClusterOrange;
-         return iconType
+         customIcon = {
+            url: iconClusterOrange,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(24, 24),
+         };
+         return customIcon;
       }
       else if (100 <= pointCount && pointCount < 300) {
-         iconType = iconClusterYellow;
-         return iconType
+         customIcon = {
+            url: iconClusterYellow,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(22, 22),
+         };
+         return customIcon;
       }
       else if (30 <= pointCount && pointCount < 100) {
-         iconType = iconClusterBlue;
-         return iconType
+         customIcon = {
+            url: iconClusterBlue,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(20, 20),
+         };
+         return customIcon;
       }
       else {
-         iconType = iconClusterWhite;
-         return iconType
+         customIcon = {
+            url: iconClusterWhite,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(18, 18),
+         };
+         return customIcon;
       }
    }
 
