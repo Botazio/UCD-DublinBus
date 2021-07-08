@@ -3,7 +3,7 @@ import sys
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 
-from .utils import train_all_stop_pair_models, generate_learning_curve
+from .utils import train_all_stop_pair_models, generate_learning_fit_time_curves
 
 model_lookup = {
     "linear-regression": LinearRegression(),
@@ -22,4 +22,4 @@ if mode == "train":
     train_all_stop_pair_models(model)
 elif mode == "learning-curve":
     stop_pair = sys.argv[3]
-    generate_learning_curve(model, stop_pair)
+    generate_learning_fit_time_curves(model, stop_pair)
