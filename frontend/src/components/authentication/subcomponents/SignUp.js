@@ -5,7 +5,7 @@ import { ReactComponent as Email } from '../fixtures/icon-email.svg';
 import { ReactComponent as Google } from '../fixtures/icon-google.svg';
 import { ReactComponent as Facebook } from '../fixtures/icon-facebook.svg';
 import { useAuth } from '../../../providers/AuthContext';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 
 const SignUp = () => {
@@ -13,9 +13,19 @@ const SignUp = () => {
    const emailRef = useRef();
    const passwordRef = useRef();
    const passwordConfirmRef = useRef();
-   const { signup } = useAuth();
+   const { signup, errorMessage } = useAuth();
    const [error, setError] = useState('');
    const [loading, setLoading] = useState(false);
+
+   // Uses the error from the context to display a message
+   useEffect(() => {
+      setError(errorMessage);
+   }, [errorMessage]);
+
+   // Set the error to null the first time the component renders
+   useEffect(() => {
+      setError(null);
+   }, []);
 
    return (
       <div className={AuthenticationCSS.signup_tab}>
@@ -91,7 +101,7 @@ const SignUp = () => {
       try {
          setError('');
          setLoading(true);
-         signup(usernameRef.current.value, emailRef.current.value, passwordRef.current.value, passwordConfirmRef.current.value);
+         signup(usernameRef.current.value, passwordRef.current.value);
       } catch {
          setError('Failed to create an account');
       }

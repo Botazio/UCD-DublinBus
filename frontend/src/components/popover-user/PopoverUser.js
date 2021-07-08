@@ -10,16 +10,16 @@ const PopoverUser = ({ currentUser, logout }) => {
       <div className={PopoverUserCSS.wrapper}>
          {/* When the user clicks on the icon it opens or closes the popover */}
          <div className={PopoverUserCSS.icon + " " + PopoverUserCSS.pointer} onClick={() => setActive(!active)}>
-            <span className={PopoverUserCSS.noselect} unselectable='on'>{currentUser.name.charAt(0)}</span>
+            <span className={PopoverUserCSS.noselect} unselectable='on'>{currentUser.username.charAt(0)}</span>
          </div>
 
          <div className={PopoverUserCSS.popover + " " + (active ? PopoverUserCSS.popover_active : '')}>
             <div className={PopoverUserCSS.popover_header}>
                <div className={PopoverUserCSS.icon} >
-                  <span className={PopoverUserCSS.noselect} unselectable='on'>{currentUser.name.charAt(0)}</span>
+                  <span className={PopoverUserCSS.noselect} unselectable='on'>{currentUser.username.charAt(0)}</span>
                </div>
                <div className={PopoverUserCSS.popover_items}>
-                  <h4>{currentUser.name}</h4>
+                  <h4>{currentUser.username}</h4>
                   <Link to='/user'><button>Edit profile</button></Link>
                </div>
             </div>

@@ -41,7 +41,7 @@ const Stops = () => {
          {stops && <MarkersSwitch displayMarkers={displayMarkers} setDisplayMarkers={setDisplayMarkers} mapRef={mapRef} />}
 
          {/* Display the markers and clusters */}
-         {displayMarkers && stops && <MarkerClusters stops={stops} mapRef={mapRef} setSelectedStop={setSelectedStop} />}
+         {displayMarkers && <MarkerClusters stops={stops} mapRef={mapRef} setSelectedStop={setSelectedStop} />}
 
          {/* If there is a stop selected display the next buses*/}
          {selectedStop && <StopBusTimes selectedStop={selectedStop} setSelectedStop={setSelectedStop} />}

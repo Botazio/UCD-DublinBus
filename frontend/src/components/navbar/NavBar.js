@@ -3,10 +3,15 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as Login } from './fixtures/icon-login.svg';
 import { useAuth } from '../../providers/AuthContext';
 import PopoverUser from '../popover-user/PopoverUser';
+import { useEffect } from 'react';
 
 const Navbar = () => {
    // change the user icon if there is a current user
-   const { currentUser, logout } = useAuth();
+   const { currentUser, logout, userAuthenticated } = useAuth();
+
+   useEffect(() => {
+      userAuthenticated();
+   }, [])
 
    return (
       <nav className={NavbarCSS.navbar}>

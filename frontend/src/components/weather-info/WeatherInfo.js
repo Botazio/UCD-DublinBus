@@ -70,9 +70,6 @@ export default function WeatherInfo() {
    // Wait for the data
    if (isPendingWeather) return <Waiting />;
 
-   // Error handling when is not posible to fetch for the data
-   if (!weatherData) return null;
-
 
    // Get the data in a google data table
    const forecastWeather = [];
