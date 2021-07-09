@@ -1,3 +1,7 @@
+"""
+Train models on the data using this script. See the README.md for more details.
+"""
+
 import logging
 import sys
 from sklearn.ensemble import RandomForestRegressor
