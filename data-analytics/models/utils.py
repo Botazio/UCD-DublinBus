@@ -39,7 +39,7 @@ def train_all_stop_pair_models(model):
     # Train a model for each adjacent stop pair
     for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
 
-        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['DAYOFSERVICE', 'TIME_ARRIVAL'])
+        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['DATE', 'TIME_ARRIVAL'])
         metrics = {
             'stop_pair': stop_pair.split('/')[-1],
             'num_rows': stop_pair_df.shape[0]
