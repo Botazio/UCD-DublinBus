@@ -20,7 +20,7 @@ def train_all_stop_pair_models(model):
     Args
     ---
         model: sklearn model instance
-            A model from scikit-learn (e.g., LinearRegression()
+            A model from scikit-learn (e.g., LinearRegression())
     """
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -104,7 +104,7 @@ def train_model(stop_pair_df, model):
             dataset (train + test)
     """
 
-    y_full = stop_pair_df['TRAVEL_TIME']
+    y_full = stop_pair_df['travel_time']
 
     features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
                 'lagged_rain', 'temp', 'bank_holiday']
