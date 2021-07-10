@@ -23,17 +23,17 @@ def create_adjacent_stop_pairs(trips):
 
         stop_pairs_trip = trip.copy()
         stop_pairs_trip = stop_pairs_trip.rename(columns={
-            'ACTUALTIME_DEP': 'TIME_DEPARTURE',
-            'STOPPOINTID': 'DEPARTURE_STOP'
+            'ACTUALTIME_DEP': 'time_departure',
+            'STOPPOINTID': 'departure_stop'
         })
 
         # arrival stop and time are from the next row
         stop_pairs_trip.loc[:,
-                            'ARRIVAL_STOP'] = stop_pairs_trip.shift(-1).loc[:, 'DEPARTURE_STOP']
+                            'arrival_stop'] = stop_pairs_trip.shift(-1).loc[:, 'departure_stop']
         stop_pairs_trip.loc[:,
-                            'TIME_ARRIVAL'] = stop_pairs_trip.shift(-1).loc[:, 'ACTUALTIME_ARR']
-        stop_pairs_trip['TRAVEL_TIME'] = stop_pairs_trip["TIME_ARRIVAL"] - \
-            stop_pairs_trip["TIME_DEPARTURE"]
+                            'time_arrival'] = stop_pairs_trip.shift(-1).loc[:, 'ACTUALTIME_ARR']
+        stop_pairs_trip['travel_time'] = stop_pairs_trip["time_arrival"] - \
+            stop_pairs_trip["time_departure"]
 
         # Only keep pairs with consecutive PROGRNUMBER
         stop_pairs_trip = stop_pairs_trip[stop_pairs_trip['PROGRNUMBER'] == (

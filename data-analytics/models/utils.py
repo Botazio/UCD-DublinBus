@@ -39,7 +39,7 @@ def train_all_stop_pair_models(model):
     # Train a model for each adjacent stop pair
     for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
 
-        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['DATE', 'TIME_ARRIVAL'])
+        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['date', 'time_arrival'])
         metrics = {
             'stop_pair': stop_pair.split('/')[-1],
             'num_rows': stop_pair_df.shape[0]
@@ -106,8 +106,8 @@ def train_model(stop_pair_df, model):
 
     y_full = stop_pair_df['TRAVEL_TIME']
 
-    features = ['COS_TIME', 'SIN_TIME', 'COS_DAY', 'SIN_DAY', 'rain',
-                'temp', 'BANK_HOLIDAY']
+    features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
+                'lagged_rain', 'temp', 'bank_holiday']
     x_full = stop_pair_df[features]
 
     x_train, x_test, y_train, y_test = train_test_split(
@@ -243,9 +243,9 @@ def generate_learning_fit_time_curves(model, stop_pair, current_time):
     )
 
     y_full = stop_pair_df['TRAVEL_TIME']
-    x_full = stop_pair_df[
-        ['BANK_HOLIDAY', 'COS_TIME', 'SIN_TIME', 'COS_DAY', 'SIN_DAY', 'rain', 'temp']
-    ]
+    features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
+                'lagged_rain', 'temp', 'bank_holiday']
+    x_full = stop_pair_df[features]
 
     train_sizes, train_scores, cv_scores, fit_times, _ = learning_curve(
         model,
