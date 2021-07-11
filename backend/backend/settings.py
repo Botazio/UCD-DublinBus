@@ -175,3 +175,5 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 NTA_DEVELOPER_KEY = env('NTA_DEVELOPER_KEY')
+
+AUTH_USER_MODEL = 'dublinbus.CustomUser'

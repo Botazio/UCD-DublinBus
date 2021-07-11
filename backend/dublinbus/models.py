@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin
+from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from .managers import CustomUserManager
 
 class Stop(models.Model):
     """
@@ -184,4 +188,52 @@ class Line(models.Model):
     """
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
     line = models.CharField(max_length=10)
-    
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    """
+    A class that represents the users in the system.
+    """
+    username = models.CharField(max_length=40, unique=True) # added in
+    email = models.EmailField(_('email address'), unique=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    USERNAME_FIELD = 'username'    # 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
+
+class FavouriteStop(models.Model):
+    """
+    A class that represents the users favourite Dublin Bus stops.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('dublinbus.CustomUser', related_name='favouritestops', on_delete=models.CASCADE) # auth.User
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['created']
+        unique_together = (("stop", "owner"),) # "surrogate" primary key column
+
+    def __str__(self):
+        return str(self.owner) + ' - ' + str(self.stop_id)
+
+class FavouriteJourney(models.Model):
+    """
+    A class that represents the users favourite Dublin Bus journeys.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('dublinbus.CustomUser', related_name='favouritejourneys', on_delete=models.CASCADE) # auth.User
+    stop_origin = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='stop_origin')
+    stop_destination = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='stop_destination')
+
+    class Meta:
+        ordering = ['created']
+        unique_together = (("stop_origin", "stop_destination", "owner"),) # "surrogate" primary key column
+
+    def __str__(self):
+        return str(self.owner) + ' - ' + str(self.stop_origin) + ' -> ' + str(self.stop_destination)

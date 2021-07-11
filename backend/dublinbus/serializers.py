@@ -1,15 +1,32 @@
-import django
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
-#from django.contrib.auth.models import User
+from .models import FavouriteStop, Stop, FavouriteJourney
+from django.contrib.auth import get_user_model
 
+class FavouriteStopSerializer(serializers.ModelSerializer):
+    '''FavouriteStopSerializer'''
+    stop = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = FavouriteStop
+        fields = ('pk', 'created', 'owner', 'stop')
+
+class FavouriteJourneySerializer(serializers.ModelSerializer):
+    '''FavouriteJourneySerializer'''
+    stop_origin = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
+    stop_destination = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = FavouriteJourney
+        fields = ('pk', 'created', 'owner', "stop_origin", "stop_destination")
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
+    favouritestops = serializers.PrimaryKeyRelatedField(many=True, queryset=FavouriteStop.objects.all())
+    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True, queryset=FavouriteJourney.objects.all())
     class Meta:
-        model = django.contrib.auth.get_user_model() # User
-        fields = ('username',)
-
+        model = get_user_model() # User
+        fields = ('pk', 'username', 'email', 'favouritestops', 'favouritejourneys')
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     ''' Serializer class for handling signups
@@ -41,5 +58,6 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = django.contrib.auth.get_user_model() # User
-        fields = ('token', 'username', 'email', 'password')
+        model = get_user_model() # User
+        fields = ('token', 'password', 'pk', 'username', 'email', 'is_staff', 'is_superuser')
+
