@@ -1,7 +1,7 @@
 import MarkersSwitchCSS from './MarkersSwitch.module.css';
 
 // this component acts as a button to render the markers
-const MarkersSwitch = ({ displayMarkers, setDisplayMarkers }) => {
+const MarkersSwitch = ({ displayMarkers, setDisplayMarkers, mapRef }) => {
    return (
       <div className={MarkersSwitchCSS.display_markers_switch} >
          <p>Display markers</p>
@@ -13,6 +13,8 @@ const MarkersSwitch = ({ displayMarkers, setDisplayMarkers }) => {
 
    function handleClick() {
       if (displayMarkers) {
+         // Clean the event listeners from the map to avoid memory leaks
+         new window.google.maps.event.clearListeners(mapRef, 'idle');
          setDisplayMarkers(false);
       }
       else {

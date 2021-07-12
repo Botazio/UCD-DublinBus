@@ -1,0 +1,201 @@
+.wrapper {
+   width: 100%;
+   height: 100vh;
+   background: linear-gradient(90deg, #FF8283, #e74545);
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+.back_home_button {
+   position: absolute;
+   top: 50px;
+   left: 50px;
+   cursor: pointer;
+}
+.back_home_button > svg {
+   transform: rotateY(180deg);
+}
+.auth_box {
+   width: 475px;
+   background-color: white;
+   border-radius: 5px;
+   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
+}
+.toggle_buttons {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 5px;
+}
+.toggle_buttons > div:first-child {
+   border-radius: 5px 0 0 0;
+}
+.toggle_buttons > div:last-child {
+   border-radius: 0 5px 0 0;
+}
+.toggle_buttons > div {
+   flex: 1;
+   font-size: 22px;
+   font-weight: 500;
+   text-align: center;
+   line-height: 64px;
+   cursor: pointer;
+}
+.inactive {
+   box-shadow: inset 0 0 30px #bac8d3;
+   color: #5f7d95;
+}
+.tabs {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+@media screen and (max-width: 600px) {
+   .wrapper {
+      height: auto;
+      min-height: 100vh;
+   }
+   .auth_box {
+      width: 90%;
+      margin: 70px 0px;
+   }
+   .back_home_button {
+      top: 20px;
+      left: 20px;
+   }
+   .toggle_buttons > div {
+      font-size: 18px;
+   }
+}
+
+/* Styles for the authentication box */
+.signin_tab,
+.signup_tab {
+   padding: 45px 40px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+}
+.buttons_wrapper {
+   display: flex;
+   width: 100%;
+   justify-content: space-around;
+}
+.buttons_wrapper > button {
+   flex: 1;
+   margin: 0 5px;
+   padding: 0 1em;
+   height: 50px;
+   font-size: 14px;
+   border-radius: 4px;
+   color: white;
+   cursor: pointer;
+}
+.google_button,
+.facebook_button {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.google_button > span,
+.facebook_button > span {
+   margin: 5px;
+}
+.google_button {
+   background-color: #dd4b39;
+}
+.google_button:hover {
+   background-color: #ca3c29;
+}
+.facebook_button {
+   background-color: rgb(59, 89, 152);
+}
+.facebook_button:hover {
+   background-color: rgb(31, 64, 134);
+}
+.error_wrapper {
+   background-color: #f8b6b6;
+   padding: 20px;
+   margin-top: 15px;
+   width: 100%;
+   border-radius: 3px;
+}
+.form {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+.email_wrapper,
+.username_wrapper,
+.password_wrapper {
+   width: 100%;
+   margin-top: 15px;
+   border-radius: 3px;
+   display: flex;
+   align-items: center;
+   border: 1px solid #bac8d3;
+}
+.email_wrapper > div,
+.username_wrapper > div,
+.password_wrapper > div {
+   min-width: 40px;
+   height: 44px;
+   background-color: whitesmoke;
+   border-radius: 3px 0 0 3px;
+   border-right: 1px solid #bac8d3;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.login_username[type=text],
+.login_email[type=text],
+.login_password[type=password] {
+   padding: 0px 15px;
+   font-size: 1rem;
+   height: 44px;
+   display: inline-block;
+   border-radius: 4px;
+   box-sizing: border-box;
+   border-radius: 0 3px 3px 0;
+   width: 100%;
+   outline: none;
+}
+.reset_password {
+   color:rgb(18, 115, 235);
+   text-decoration: none;
+   align-self: flex-end;
+   margin-top: 15px;
+}
+.submit_button {
+   background-color: #1273eb;
+   border-radius: 3px;
+   width: 100%;
+   padding: 0 1em;
+   line-height: 44px;
+   font-size: 1rem;
+   color: white;
+   font-weight: 500;
+   margin-top: 15px;
+   cursor: pointer;
+}
+.submit_button:hover {
+   background-color: #1b5fb3;
+}
+
+@media screen and (max-width: 600px) {
+   .google_button > span,
+   .facebook_button > span {
+      display: none;
+   }
+   .signin_tab,
+   .signup_tab {
+      padding: 45px 30px;
+   }
+}

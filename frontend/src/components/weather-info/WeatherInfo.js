@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import useFetch from '../../helpers/useFetch';
 import { Chart } from "react-google-charts";
+import FetchError from '../fetch-error/FetchError';
+import Waiting from '../waiting/Waiting';
 import WeatherInfoCSS from './WeatherInfo.module.css';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
 import { ReactComponent as Humidity } from './fixtures/icon-humidity.svg';
 import { ReactComponent as Sunset } from './fixtures/icon-sunset.svg';
 import { ReactComponent as Sunrise } from './fixtures/icon-sunrise.svg';
 import { ReactComponent as Ultraviolet } from './fixtures/icon-ultraviolet.svg';
-import Waiting from '../waiting/Waiting';
+import { ReactComponent as WaterDrop } from './fixtures/icon-water-drop.svg';
+
 
 // Styles for the graph
 const options = {
@@ -62,10 +65,11 @@ export default function WeatherInfo() {
 
 
    // Error handling when fetching for the data
-   if (error) return (<div className={WeatherInfoCSS.weather_wrapper}>Unable to get the weather data"</div>)
+   if (error) return (<FetchError height="60" message="Unable to fetch the weather data" />)
 
    // Wait for the data
    if (isPendingWeather) return <Waiting />;
+
 
    // Get the data in a google data table
    const forecastWeather = [];
@@ -156,7 +160,7 @@ export default function WeatherInfo() {
             {hourlyIcon}
          </div>
          <div className={WeatherInfoCSS.hourly_pop}>
-            <p>&#127778;{Math.round(weatherData.hourly[x].pop * 100)}%</p>
+            <p><WaterDrop height="10px" />{Math.round(weatherData.hourly[x].pop * 100)}%</p>
          </div>
          <div className={WeatherInfoCSS.hourly_temp}>
             <p>{Math.round(weatherData.hourly[x].temp)}º</p>
@@ -206,6 +210,8 @@ export default function WeatherInfo() {
             </div>
          </div>
       </div>)
+
+
 
    return (
       <>
@@ -262,6 +268,7 @@ export default function WeatherInfo() {
       </>
    )
 
+
    // Function that allows the user to navigate through the daily slides using arrow buttons
    function handleCurrentSlide(n) {
       if (n > weatherSlides.length - 1) {
@@ -307,4 +314,5 @@ export default function WeatherInfo() {
 
       return dayTime.getHours() + symbol + dayTime.getMinutes();
    }
+
 }
