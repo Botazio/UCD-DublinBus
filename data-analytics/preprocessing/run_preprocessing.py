@@ -1,21 +1,5 @@
 """
-Run preprocessing on the data using this script. The preprocessing is broken up into two stages.
-
-1. Matching Adjacent Pairs of Stops: This step matches up pairs of adjacent stops
-for each day in the 2018 data and saves them as separate parquet files.
-
-    nohup python -u -m preprocessing.run_preprocessing create_adjacent_stop_pairs &
-
-It saves the output to /home/team13/data/adjacent_stop_pairs/. Timestampted logs are available in
-/home/team13/logs/preprocessing/.
-
-2. Feature Engineering: This stage takes the input of the previous stage and combines all the
-CSVs files for a particular stop pair together and adds features.
-
-    nohup python -u -m preprocessing.run_preprocessing features &
-
-It saves the output to /home/team13/data/adjacent_stop_pairs_with_features/.
-Timestampted logs are available in /home/team13/logs/preprocessing/.
+Run preprocessing on the data using this script. See the README.md for more details.
 """
 
 import sqlite3
