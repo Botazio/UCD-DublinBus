@@ -5,9 +5,9 @@ name: Lint JavaScript
 on:
   # Triggers the workflow on push or pull request events but only for the DUB-59 branch
   push:
-    branches: [DUB-59]
+    branches: [main]
   pull_request:
-    branches: [DUB-59]
+    branches: [main]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
