@@ -229,13 +229,13 @@ class FavouriteJourney(models.Model):
     A class that represents the users favourite Dublin Bus journeys.
     """
     created = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey('dublinbus.CustomUser', 
-                              related_name='favouritejourneys', 
+    owner = models.ForeignKey('dublinbus.CustomUser',
+                              related_name='favouritejourneys',
                               on_delete=models.CASCADE) # auth.User
-    stop_origin = models.ForeignKey(Stop, 
-                                    on_delete=models.CASCADE, 
+    stop_origin = models.ForeignKey(Stop,
+                                    on_delete=models.CASCADE,
                                     related_name='stop_origin')
-    stop_destination = models.ForeignKey(Stop, 
+    stop_destination = models.ForeignKey(Stop,
                                          on_delete=models.CASCADE,
                                          related_name='stop_destination')
 

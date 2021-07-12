@@ -188,7 +188,7 @@ class FavouriteStopView(APIView):
             return FavouriteStop.objects.get(pk=primary_key)
         except FavouriteStop.DoesNotExist as favourite_stop_not_exist:
             raise Http404(f"Cannot find FavouriteStop: {primary_key}") from favourite_stop_not_exist
-                
+
     def delete(self, request, primary_key):
         """Delete a FavouriteStop for the currently authenticated user."""
         favourite_stop = self.get_object(primary_key)
@@ -224,7 +224,9 @@ class FavouriteJourneyView(APIView):
         try:
             return FavouriteJourney.objects.get(pk=primary_key)
         except FavouriteJourney.DoesNotExist as favourite_journey_not_exist:
-            raise Http404(f"Cannot find FavouriteJourney: {primary_key}") from favourite_journey_not_exist
+            raise Http404(
+                f"Cannot find FavouriteJourney: {primary_key}"
+                ) from favourite_journey_not_exist
 
     def delete(self, request, primary_key):
         """Delete a FavouriteJourney for the currently authenticated user."""

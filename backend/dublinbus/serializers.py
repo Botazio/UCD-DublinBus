@@ -23,9 +23,9 @@ class FavouriteJourneySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
-    favouritestops = serializers.PrimaryKeyRelatedField(many=True, 
+    favouritestops = serializers.PrimaryKeyRelatedField(many=True,
                                                         queryset=FavouriteStop.objects.all())
-    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True, 
+    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True,
                                                         queryset=FavouriteJourney.objects.all())
     class Meta:
         model = get_user_model() # User
