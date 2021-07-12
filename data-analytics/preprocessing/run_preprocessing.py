@@ -77,10 +77,10 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
 
         for dep_stop, arr_stop in list(
                 stop_pairs_df.groupby(['DEPARTURE_STOP', 'ARRIVAL_STOP'])[
-                    ['TRAVEL_TIME']].mean().index
+                    ['travel_time']].mean().index
         ):
-            res = stop_pairs_df[(stop_pairs_df['DEPARTURE_STOP'] == dep_stop) & (
-                stop_pairs_df['ARRIVAL_STOP'] == arr_stop)]
+            res = stop_pairs_df[(stop_pairs_df['departure_stop'] == dep_stop) & (
+                stop_pairs_df['arrival_stop'] == arr_stop)]
 
             path = f"/home/team13/data/adjacent_stop_pairs/{int(dep_stop)}_to_{int(arr_stop)}/"
 
@@ -88,7 +88,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
                 os.mkdir(path)
 
             file_name = f'{int(dep_stop)}_to_{int(arr_stop)}_{query_date}'
-            res.sort_values('TIME_DEPARTURE').to_parquet(
+            res.sort_values('time_departure').to_parquet(
                 path + f'{file_name}.parquet', index=False)
 
 elif sys.argv[1] == "features":
@@ -105,51 +105,63 @@ elif sys.argv[1] == "features":
         logging.info(f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
         # Data quality checks
-        if (stop_pair_df[stop_pair_df['TRAVEL_TIME'] < 0].shape[0]) > 0:
-            invalid_rows = stop_pair_df[stop_pair_df['TRAVEL_TIME'] < 0].index
+        if (stop_pair_df[stop_pair_df['travel_time'] < 0].shape[0]) > 0:
+            invalid_rows = stop_pair_df[stop_pair_df['travel_time'] < 0].index
             logging.info(f"Dropping {len(invalid_rows)} rows where calculated travel" +
                             "time is < 0")
 
             stop_pair_df = stop_pair_df.drop(invalid_rows)
 
-        # Add time features
+        # cosine and sine of seconds since midnight
         SECONDS_IN_DAY = 24 * 60 * 60
 
         stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
             stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
-        stop_pair_df['DATE'] = stop_pair_df['DAYOFSERVICE'].dt.date
-        stop_pair_df['HOUR'] = (stop_pair_df['TIME_DEPARTURE'] / (60 * 60)).astype(int)
-        stop_pair_df['DAY'] = stop_pair_df['DAYOFSERVICE'].dt.weekday
+        stop_pair_df['date'] = stop_pair_df['DAYOFSERVICE'].dt.date
+        stop_pair_df['hour'] = (stop_pair_df['TIME_DEPARTURE'] / (60 * 60)).astype(int)
+        stop_pair_df['day'] = stop_pair_df['DAYOFSERVICE'].dt.weekday
 
-        stop_pair_df['COS_TIME'] = np.cos(
+        stop_pair_df['cos_time'] = np.cos(
             stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
-        stop_pair_df['SIN_TIME'] = np.sin(
+        stop_pair_df['cos_sine'] = np.sin(
             stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
 
-        stop_pair_df['COS_DAY'] = np.cos(
-            stop_pair_df['DAY'] * (2 * np.pi / 7))
-        stop_pair_df['SIN_DAY'] = np.sin(
-            stop_pair_df['DAY'] * (2 * np.pi / 7))
+        # cosine and sine of day of week number
+        stop_pair_df['day'] = pd.to_datetime(
+            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
+        stop_pair_df['cos_day'] = np.cos(
+            stop_pair_df['day'] * (2 * np.pi / 7))
+        stop_pair_df['sin_day'] = np.sin(
+            stop_pair_df['day'] * (2 * np.pi / 7))
+
+        # dummy variable for weekend
+        stop_pair_df['is_weekend'] = stop_pair['DAY'].isin([5, 6])
+
+        # one-hot encoding of days
+        day_of_week_columns = pd.get_dummies(stop_pair_df['DAY'], drop_first=True, prefix="day")
+        stop_pair_df[list(day_of_week_columns)] = day_of_week_columns
 
         stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
 
         # Add weather features
         weather_df = pd.read_csv(
-            "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv",
+            "~/data/raw/met_eireann_hourly_phoenixpark_dec2017jan2019.csv",
             usecols=['date', 'rain', 'temp'])
         weather_df['datetime'] = pd.to_datetime(
             weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
         weather_df = weather_df.drop('date', axis=1)
-        weather_df['DATE'] = weather_df['datetime'].dt.date
-        weather_df['HOUR'] = weather_df['datetime'].dt.hour
+        weather_df['date'] = weather_df['datetime'].dt.date
+        weather_df['hour'] = weather_df['datetime'].dt.hour
+        weather_df = weather_df.sort_values('datetime')
+        weather_df['lagged_rain'] = weather_df['rain'].shift(1)
 
         stop_pair_df = pd.merge(stop_pair_df, weather_df, on=[
-                                'DATE', 'HOUR'], how='left')
+                                'date', 'hour'], how='left')
         file_path = f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
 
         # bank holiday features
-        stop_pair_df['BANK_HOLIDAY'] = 0
-        stop_pair_df.loc[stop_pair_df['DATE'].isin(bank_holidays_2018), 'BANK_HOLIDAY'] = 1
+        stop_pair_df['bank_holiday'] = 0
+        stop_pair_df.loc[stop_pair_df['date'].isin(bank_holidays_2018), 'bank_holiday'] = 1
 
         stop_pair_df.sort_values(['DATE', 'TIME_DEPARTURE']).to_parquet(
             file_path, index=False)
