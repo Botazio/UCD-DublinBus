@@ -32,7 +32,6 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
             b.getNorthEast().lat()
          ]);
       });
-
    }, [mapRef]);
 
    // convert stops to the proper format for supercluster

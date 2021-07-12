@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 
 def create_adjacent_stop_pairs(trips):
@@ -42,3 +43,25 @@ def create_adjacent_stop_pairs(trips):
         stop_pairs.append(stop_pairs_trip)
 
     return pd.concat(stop_pairs)
+
+
+bank_holidays_2018 = [
+    # New Year's Day
+    datetime.datetime(2018, 1, 1),
+    # St Patricks' Day
+    datetime.datetime(2018, 3, 17),
+    # Easter Monday
+    datetime.datetime(2018, 4, 2),
+    # May Bank Holiday
+    datetime.datetime(2018, 5, 7),
+    # June Bank Holiday
+    datetime.datetime(2018, 6, 4),
+    # August Bank Holiday
+    datetime.datetime(2018, 8, 6),
+    # October Bank Holiday
+    datetime.datetime(2018, 10, 29),
+    # Christmas Day
+    datetime.datetime(2018, 12, 25),
+    # St Stephen's Day
+    datetime.datetime(2018, 12, 26),
+]
