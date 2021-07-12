@@ -22,7 +22,7 @@ const Stops = () => {
    const mapRef = useGoogleMap();
 
    // Fetch the all the stops
-   const { data: stops, isPending, error } = useFetch('http://csi420-02-vm6.ucd.ie/dublinbus/stops/');
+   const { data: stops, isPending, error } = useFetch('http://localhost:8000/dublinbus/stops/');
 
    // Error handling when fetching for the data
    if (error) return (<FetchError height="60" message="Unable to fetch the data" />)

@@ -72,7 +72,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'http://34.245.228.88:3000', # http://localhost:3000
+    'http://34.245.228.88:3000',
+    'http://localhost:3000'
 )
 
 JWT_AUTH = {

@@ -4,7 +4,7 @@ import StopBusTimesCSS from './StopBusTimes.module.css';
 
 const StopBusTimes = ({ selectedStop }) => {
    // Fetch the selected stop
-   const { data: fetchedStop, isPending, error } = useFetch('http://csi420-02-vm6.ucd.ie/dublinbus/stop/' + selectedStop.stop_id);
+   const { data: fetchedStop, isPending, error } = useFetch('http://localhost:8000/dublinbus/stop/' + selectedStop.stop_id);
 
    // Error handling when fetching for the data
    if (error) return (<div>Unable to get the bus times</div>);
