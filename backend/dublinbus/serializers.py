@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
-from .models import FavouriteStop, Stop, FavouriteJourney
 from django.contrib.auth import get_user_model
+from .models import FavouriteStop, Stop, FavouriteJourney
+
 
 class FavouriteStopSerializer(serializers.ModelSerializer):
     '''FavouriteStopSerializer'''
@@ -22,8 +23,10 @@ class FavouriteJourneySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
-    favouritestops = serializers.PrimaryKeyRelatedField(many=True, queryset=FavouriteStop.objects.all())
-    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True, queryset=FavouriteJourney.objects.all())
+    favouritestops = serializers.PrimaryKeyRelatedField(many=True, 
+                                                        queryset=FavouriteStop.objects.all())
+    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True, 
+                                                        queryset=FavouriteJourney.objects.all())
     class Meta:
         model = get_user_model() # User
         fields = ('pk', 'username', 'email', 'favouritestops', 'favouritejourneys')
@@ -60,4 +63,3 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = get_user_model() # User
         fields = ('token', 'password', 'pk', 'username', 'email', 'is_staff', 'is_superuser')
-

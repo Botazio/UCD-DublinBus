@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from .managers import CustomUserManager
@@ -212,7 +212,9 @@ class FavouriteStop(models.Model):
     A class that represents the users favourite Dublin Bus stops.
     """
     created = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey('dublinbus.CustomUser', related_name='favouritestops', on_delete=models.CASCADE) # auth.User
+    owner = models.ForeignKey('dublinbus.CustomUser',
+                              related_name='favouritestops',
+                              on_delete=models.CASCADE) # auth.User
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
 
     class Meta:
@@ -227,13 +229,19 @@ class FavouriteJourney(models.Model):
     A class that represents the users favourite Dublin Bus journeys.
     """
     created = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey('dublinbus.CustomUser', related_name='favouritejourneys', on_delete=models.CASCADE) # auth.User
-    stop_origin = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='stop_origin')
-    stop_destination = models.ForeignKey(Stop, on_delete=models.CASCADE, related_name='stop_destination')
+    owner = models.ForeignKey('dublinbus.CustomUser', 
+                              related_name='favouritejourneys', 
+                              on_delete=models.CASCADE) # auth.User
+    stop_origin = models.ForeignKey(Stop, 
+                                    on_delete=models.CASCADE, 
+                                    related_name='stop_origin')
+    stop_destination = models.ForeignKey(Stop, 
+                                         on_delete=models.CASCADE,
+                                         related_name='stop_destination')
 
     class Meta:
         ordering = ['created']
-        unique_together = (("stop_origin", "stop_destination", "owner"),) # "surrogate" primary key column
+        unique_together = (("stop_origin", "stop_destination", "owner"),)
 
     def __str__(self):
         return str(self.owner) + ' - ' + str(self.stop_origin) + ' -> ' + str(self.stop_destination)

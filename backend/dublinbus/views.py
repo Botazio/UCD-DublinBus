@@ -6,11 +6,12 @@ from django.contrib.auth import get_user_model
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
 
-from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializerWithToken, FavouriteStopSerializer, FavouriteJourneySerializer
+from .serializers import UserSerializerWithToken, \
+    FavouriteStopSerializer, \
+    FavouriteJourneySerializer
 from .models import FavouriteStop, FavouriteJourney
 from .permissions import IsOwner, IsUser
 
@@ -180,16 +181,17 @@ class FavouriteStopView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(primary_key):
         """Return the FavouriteStop object for the currently authenticated user."""
         try:
-            return FavouriteStop.objects.get(pk=pk)
-        except FavouriteStop.DoesNotExist:
-            raise Http404
-
-    def delete(self, request, pk):
+            return FavouriteStop.objects.get(pk=primary_key)
+        except FavouriteStop.DoesNotExist as favourite_stop_not_exist:
+            raise Http404(f"Cannot find FavouriteStop: {primary_key}") from favourite_stop_not_exist
+                
+    def delete(self, request, primary_key):
         """Delete a FavouriteStop for the currently authenticated user."""
-        favourite_stop = self.get_object(pk)
+        favourite_stop = self.get_object(primary_key)
         self.check_object_permissions(self.request, favourite_stop)
         favourite_stop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -216,16 +218,17 @@ class FavouriteJourneyView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(primary_key):
         """Return the FavouriteJourneys object for the currently authenticated user."""
         try:
-            return FavouriteJourney.objects.get(pk=pk)
-        except FavouriteJourney.DoesNotExist:
-            raise Http404
+            return FavouriteJourney.objects.get(pk=primary_key)
+        except FavouriteJourney.DoesNotExist as favourite_journey_not_exist:
+            raise Http404(f"Cannot find FavouriteJourney: {primary_key}") from favourite_journey_not_exist
 
-    def delete(self, request, pk):
+    def delete(self, request, primary_key):
         """Delete a FavouriteJourney for the currently authenticated user."""
-        favourite_journey = self.get_object(pk)
+        favourite_journey = self.get_object(primary_key)
         self.check_object_permissions(self.request, favourite_journey)
         favourite_journey.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -238,24 +241,29 @@ class UserView(APIView):
     permission_classes = [IsUser]   # [ IsUser | IsAdminUser ]
 
     def get(self, request):
+        """Return the User details for the currently authenticated user."""
         serializer = UserSerializerWithToken(request.user)
         return Response(serializer.data)
 
     def post(self, request):
+        """Create a new User for the currently authenticated user."""
         serializer = UserSerializerWithToken(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(primary_key):
+        """Return the User object for the currently authenticated user."""
         try:
-            return get_user_model().objects.get(pk=pk)
-        except get_user_model().DoesNotExist:
-            raise Http404
+            return get_user_model().objects.get(pk=primary_key)
+        except get_user_model().DoesNotExist as user_not_exist:
+            raise Http404(f"Cannot find User: {primary_key}") from user_not_exist
 
-    def delete(self, request, pk):
-        user = self.get_object(pk)
+    def delete(self, request, primary_key):
+        """Delete a User for the currently authenticated user."""
+        user = self.get_object(primary_key)
         self.check_object_permissions(self.request, user)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
