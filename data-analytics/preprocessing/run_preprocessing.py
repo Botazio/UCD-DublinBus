@@ -114,31 +114,34 @@ elif sys.argv[1] == "features":
 
         # Add time features
         SECONDS_IN_DAY = 24 * 60 * 60
+
+        stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
+            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
+        stop_pair_df['DATE'] = stop_pair_df['DAYOFSERVICE'].dt.date
+        stop_pair_df['HOUR'] = (stop_pair_df['TIME_DEPARTURE'] / (60 * 60)).astype(int)
+        stop_pair_df['DAY'] = stop_pair_df['DAYOFSERVICE'].dt.weekday
+
         stop_pair_df['COS_TIME'] = np.cos(
             stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
         stop_pair_df['SIN_TIME'] = np.sin(
             stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
 
-        stop_pair_df['DAY'] = pd.to_datetime(
-            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
         stop_pair_df['COS_DAY'] = np.cos(
             stop_pair_df['DAY'] * (2 * np.pi / 7))
         stop_pair_df['SIN_DAY'] = np.sin(
             stop_pair_df['DAY'] * (2 * np.pi / 7))
 
+        stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
+
         # Add weather features
         weather_df = pd.read_csv(
             "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv",
             usecols=['date', 'rain', 'temp'])
-        weather_df['date'] = pd.to_datetime(
+        weather_df['datetime'] = pd.to_datetime(
             weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
-        weather_df['DATE'] = weather_df['date'].dt.date
-        weather_df['HOUR'] = weather_df['date'].dt.hour
-
-        stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
-            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
-        stop_pair_df['DATE'] = stop_pair_df['DAYOFSERVICE'].dt.date
-        stop_pair_df['HOUR'] = stop_pair_df['DAYOFSERVICE'].dt.hour
+        weather_df = weather_df.drop('date', axis=1)
+        weather_df['DATE'] = weather_df['datetime'].dt.date
+        weather_df['HOUR'] = weather_df['datetime'].dt.hour
 
         stop_pair_df = pd.merge(stop_pair_df, weather_df, on=[
                                 'DATE', 'HOUR'], how='left')
@@ -146,7 +149,7 @@ elif sys.argv[1] == "features":
 
         # bank holiday features
         stop_pair_df['BANK_HOLIDAY'] = 0
-        stop_pair_df.loc[stop_pair_df['DAYOFSERVICE'].isin(bank_holidays_2018), 'BANK_HOLIDAY'] = 1
+        stop_pair_df.loc[stop_pair_df['DATE'].isin(bank_holidays_2018), 'BANK_HOLIDAY'] = 1
 
-        stop_pair_df.sort_values(['DAYOFSERVICE', 'TIME_DEPARTURE']).to_parquet(
+        stop_pair_df.sort_values(['DATE', 'TIME_DEPARTURE']).to_parquet(
             file_path, index=False)
