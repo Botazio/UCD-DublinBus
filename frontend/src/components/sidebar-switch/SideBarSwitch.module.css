@@ -1,10 +1,10 @@
 .list_icon {
-   cursor: pointer;
-   display: flex;
-   justify-content: center;
-   align-items: center;
- }
- .list_icon_active svg {
-   fill: #B82025;
-   transition: 0.5s;
- }
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.list_icon_active svg {
+  fill: #b82025;
+  transition: 0.5s;
+}

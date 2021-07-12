@@ -1,17 +1,17 @@
 .text {
-   position: absolute;
-   left: 50%;
-   transform: translate(-50%, 0%);
-   margin-top: 35px;
-   z-index: 10;
-   background-color: #FF8283;
-   padding: 20px 30px;
-   border-radius: 20px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  margin-top: 35px;
+  z-index: 10;
+  background-color: #ff8283;
+  padding: 20px 30px;
+  border-radius: 20px;
 }
 .text > p {
-   margin: 5px 0px;
+  margin: 5px 0px;
 }
 .text > a {
-   color: black;
-   font-weight: bold;
+  color: black;
+  font-weight: bold;
 }

@@ -4,17 +4,16 @@ import MapContainer from "../components/mapcontainer/MapContainer";
 import MapCustomButtons from "../components/map-custom-buttons/MapCustomButtons";
 
 const BusPage = () => {
-
-   return (
-      <>
-         <NavBar />
-         {/* MapContainer is a context where all the childs can access the map property */}
-         <MapContainer>
-            <SideBar />
-            <MapCustomButtons />
-         </MapContainer>
-      </>
-   );
-}
+  return (
+    <>
+      <NavBar />
+      {/* MapContainer is a context where all the childs can access the map property */}
+      <MapContainer>
+        <SideBar />
+        <MapCustomButtons />
+      </MapContainer>
+    </>
+  );
+};
 
 export default BusPage;

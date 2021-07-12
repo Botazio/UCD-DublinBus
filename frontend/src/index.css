@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap"); 
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
 
 /* base styles */
@@ -15,7 +15,7 @@
 }
 
 /* Styles for the comboboxes */
-[data-reach-combobox-option]  {
+[data-reach-combobox-option] {
   padding: 5px 5px !important;
   text-transform: capitalize;
 }

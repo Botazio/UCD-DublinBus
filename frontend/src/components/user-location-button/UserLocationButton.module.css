@@ -1,22 +1,22 @@
 /* Styles for the center view button */
 .button {
-   position: absolute;
-   right: 10px;
-   bottom: 100px;
-   padding: 10px;
-   background-color: white;
-   border-radius: 2px;
-   cursor: pointer;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   z-index: 1;
-   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
- }
- .button > img {
-   opacity: 0.6;
- }
- 
- .button:hover > img {
-   opacity: 1;
- }
+  position: absolute;
+  right: 10px;
+  bottom: 100px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
+}
+.button > img {
+  opacity: 0.6;
+}
+
+.button:hover > img {
+  opacity: 1;
+}
