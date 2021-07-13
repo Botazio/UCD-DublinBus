@@ -6,7 +6,7 @@ const MarkersSwitch = ({ displayMarkers, setDisplayMarkers, mapRef }) => {
   return (
     <FormControlLabel
       value="start"
-      control={<Switch checked={displayMarkers} color="secondary" onChange={() => handleChange()} />}
+      control={<Switch checked={displayMarkers} color="primary" onChange={() => handleChange()} />}
       label="DisplayMarkers"
       labelPlacement="start"
       style={{ margin: '0px 5px' }}
