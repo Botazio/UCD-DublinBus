@@ -7,8 +7,6 @@
 }
 .lds_dual_ring {
   display: inline-block;
-  width: 80px;
-  height: 80px;
 }
 .lds_dual_ring:after {
   content: " ";
@@ -16,11 +14,20 @@
   width: 64px;
   height: 64px;
   margin: 8px;
-  border-radius: 50%;
   border: 6px solid #fff;
   border-color: #fff transparent #fff transparent;
+  border-radius: 50%;
   animation: lds_dual_ring 1.2s linear infinite;
 }
+.dark:after {
+  border: 6px solid black;
+  border-color: black transparent black transparent;
+}
+.small:after {
+  width: 40px;
+  height: 40px;
+}
+
 @keyframes lds_dual_ring {
   0% {
     transform: rotate(0deg);

@@ -1,24 +1,20 @@
-import MarkersSwitchCSS from "./MarkersSwitch.module.css";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 // this component acts as a button to render the markers
 const MarkersSwitch = ({ displayMarkers, setDisplayMarkers, mapRef }) => {
   return (
-    <div className={MarkersSwitchCSS.display_markers_switch}>
-      <p>Display markers</p>
-      <label className={MarkersSwitchCSS.switch}>
-        <input type="checkbox" />
-        <span
-          className={MarkersSwitchCSS.slider}
-          onClick={() => handleClick()}
-        ></span>
-      </label>
-    </div>
+    <FormControlLabel
+      value="start"
+      control={<Switch checked={displayMarkers} color="secondary" onChange={() => handleChange()} />}
+      label="DisplayMarkers"
+      labelPlacement="start"
+      style={{ margin: '0px 5px' }}
+    />
   );
 
-  function handleClick() {
+  function handleChange() {
     if (displayMarkers) {
-      // Clean the event listeners from the map to avoid memory leaks
-      new window.google.maps.event.clearListeners(mapRef, "idle");
       setDisplayMarkers(false);
     } else {
       setDisplayMarkers(true);

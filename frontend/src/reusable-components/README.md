@@ -1,0 +1,1 @@
+This folder contains all those components that could be used in different parts of the code.

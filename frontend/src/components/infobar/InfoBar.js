@@ -2,6 +2,7 @@ import InfobarCSS from "./Infobar.module.css";
 import { ReactComponent as Close } from "./fixtures/icon-close.svg";
 import Directions from "../directions/Directions";
 import Stops from "../stops/Stops";
+import NearMe from "../near-me/NearMe";
 import MapSwitch from "../map-switch/MapSwitch";
 import WeatherInfo from "../weather-info/WeatherInfo";
 
@@ -39,6 +40,7 @@ const InfoBar = ({
         {/* Render a section depending on which button is active */}
         {buttonActive === "directions" && <Directions />}
         {buttonActive === "stops" && <Stops />}
+        {buttonActive === "near me" && <NearMe />}
         {buttonActive === "weather" && <WeatherInfo />}
       </div>
     </>

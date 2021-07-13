@@ -7,14 +7,18 @@ import PrivateRoute from "./helpers/PrivateRoute";
 import UserPage from "./pages/UserPage";
 import NotFound from "./components/notfound/NotFound";
 import NoUserRoute from "./helpers/NoUserRoute";
+import { StopsProvider } from "./providers/StopsContext";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Switch>
+
           <Route exact path="/">
-            <BusPage />
+            <StopsProvider>
+              <BusPage />
+            </StopsProvider>
           </Route>
           <NoUserRoute exact path="/login">
             <AuthenticationPage />

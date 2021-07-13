@@ -9,6 +9,9 @@ import MarkerClusters from "../marker-clusters/MarkerClusters";
 import { useGoogleMap } from "@react-google-maps/api";
 import MarkersSwitch from "../markers-switch/MarkersSwitch";
 import CustomMarker from "../custom-marker/CustomMarker";
+import Card from "../../reusable-components/card/Card";
+import PopoverOptions from "../popover-options/PopoverOptions";
+import { useStops } from "../../providers/StopsContext";
 
 // This component is the main component for the stops system.
 // The subcomponents are inserted in this component
@@ -21,12 +24,8 @@ const Stops = () => {
   // reference to the map
   const mapRef = useGoogleMap();
 
-  // Fetch the all the stops
-  const {
-    data: stops,
-    isPending,
-    error,
-  } = useFetch("http://csi420-02-vm6.ucd.ie/dublinbus/stops/");
+  // Get the data from the provider
+  const { data: stops, isPending, error } = useStops();
 
   // Error handling when fetching for the data
   if (error)
@@ -46,13 +45,17 @@ const Stops = () => {
         />
       </div>
 
-      {/* Display the button that controls when to display the markers */}
+      {/* Display the options in a popover */}
       {stops && (
-        <MarkersSwitch
-          displayMarkers={displayMarkers}
-          setDisplayMarkers={setDisplayMarkers}
-          mapRef={mapRef}
-        />
+        <div className={StopsCSS.options}>
+          <PopoverOptions>
+            <MarkersSwitch
+              displayMarkers={displayMarkers}
+              setDisplayMarkers={setDisplayMarkers}
+              mapRef={mapRef}
+            />
+          </PopoverOptions>
+        </div>
       )}
 
       {/* Display the markers and clusters */}
@@ -65,11 +68,13 @@ const Stops = () => {
       )}
 
       {/* If there is a stop selected display the next buses*/}
-      {selectedStop && (
+      {selectedStop && (<Card>
+        <h4 className={StopsCSS.stop_bus_times_title}>{selectedStop.stop_name}</h4>
         <StopBusTimes
           selectedStop={selectedStop}
           setSelectedStop={setSelectedStop}
         />
+      </Card>
       )}
 
       {/* If there is a stop selected display a marker at that stop */}
