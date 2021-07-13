@@ -2,7 +2,6 @@ import { useGoogleMap } from "@react-google-maps/api";
 import { useEffect } from "react";
 import { useState } from "react";
 import NearMeCSS from "./NearMe.module.css";
-import useFetch from "../../helpers/useFetch";
 import ToogleButtons from "./subcomponents/ToogleButtons";
 import Waiting from "../waiting/Waiting";
 import FetchError from "../fetch-error/FetchError";
@@ -23,7 +22,7 @@ const NearMe = () => {
    // states that the user decides on the settings popover
    const [distance, setDistance] = useState(1);
    const [maxStopsDisplayed, setMaxStopsDisplayed] = useState(20);
-   // state for the page in the results
+   // state for the pagination
    const [page, setPage] = useState(1);
 
    const mapRef = useGoogleMap();
@@ -91,14 +90,14 @@ const NearMe = () => {
             mapRef={mapRef}
          />}
 
-         {(active === "stops") && nearStops &&
+         {(active === "stops") &&
             <Card variant="last">
                <DisplayStops stops={nearStops} mapRef={mapRef} page={page} />
 
                {/* Controls which stops to display in the infobar from 10 to */}
-               <div className={NearMeCSS.pagination}>
+               {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>
                   <Pagination onChange={handlePage} page={page} count={Math.ceil(nearStops.length / 10)} color="primary" size="small" />
-               </div>
+               </div>}
             </Card>}
       </>
    );
@@ -115,12 +114,6 @@ const NearMe = () => {
                lat: pos.coords.latitude,
                lng: pos.coords.longitude,
             });
-            mapRef.setZoom(13);
-            // I will change this in the future. I have set up the center of Dublin for the presentation
-            mapRef.panTo({
-               lat: 53.349804,
-               lng: -6.26031,
-            });
          },
          (err) => alert(err.message)
       );
@@ -130,7 +123,7 @@ const NearMe = () => {
       if (!stops) return;
 
       let nearStopsArray = stops.filter((stop) => {
-         var dist = geodist({ lat: 53.349804, lon: -6.26031 }, { lat: stop.stop_lat, lon: stop.stop_lon }, { exact: true, unit: 'km' });
+         var dist = geodist({ lat: position.lat, lon: position.lng }, { lat: stop.stop_lat, lon: stop.stop_lon }, { exact: true, unit: 'km' });
          // if the distance is less than the distance set by the user
          if (dist < distance) {
             // set a property in the stop object call distance

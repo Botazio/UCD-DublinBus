@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Marker } from '@react-google-maps/api';
 import iconStop from "../../../fixtures/icon-stop.png";
 import FetchError from '../../fetch-error/FetchError';
-import { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';

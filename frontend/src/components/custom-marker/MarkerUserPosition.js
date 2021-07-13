@@ -6,7 +6,8 @@ import iconBluedot from "../../fixtures/icon-bluedot.png";
 const MarkerUserPosition = ({ id, position, mapRef }) => {
    useEffect(() => {
       // move the map view to the center of the marker
-      //mapRef.panTo(position);
+      mapRef.panTo(position);
+      mapRef.setZoom(13);
    }, [position, mapRef]);
 
 
@@ -14,8 +15,8 @@ const MarkerUserPosition = ({ id, position, mapRef }) => {
       <Marker
          key={id}
          position={{
-            lat: 53.349804,
-            lng: -6.26031,
+            lat: position.lat,
+            lng: position.lng,
          }}
          options={{
             icon: iconBluedot,
@@ -24,7 +25,7 @@ const MarkerUserPosition = ({ id, position, mapRef }) => {
             map: mapRef,
             zIndex: 1000,
          }}
-      //onClick={() => handleClick()}
+         onClick={() => handleClick()}
       />
    );
 

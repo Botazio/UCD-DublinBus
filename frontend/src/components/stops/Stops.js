@@ -1,6 +1,5 @@
 import StopSearchBar from "../stop-searchbar/StopSearchBar";
 import StopsCSS from "./Stops.module.css";
-import useFetch from "../../helpers/useFetch";
 import Waiting from "../waiting/Waiting";
 import FetchError from "../fetch-error/FetchError";
 import { useState } from "react";
