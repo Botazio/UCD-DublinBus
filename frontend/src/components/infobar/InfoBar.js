@@ -7,6 +7,8 @@ import MapSwitch from "../map-switch/MapSwitch";
 import WeatherInfo from "../weather-info/WeatherInfo";
 
 // InfoBar is a subcomponent of SideBar
+// Renders section component depending which one is active 
+// All the states are coming from the sidebar
 const InfoBar = ({
   sideBar,
   setInfoBar,
@@ -24,20 +26,13 @@ const InfoBar = ({
         <MapSwitch buttonActive={buttonActive} />
       </div>
       {/* The styles for the infobar depends on the sidebar position */}
-      <div
-        className={
-          InfobarCSS.infobar +
-          " " +
-          (sideBar
-            ? InfobarCSS.infobar_sidebar_active
-            : InfobarCSS.infobar_sidebar_inactive)
-        }
-      >
+      <div className={InfobarCSS.infobar + " " + (sideBar ? InfobarCSS.infobar_sidebar_active : InfobarCSS.infobar_sidebar_inactive)}>
+        {/* Icon to close the infobar */}
         <div className={InfobarCSS.close_button} onClick={() => handleClose()}>
           <Close height={"15"} />
         </div>
 
-        {/* Render a section depending on which button is active */}
+        {/* Render a section depending on which one is active */}
         {buttonActive === "directions" && <Directions />}
         {buttonActive === "stops" && <Stops />}
         {buttonActive === "near me" && <NearMe />}
@@ -46,6 +41,7 @@ const InfoBar = ({
     </>
   );
 
+  // Function that closes the infobar and sets the active button to null
   function handleClose() {
     setInfoBar(false);
     setButtonActive("");

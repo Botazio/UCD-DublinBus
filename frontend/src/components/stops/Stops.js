@@ -1,13 +1,13 @@
 import StopSearchBar from "../stop-searchbar/StopSearchBar";
 import StopsCSS from "./Stops.module.css";
 import Waiting from "../waiting/Waiting";
-import FetchError from "../fetch-error/FetchError";
+import CustomError from "../../reusable-components/error/CustomError";
 import { useState } from "react";
 import StopBusTimes from "../stop-bus-times/StopBusTimes";
 import MarkerClusters from "../marker-clusters/MarkerClusters";
 import { useGoogleMap } from "@react-google-maps/api";
 import MarkersSwitch from "../markers-switch/MarkersSwitch";
-import CustomMarker from "../custom-marker/CustomMarker";
+import CustomMarker from "../../reusable-components/custom-marker/CustomMarker";
 import Card from "../../reusable-components/card/Card";
 import PopoverOptions from "../popover-options/PopoverOptions";
 import { useStops } from "../../providers/StopsContext";
@@ -28,7 +28,7 @@ const Stops = () => {
 
   // Error handling when fetching for the data
   if (error)
-    return <FetchError height="60" message="Unable to fetch the data" />;
+    return <CustomError height="60" message="Unable to fetch the data" />;
 
   // Wait for the data
   if (isPending) return <Waiting />;

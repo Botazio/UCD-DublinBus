@@ -1,8 +1,7 @@
 /* Styles for the center view button */
-.center_view_button {
+.button {
   position: absolute;
   right: 10px;
-  top: 60px;
   padding: 10px;
   background-color: white;
   border-radius: 2px;
@@ -13,10 +12,16 @@
   z-index: 1;
   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
 }
-.center_view_button > img {
+.button > img {
   opacity: 0.6;
 }
-
-.center_view_button:hover > img {
+.button:hover > img {
   opacity: 1;
 }
+.button_bottom {
+  bottom: 100px;
+}
+.button_top {
+  top: 60px
+}
+

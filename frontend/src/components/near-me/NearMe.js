@@ -4,14 +4,14 @@ import { useState } from "react";
 import NearMeCSS from "./NearMe.module.css";
 import ToogleButtons from "./subcomponents/ToogleButtons";
 import Waiting from "../waiting/Waiting";
-import FetchError from "../fetch-error/FetchError";
+import CustomError from "../../reusable-components/error/CustomError";
 import geodist from "geodist";
 import Card from "../../reusable-components/card/Card";
 import DisplayStops from "./subcomponents/DisplayStops";
 import PopoverOptions from "../popover-options/PopoverOptions";
 import Slider from "@material-ui/core/Slider";
 import Pagination from '@material-ui/lab/Pagination';
-import MarkerUserPosition from "../custom-marker/MarkerUserPosition";
+import CustomMarker from "../../reusable-components/custom-marker/CustomMarker";
 import { useStops } from "../../providers/StopsContext";
 
 // this is the main component for the NearMe section
@@ -54,7 +54,7 @@ const NearMe = () => {
 
    // Error handling when fetching for the data
    if (error)
-      return <FetchError height="60" message="Unable to fetch the data" />;
+      return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
    if (isPending) return <Waiting />;
@@ -84,7 +84,7 @@ const NearMe = () => {
          </div>
 
          {/* display a marker at the user position*/}
-         {position && <MarkerUserPosition
+         {position && <CustomMarker
             id="user-position"
             position={position}
             mapRef={mapRef}

@@ -1,11 +1,11 @@
-import DirectionsSearch from "../directions-search/DirectionsSearch";
+import DirectionsSearcher from "./subcomponents/DirectionsSearcher";
 
-// This component is the main component for the directions system.
-// The subcomponents are inserted in this component
+// This component is the main component for the directions section.
+// The subcomponents are called from this component
 const Directions = () => {
   return (
     <>
-      <DirectionsSearch />
+      <DirectionsSearcher />
     </>
   );
 };

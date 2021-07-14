@@ -1,7 +1,7 @@
-import UserLocationButtonCSS from "./UserLocationButton.module.css";
-import iconPosition from "./fixtures/icon-position.png";
+import MapCustomButtonsCSS from "../MapCustomButtons.module.css";
+import iconPosition from "../fixtures/icon-position.png";
 import { useState } from "react";
-import MarkerUserPosition from "../custom-marker/MarkerUserPosition";
+import MarkerUserPosition from "../../../reusable-components/custom-marker/CustomMarker";
 
 // Displays a marker at the user location when it is clicked
 const UserLocationButton = ({ mapRef }) => {
@@ -10,7 +10,7 @@ const UserLocationButton = ({ mapRef }) => {
   return (
     <>
       <div
-        className={UserLocationButtonCSS.button}
+        className={MapCustomButtonsCSS.button + " " + MapCustomButtonsCSS.button_bottom}
         onClick={() => getUserPosition()}
       >
         <img

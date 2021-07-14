@@ -8,16 +8,20 @@ import { useAuth } from "../../../providers/AuthContext";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 
+// This component provides a signin form to login into the application
 const SignIn = () => {
+  // Reference to the HTML elements
   const usernameRef = useRef();
   const passwordRef = useRef();
+  // Hook to get the variables from the authentication context
   const { signin, errorMessage } = useAuth();
+  // States for the form. Display error messages and avoids sending the form multiple times
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Uses the error from the context to display a message
   useEffect(() => {
-    setError(errorMessage);
+    setError(errorMessage); // Comes from the auth hook after getting an error from the backend
   }, [errorMessage]);
 
   // Set the error to null the first time the component renders
@@ -26,6 +30,7 @@ const SignIn = () => {
   }, []);
 
   return (
+    /* Google and Facebook buttons */
     <div className={AuthenticationCSS.signin_tab}>
       <div className={AuthenticationCSS.buttons_wrapper}>
         <button className={AuthenticationCSS.google_button}>
@@ -41,6 +46,7 @@ const SignIn = () => {
       {/* If there is an error display it */}
       {error && <div className={AuthenticationCSS.error_wrapper}>{error}</div>}
 
+      {/* Form to fill with email or name and password */}
       <form className={AuthenticationCSS.form} onSubmit={handleSubmit}>
         <div className={AuthenticationCSS.email_wrapper}>
           <div>
@@ -79,6 +85,9 @@ const SignIn = () => {
     </div>
   );
 
+  // Function that controls the logic of the form after submission.
+  // Uses the context(AuthContext) signin function to change the state of the application 
+  // if the response from the backend is ok (the user exist)
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -92,7 +101,10 @@ const SignIn = () => {
 
     try {
       setError("");
+      // set Loading to true so the user can not send the same information twice
       setLoading(true);
+      // try to sign in with the information the user has provided
+      // this can triggered an error in the backend if the user does not exist
       signin(usernameRef.current.value, passwordRef.current.value, setError);
     } catch {
       setError("Failed to sign in");

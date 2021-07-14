@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useFetch from "../../helpers/useFetch";
 import { Chart } from "react-google-charts";
-import FetchError from "../fetch-error/FetchError";
+import CustomError from "../../reusable-components/error/CustomError";
 import Waiting from "../waiting/Waiting";
 import WeatherInfoCSS from "./WeatherInfo.module.css";
 import ScrollMenu from "react-horizontal-scrolling-menu";
@@ -71,7 +71,7 @@ export default function WeatherInfo() {
   // Error handling when fetching for the data
   if (error)
     return (
-      <FetchError height="60" message="Unable to fetch the weather data" />
+      <CustomError height="60" message="Unable to fetch the weather data" />
     );
 
   // Wait for the data

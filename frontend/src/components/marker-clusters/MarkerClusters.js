@@ -2,7 +2,7 @@ import useSupercluster from "use-supercluster";
 import { Marker } from "@react-google-maps/api";
 import { useState } from "react";
 import { useEffect } from "react";
-import iconStop from "../../fixtures/icon-stop.png";
+import iconStop from "../../fixtures/icons/icon-stop.png";
 import iconClusterPurple from "./fixtures/icon-cluster-purple.png";
 import iconClusterRed from "./fixtures/icon-cluster-red.png";
 import iconClusterOrange from "./fixtures/icon-cluster-orange.png";

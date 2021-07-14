@@ -2,8 +2,8 @@ import NearMeCSS from '../NearMe.module.css';
 import StopBusTimes from '../../stop-bus-times/StopBusTimes';
 import { useState } from 'react';
 import { Marker } from '@react-google-maps/api';
-import iconStop from "../../../fixtures/icon-stop.png";
-import FetchError from '../../fetch-error/FetchError';
+import iconStop from "../../../fixtures/icons/icon-stop.png";
+import CustomError from '../../../reusable-components/error/CustomError';
 import { withStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
@@ -37,7 +37,7 @@ const DisplayStops = ({ stops, mapRef, page }) => {
     };
 
     if (stops === "no stops") {
-        return (<FetchError message="No stops around" height={60} />);
+        return (<CustomError message="No stops around" height={60} />);
     }
 
     return (

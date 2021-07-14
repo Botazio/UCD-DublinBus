@@ -1,4 +1,4 @@
-import { ReactComponent as Options } from "../../fixtures/icon-options.svg";
+import { ReactComponent as Options } from "../../fixtures/icons/icon-options.svg";
 import Popover from "@material-ui/core/Popover";
 import { useState } from 'react';
 

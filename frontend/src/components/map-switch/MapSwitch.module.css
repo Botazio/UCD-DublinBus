@@ -1,6 +1,7 @@
 .container {
   background-color: white;
   display: flex;
+  flex-direction: row;
   border-radius: 25px;
   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
 }
@@ -12,6 +13,42 @@
   display: flex;
   align-items: center;
 }
+.container > div > svg {
+  fill: rgba(0,0,0, 0.8);
+  margin-right: 5px;
+}
 .active {
   background-color: lightblue;
 }
+
+/* Display the switcher on the right side when the screen width is 
+between 600px-900px */
+@media screen and (max-width: 900px) and (min-width: 600px) {
+  .container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+  }
+  .container > div {
+    height: 60px;
+    border-radius: 25px;
+    padding:0;
+    width: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container > div > p {
+    display: none;
+  }
+  .container > div > svg {
+    fill: rgba(0,0,0, 0.6);
+    margin-right: 0px;
+  }
+  .container > div:hover > svg {
+    fill: rgba(0,0,0, 0.9);
+  }
+}
+

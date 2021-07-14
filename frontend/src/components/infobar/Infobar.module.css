@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 5;
   left: 150px;
-  width: 300px;
+  width: 325px;
   background-color: #ff8283;
   height: 100%;
   transition: 0.5s;
@@ -46,6 +46,17 @@
 .infobar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+@media screen and (max-width: 900px) {
+  .map_switcher {
+    position: absolute;
+    top: 50%;
+    z-index: 20;
+    right: 10px;
+    transform: translateY(-50%);
+    display: block;
+  }
 }
 
 @media screen and (max-width: 600px) {

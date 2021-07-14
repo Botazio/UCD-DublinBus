@@ -5,37 +5,43 @@ import SignIn from "./subcomponents/SignIn";
 import SignUp from "./subcomponents/SignUp";
 import { ReactComponent as Arrow } from "./fixtures/icon-arrow.svg";
 
+// This is the main component for the authentication page
+// Provides a signin and singup forms
 const Authentication = () => {
-  // state that controls when to display sign in or sign up
+  // State that controls when to display sign in or sign up
   const [signInActive, setSignInActive] = useState(true);
 
   return (
     <div className={AuthenticationCSS.wrapper}>
+
+      {/* Link to go back into the main page */}
       <Link to="/">
         <div className={AuthenticationCSS.back_home_button}>
           <Arrow height={"30px"} fill={"white"} />
         </div>
       </Link>
+
       <div className={AuthenticationCSS.auth_box}>
+        {/* Toogle buttons to switch between signin and signup */}
         <div className={AuthenticationCSS.toggle_buttons}>
           <div
             onClick={() => setSignInActive(false)}
-            className={signInActive ? AuthenticationCSS.inactive : ""}
-          >
+            className={signInActive ? AuthenticationCSS.inactive : ""}>
             <p>Sign up</p>
           </div>
           <div
             onClick={() => setSignInActive(true)}
-            className={!signInActive ? AuthenticationCSS.inactive : ""}
-          >
+            className={!signInActive ? AuthenticationCSS.inactive : ""}>
             <p>Sign in</p>
           </div>
         </div>
+        {/* signin and signup forms */}
         <div className={AuthenticationCSS.tabs}>
           {signInActive && <SignIn />}
           {!signInActive && <SignUp />}
         </div>
       </div>
+
     </div>
   );
 };
