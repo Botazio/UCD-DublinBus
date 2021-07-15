@@ -1,6 +1,6 @@
 import NavBar from "../components/navbar/NavBar";
 import SideBar from "../components/sidebar/SideBar";
-import MapContainer from "../components/mapcontainer/MapContainer";
+import MapContainer from "../components/map-container/MapContainer";
 import MapCustomButtons from "../components/map-custom-buttons/MapCustomButtons";
 
 const BusPage = () => {
