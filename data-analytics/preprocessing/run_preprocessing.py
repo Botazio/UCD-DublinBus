@@ -1,21 +1,5 @@
 """
-Run preprocessing on the data using this script. The preprocessing is broken up into two stages.
-
-1. Matching Adjacent Pairs of Stops: This step matches up pairs of adjacent stops
-for each day in the 2018 data and saves them as separate parquet files.
-
-    nohup python -u data-analytics/preprocessing/run_preprocessing.py create_adjacent_stop_pairs &
-
-It saves the output to /home/team13/data/adjacent_stop_pairs/. Timestampted logs are available in
-/home/team13/logs/preprocessing/.
-
-2. Feature Engineering: This stage takes the input of the previous stage and combines all the
-CSVs files for a particular stop pair together and adds features.
-
-    nohup python -u data-analytics/preprocessing/run_preprocessing.py features &
-
-It saves the output to /home/team13/data/adjacent_stop_pairs_with_features/.
-Timestampted logs are available in /home/team13/logs/preprocessing/.
+Run preprocessing on the data using this script. See the README.md for more details.
 """
 
 import sqlite3
@@ -26,7 +10,7 @@ import sys
 import glob
 import pandas as pd
 import numpy as np
-from . import utils
+from .utils import create_adjacent_stop_pairs, bank_holidays_2018
 
 logging.basicConfig(
     filename=f"/home/team13/logs/preprocessing/{sys.argv[1]}_{datetime.datetime.now()}",
@@ -59,21 +43,28 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
         WHERE DAYOFSERVICE == "{query_date}"
         """
 
-        # Join leavetimes and trips
-        RT_Leavetimes = pd.read_sql(
+        leavetimes = pd.read_sql(
             LEAVTIMES_QUERY.format(query_date=query_date), conn)
-        RT_Trips = pd.read_sql(TRIPS_QUERY.format(query_date=query_date), conn)
-        leavetimes_trips = RT_Leavetimes.join(
-            RT_Trips.set_index('TRIPID'), on='TRIPID')
+        trips = pd.read_sql(TRIPS_QUERY.format(query_date=query_date), conn)
 
-        stop_pairs_df = utils.create_adjacent_stop_pairs(leavetimes_trips)
+        # Data quality checks
+        # Remove any rows from leavetimes where the ACTUALTIME_ARR is greater than
+        # the ACTUALTIME_DEP (i.e., a bus cannot arrive at a stop after it's
+        # already supposed to have departed)
+        leavetimes = leavetimes[leavetimes['ACTUALTIME_ARR'] <= leavetimes['ACTUALTIME_DEP']]
+
+        # Join leavetimes and trips
+        leavetimes_trips = leavetimes.join(
+            trips.set_index('TRIPID'), on='TRIPID')
+
+        stop_pairs_df = create_adjacent_stop_pairs(leavetimes_trips)
 
         for dep_stop, arr_stop in list(
                 stop_pairs_df.groupby(['DEPARTURE_STOP', 'ARRIVAL_STOP'])[
-                    ['TRAVEL_TIME']].mean().index
+                    ['travel_time']].mean().index
         ):
-            res = stop_pairs_df[(stop_pairs_df['DEPARTURE_STOP'] == dep_stop) & (
-                stop_pairs_df['ARRIVAL_STOP'] == arr_stop)]
+            res = stop_pairs_df[(stop_pairs_df['departure_stop'] == dep_stop) & (
+                stop_pairs_df['arrival_stop'] == arr_stop)]
 
             path = f"/home/team13/data/adjacent_stop_pairs/{int(dep_stop)}_to_{int(arr_stop)}/"
 
@@ -81,7 +72,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
                 os.mkdir(path)
 
             file_name = f'{int(dep_stop)}_to_{int(arr_stop)}_{query_date}'
-            res.sort_values('TIME_DEPARTURE').to_parquet(
+            res.sort_values('time_departure').to_parquet(
                 path + f'{file_name}.parquet', index=False)
 
 elif sys.argv[1] == "features":
@@ -97,36 +88,64 @@ elif sys.argv[1] == "features":
 
         logging.info(f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
-        # Add time features
+        # Data quality checks
+        if (stop_pair_df[stop_pair_df['travel_time'] < 0].shape[0]) > 0:
+            invalid_rows = stop_pair_df[stop_pair_df['travel_time'] < 0].index
+            logging.info(f"Dropping {len(invalid_rows)} rows where calculated travel" +
+                            "time is < 0")
+
+            stop_pair_df = stop_pair_df.drop(invalid_rows)
+
+        # cosine and sine of seconds since midnight
         SECONDS_IN_DAY = 24 * 60 * 60
-        stop_pair_df['COS_TIME'] = np.cos(
-            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
-        stop_pair_df['SIN_TIME'] = np.sin(
-            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
-
-        stop_pair_df['DAY'] = pd.to_datetime(
-            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
-        stop_pair_df['COS_DAY'] = np.cos(
-            stop_pair_df['DAY'] * (2 * np.pi / 7))
-        stop_pair_df['SIN_DAY'] = np.sin(
-            stop_pair_df['DAY'] * (2 * np.pi / 7))
-
-        # Add weather features
-        weather_df = pd.read_csv(
-            "~/data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv")
-        weather_df['date'] = pd.to_datetime(
-            weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
-        weather_df['DATE'] = weather_df['date'].dt.date
-        weather_df['HOUR'] = weather_df['date'].dt.hour
 
         stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
             stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
-        stop_pair_df['DATE'] = stop_pair_df['DAYOFSERVICE'].dt.date
-        stop_pair_df['HOUR'] = stop_pair_df['DAYOFSERVICE'].dt.hour
+        stop_pair_df['date'] = stop_pair_df['DAYOFSERVICE'].dt.date
+        stop_pair_df['hour'] = (stop_pair_df['TIME_DEPARTURE'] / (60 * 60)).astype(int)
+        stop_pair_df['day'] = stop_pair_df['DAYOFSERVICE'].dt.weekday
+
+        stop_pair_df['cos_time'] = np.cos(
+            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
+        stop_pair_df['cos_sine'] = np.sin(
+            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
+
+        # cosine and sine of day of week number
+        stop_pair_df['day'] = pd.to_datetime(
+            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
+        stop_pair_df['cos_day'] = np.cos(
+            stop_pair_df['day'] * (2 * np.pi / 7))
+        stop_pair_df['sin_day'] = np.sin(
+            stop_pair_df['day'] * (2 * np.pi / 7))
+
+        # dummy variable for weekend
+        stop_pair_df['is_weekend'] = stop_pair['DAY'].isin([5, 6])
+
+        # one-hot encoding of days
+        day_of_week_columns = pd.get_dummies(stop_pair_df['DAY'], drop_first=True, prefix="day")
+        stop_pair_df[list(day_of_week_columns)] = day_of_week_columns
+
+        stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
+
+        # Add weather features
+        weather_df = pd.read_csv(
+            "~/data/raw/met_eireann_hourly_phoenixpark_dec2017jan2019.csv",
+            usecols=['date', 'rain', 'temp'])
+        weather_df['datetime'] = pd.to_datetime(
+            weather_df['date'].str.upper(), format="%d-%b-%Y %H:%M")
+        weather_df = weather_df.drop('date', axis=1)
+        weather_df['date'] = weather_df['datetime'].dt.date
+        weather_df['hour'] = weather_df['datetime'].dt.hour
+        weather_df = weather_df.sort_values('datetime')
+        weather_df['lagged_rain'] = weather_df['rain'].shift(1)
 
         stop_pair_df = pd.merge(stop_pair_df, weather_df, on=[
-                                'DATE', 'HOUR'], how='left')
+                                'date', 'hour'], how='left')
         file_path = f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
 
-        stop_pair_df.sort_values(['DAYOFSERVICE', 'TIME_DEPARTURE']).to_parquet(
+        # bank holiday features
+        stop_pair_df['bank_holiday'] = 0
+        stop_pair_df.loc[stop_pair_df['date'].isin(bank_holidays_2018), 'bank_holiday'] = 1
+
+        stop_pair_df.sort_values(['DATE', 'TIME_DEPARTURE']).to_parquet(
             file_path, index=False)
