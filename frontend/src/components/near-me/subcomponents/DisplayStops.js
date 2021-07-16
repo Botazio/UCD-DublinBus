@@ -1,14 +1,14 @@
 import NearMeCSS from '../NearMe.module.css';
-import StopBusTimes from '../../stop-bus-times/StopBusTimes';
+import StopBusArrivals from '../../stop-bus-arrivals/StopBusArrivals';
 import { useState } from 'react';
-import { Marker } from '@react-google-maps/api';
 import iconStop from "../../../fixtures/icons/icon-stop.png";
-import CustomError from '../../../reusable-components/error/CustomError';
 import { withStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { AccordionDetails } from '@material-ui/core';
+import CustomMarker from '../../../reusable-components/custom-marker/CustomMarker';
 
+// Styles for the accordion
 const AccordionSummary = withStyles({
     content: {
         '&$expanded': {
@@ -18,8 +18,9 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-// this component returns a div and displays a marker for each stop in the array
-const DisplayStops = ({ stops, mapRef, page }) => {
+// This component returns a div and displays a marker for each stop in the array
+// This div are wrapped by an accordion
+const DisplayStops = ({ stops, page }) => {
     // state to hold which stop has been clicked
     const [activeStop, setActiveStop] = useState("");
     // state to control the accordion
@@ -29,22 +30,19 @@ const DisplayStops = ({ stops, mapRef, page }) => {
         setExpanded(isExpanded ? stop : false);
     };
 
-    // custom options for the stops marker
+    // Custom options for the stops marker
     var customIcon = {
         url: iconStop,
         origin: new window.google.maps.Point(0, 0),
         anchor: new window.google.maps.Point(10, 10),
     };
 
-    if (stops === "no stops") {
-        return (<CustomError message="No stops around" height={60} />);
-    }
 
     return (
         <>
+            {/* Displays 10 results per page */}
             {stops.slice((page - 1) * 10, ((page - 1) * 10) + 10).map((stop) => {
                 return (
-
                     <div key={"div_" + stop.stop_id} className={NearMeCSS.stop_container} onClick={() => setActiveStop(stop)}>
 
                         <Accordion expanded={expanded === stop} onChange={handleChange(stop)} >
@@ -60,10 +58,11 @@ const DisplayStops = ({ stops, mapRef, page }) => {
                                 </div>
                             </AccordionSummary>
 
+                            {/* Only display the accordion details (Next bus arrivals) when that stop is active */}
                             {(activeStop === stop) &&
                                 <AccordionDetails>
                                     <div className={NearMeCSS.bus_times}>
-                                        <StopBusTimes selectedStop={activeStop} waitingColor="dark" waitingSize="small" />
+                                        <StopBusArrivals selectedStop={activeStop} waitingColor="dark" waitingSize="small" />
                                     </div>
                                 </AccordionDetails>}
 
@@ -72,22 +71,22 @@ const DisplayStops = ({ stops, mapRef, page }) => {
                 );
             })}
 
+            {/* Map the stops array and display a custom marker */}
             {stops.map((stop) => (
-                <Marker
+                <CustomMarker
                     key={"marker" + stop.stop_id}
                     position={{
                         lat: stop.stop_lat,
                         lng: stop.stop_lon,
                     }}
-                    options={{
-                        map: mapRef,
-                        icon: customIcon,
-                    }}
+                    options={{ icon: customIcon }}
                 />
             ))}
         </>
     );
 
+    // Function that controls how to display the distance
+    // Displays km if the distance is more than 1 km
     function handleDistance(dist) {
         // if the distance is less than a km return the units in meters
         if (dist < 1) {

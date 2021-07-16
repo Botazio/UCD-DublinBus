@@ -12,12 +12,9 @@ import WeatherInfo from "../weather-info/WeatherInfo";
 const InfoBar = ({
   sideBar,
   setInfoBar,
-  infoBar,
   buttonActive,
   setButtonActive,
 }) => {
-  // If infobar is not active we do not return anything
-  if (!infoBar) return "";
 
   return (
     <>
@@ -25,12 +22,17 @@ const InfoBar = ({
         {/* We want to rerender the component every time buttonActive changes */}
         <MapSwitch buttonActive={buttonActive} />
       </div>
+
       {/* The styles for the infobar depends on the sidebar position */}
       <div className={InfobarCSS.infobar + " " + (sideBar ? InfobarCSS.infobar_sidebar_active : InfobarCSS.infobar_sidebar_inactive)}>
+
         {/* Icon to close the infobar */}
         <div className={InfobarCSS.close_button} onClick={() => handleClose()}>
           <Close height={"15"} />
         </div>
+
+        {/* This empty div sets up an space between the map switch and the rest of the components */}
+        <div className={InfobarCSS.dummy_div}></div>
 
         {/* Render a section depending on which one is active */}
         {buttonActive === "directions" && <Directions />}

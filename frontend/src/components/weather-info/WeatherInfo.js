@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useFetch from "../../helpers/useFetch";
 import { Chart } from "react-google-charts";
 import CustomError from "../../reusable-components/error/CustomError";
-import Waiting from "../waiting/Waiting";
+import Waiting from "../../reusable-components/waiting/Waiting";
 import WeatherInfoCSS from "./WeatherInfo.module.css";
 import ScrollMenu from "react-horizontal-scrolling-menu";
 import { ReactComponent as Humidity } from "./fixtures/icon-humidity.svg";
@@ -53,7 +53,7 @@ const options = {
     fontName: "Roboto, sans-serif",
     color: "black",
   },
-  legend: "none",
+  legend: 'bottom'
 };
 
 export default function WeatherInfo() {

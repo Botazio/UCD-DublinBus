@@ -1,6 +1,6 @@
 import WaitingCSS from "./Waiting.module.css";
 
-// This is component while the user is waiting for a fetch call
+// This reusable component is meant to be used while the user is waiting for an async operation
 const Waiting = ({ variant, size }) => {
 
   return (

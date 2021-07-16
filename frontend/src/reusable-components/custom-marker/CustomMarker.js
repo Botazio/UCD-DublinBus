@@ -8,6 +8,7 @@ const CustomMarker = ({ id, position, options }) => {
   // Default options
   const defaultOptions = {
     map: mapRef,
+    zIndex: 1000,
   };
 
   return (
@@ -25,7 +26,7 @@ const CustomMarker = ({ id, position, options }) => {
 
     // Zooms more the higher is the view
     if (zoom <= 13) {
-      mapRef.setZoom(zoom + 2);
+      mapRef.setZoom(15);
     } else if (13 < zoom && zoom <= 16) {
       mapRef.setZoom(zoom + 1);
     }

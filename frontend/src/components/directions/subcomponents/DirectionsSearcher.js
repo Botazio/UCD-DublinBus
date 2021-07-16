@@ -1,6 +1,6 @@
 import DirectionsSearchCSS from "../Directions.module.css";
 import StopSearchBar from "../../stop-searchbar/StopSearchBar";
-import SearchButton from "../../search-button/SearchButton";
+import SearchButton from "../../../reusable-components/search-button/SearchButton";
 
 // This is a subcomponent from the direction search system.
 // Allows the user to enter the Origin stop and the Destination stop

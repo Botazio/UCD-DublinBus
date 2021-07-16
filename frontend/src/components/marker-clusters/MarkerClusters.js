@@ -144,28 +144,28 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
       customIcon = {
         url: iconClusterPurple,
         origin: new window.google.maps.Point(0, 0),
-        anchor: new window.google.maps.Point(28, 28),
+        anchor: new window.google.maps.Point(40, 40),
       };
       return customIcon;
     } else if (700 <= pointCount && pointCount < 2000) {
       customIcon = {
         url: iconClusterRed,
         origin: new window.google.maps.Point(0, 0),
-        anchor: new window.google.maps.Point(26, 26),
+        anchor: new window.google.maps.Point(35, 35),
       };
       return customIcon;
     } else if (300 <= pointCount && pointCount < 700) {
       customIcon = {
         url: iconClusterOrange,
         origin: new window.google.maps.Point(0, 0),
-        anchor: new window.google.maps.Point(24, 24),
+        anchor: new window.google.maps.Point(30, 30),
       };
       return customIcon;
     } else if (100 <= pointCount && pointCount < 300) {
       customIcon = {
         url: iconClusterYellow,
         origin: new window.google.maps.Point(0, 0),
-        anchor: new window.google.maps.Point(22, 22),
+        anchor: new window.google.maps.Point(25, 25),
       };
       return customIcon;
     } else if (30 <= pointCount && pointCount < 100) {
@@ -185,6 +185,8 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
     }
   }
 
+  // Function to handle when a stop is clicked. Displays a normal marker
+  // and centers the view on it
   function handleStopClick(stopId) {
     const selectedStop = stops.find((stop) => stop.stop_id === stopId);
     setSelectedStop(selectedStop);

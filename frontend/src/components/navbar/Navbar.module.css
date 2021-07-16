@@ -15,10 +15,12 @@
   align-items: center;
   font-family: "Roboto", sans-serif;
 }
-.login_icon {
+.login_icon, 
+.list_icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
 }
 .logo_navbar_phone {
   display: none;

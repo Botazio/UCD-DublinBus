@@ -3,7 +3,6 @@ import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import MapContainerCSS from "./MapContainer.module.css";
 import mapStyles from "../../fixtures/map-styles/mapStyles";
 import { useStops } from "../../providers/StopsContext";
-import { useEffect } from "react";
 
 // Google map libraries
 const libraries = ["places"];

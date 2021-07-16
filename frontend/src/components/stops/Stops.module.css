@@ -1,5 +1,11 @@
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
 .searchbar {
-  margin-top: 60px;
   width: 70%;
 }
 .searchbar > div > input {
@@ -15,10 +21,10 @@
   padding: 5px;
 }
 .options {
-  top: 70px;
-  right: 20px;
+  right: 17.5px;
   position: absolute;
   z-index: 1;
+  margin-top: 3px;
 }
 .options > svg {
   cursor: pointer;

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthProvider } from "./providers/AuthContext";
-import "./App.css";
 import BusPage from "./pages/BusPage";
 import AuthenticationPage from "./pages/AuthenticationPage";
 import PrivateRoute from "./helpers/PrivateRoute";
@@ -14,7 +13,6 @@ function App() {
     <Router>
       <AuthProvider>
         <Switch>
-
           <Route exact path="/">
             <StopsProvider>
               <BusPage />

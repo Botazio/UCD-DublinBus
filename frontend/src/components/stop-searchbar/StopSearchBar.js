@@ -11,6 +11,7 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
+// This component gives stop suggestions to the user while input is being entered
 const StopSearchBar = ({ placeholder, stops, setSelectedStop }) => {
   // States
   const [term, setTerm] = React.useState("");
@@ -66,18 +67,9 @@ const StopSearchBar = ({ placeholder, stops, setSelectedStop }) => {
     // Waits 0.1s before giving another prediction
     const throttledTerm = useThrottle(term, 100);
     /* eslint-disable */
-    return useMemo(
-      () =>
-        term === ""
-          ? null
-          : matchSorter(
-              stops,
-              term,
-              { keys: ["stop_name", "stop_number"] },
-              { threshold: matchSorter.rankings.STARTS_WITH }
-            ),
-      [throttledTerm]
-    );
+    return useMemo(() => term === "" ? null :
+      matchSorter(stops, term, { keys: ["stop_name", "stop_number"] },
+        { threshold: matchSorter.rankings.STARTS_WITH }), [throttledTerm]);
   }
 };
 

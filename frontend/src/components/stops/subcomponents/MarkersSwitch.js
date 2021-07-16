@@ -1,7 +1,8 @@
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
-// this component acts as a button to render the markers
+// This component acts as a button to render the markers
+// When active the markers are displayed on the map
 const MarkersSwitch = ({ displayMarkers, setDisplayMarkers }) => {
   return (
     <FormControlLabel
