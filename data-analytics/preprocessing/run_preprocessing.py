@@ -21,7 +21,7 @@ logging.basicConfig(
 
 if sys.argv[1] == "create_adjacent_stop_pairs":
 
-    conn = sqlite3.connect("/home/team13/db/database/DublinBusHistoric1.db")
+    conn = sqlite3.connect("/home/team13/db/database/DublinBusHistoric_typed.db")
 
     dates = pd.read_sql("SELECT DISTINCT DAYOFSERVICE FROM trips", conn)
     dates = pd.to_datetime(dates['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
@@ -60,7 +60,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
         stop_pairs_df = create_adjacent_stop_pairs(leavetimes_trips)
 
         for dep_stop, arr_stop in list(
-                stop_pairs_df.groupby(['DEPARTURE_STOP', 'ARRIVAL_STOP'])[
+                stop_pairs_df.groupby(['departure_stop', 'arrival_stop'])[
                     ['travel_time']].mean().index
         ):
             res = stop_pairs_df[(stop_pairs_df['departure_stop'] == dep_stop) & (
@@ -96,33 +96,37 @@ elif sys.argv[1] == "features":
 
             stop_pair_df = stop_pair_df.drop(invalid_rows)
 
-        # cosine and sine of seconds since midnight
-        SECONDS_IN_DAY = 24 * 60 * 60
-
         stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
             stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
+        stop_pair_df['hour'] = (stop_pair_df['time_departure'] / (60 * 60)).astype(int)
+
+        # Dublin Bus data uses hours >= 24 for the next day (e.g., 25:00 for 1am)
+        # Move the day of service to the next day and convert hour back to 24hr clock
+        stop_pair_df.loc[stop_pair_df['hour'] >= 24,
+                            'DAYOFSERVICE'] = stop_pair_df['DAYOFSERVICE'] + pd.Timedelta(days=1)
+        stop_pair_df['hour'] = stop_pair_df['hour'] % 24
+
         stop_pair_df['date'] = stop_pair_df['DAYOFSERVICE'].dt.date
-        stop_pair_df['hour'] = (stop_pair_df['TIME_DEPARTURE'] / (60 * 60)).astype(int)
         stop_pair_df['day'] = stop_pair_df['DAYOFSERVICE'].dt.weekday
 
+        # cosine and sine of seconds since midnight
+        SECONDS_IN_DAY = 24 * 60 * 60
         stop_pair_df['cos_time'] = np.cos(
-            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
-        stop_pair_df['cos_sine'] = np.sin(
-            stop_pair_df['TIME_DEPARTURE'] * (2 * np.pi / SECONDS_IN_DAY))
+            stop_pair_df['time_departure'] * (2 * np.pi / SECONDS_IN_DAY))
+        stop_pair_df['sin_time'] = np.sin(
+            stop_pair_df['time_departure'] * (2 * np.pi / SECONDS_IN_DAY))
 
         # cosine and sine of day of week number
-        stop_pair_df['day'] = pd.to_datetime(
-            stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S").dt.weekday
         stop_pair_df['cos_day'] = np.cos(
             stop_pair_df['day'] * (2 * np.pi / 7))
         stop_pair_df['sin_day'] = np.sin(
             stop_pair_df['day'] * (2 * np.pi / 7))
 
         # dummy variable for weekend
-        stop_pair_df['is_weekend'] = stop_pair['DAY'].isin([5, 6])
+        stop_pair_df['is_weekend'] = stop_pair_df['day'].isin([5, 6])
 
         # one-hot encoding of days
-        day_of_week_columns = pd.get_dummies(stop_pair_df['DAY'], drop_first=True, prefix="day")
+        day_of_week_columns = pd.get_dummies(stop_pair_df['day'], drop_first=True, prefix="day")
         stop_pair_df[list(day_of_week_columns)] = day_of_week_columns
 
         stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
@@ -147,5 +151,5 @@ elif sys.argv[1] == "features":
         stop_pair_df['bank_holiday'] = 0
         stop_pair_df.loc[stop_pair_df['date'].isin(bank_holidays_2018), 'bank_holiday'] = 1
 
-        stop_pair_df.sort_values(['DATE', 'TIME_DEPARTURE']).to_parquet(
+        stop_pair_df.sort_values(['date', 'time_departure']).to_parquet(
             file_path, index=False)
