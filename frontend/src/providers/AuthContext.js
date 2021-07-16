@@ -16,73 +16,73 @@ export function AuthProvider({ children }) {
 
   // function to sign up
   function signup(username, password) {
-    const body = { "username": username, "password": password }
+    const body = { username: username, password: password };
 
-    // set the error to null 
+    // set the error to null
     setErrorMessage(null);
 
-    fetch('http://csi420-02-vm6.ucd.ie/dublinbus/users/', {
-      method: 'POST',
+    fetch("http://csi420-02-vm6.ucd.ie/dublinbus/users/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw Error();
         }
-        return res.json()
+        return res.json();
       })
-      .then(json => {
+      .then((json) => {
         // set the token in the local storage so it does not depend on react state
-        localStorage.setItem('token', json.token);
+        localStorage.setItem("token", json.token);
 
-        // set the current user to the response 
+        // set the current user to the response
         setCurrentUser({ username: json.username });
       })
-      .catch(err => {
-        if (err.name === 'AbortError') {
-          console.log('fetch abort');
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("fetch abort");
         } else {
-          console.log(err)
-          setErrorMessage('Failed to create an account');
+          console.log(err);
+          setErrorMessage("Failed to create an account");
         }
       });
   }
 
-  // function to sign in 
+  // function to sign in
   function signin(username, password) {
-    const body = { "username": username, "password": password }
+    const body = { username: username, password: password };
 
-    // set the error to null 
+    // set the error to null
     setErrorMessage(null);
 
-    fetch('http://csi420-02-vm6.ucd.ie/token-auth/', {
-      method: 'POST',
+    fetch("http://csi420-02-vm6.ucd.ie/token-auth/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw Error();
         }
-        return res.json()
+        return res.json();
       })
-      .then(json => {
+      .then((json) => {
         // set the token in the local storage so it does not depend on react state
-        localStorage.setItem('token', json.token);
+        localStorage.setItem("token", json.token);
 
-        // set the current user to the response 
+        // set the current user to the response
         setCurrentUser(json.user);
       })
-      .catch(err => {
-        if (err.name === 'AbortError') {
-          console.log('fetch abort');
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("fetch abort");
         } else {
-          setErrorMessage('Failed to sign in');
+          setErrorMessage("Failed to sign in");
         }
       });
   }
@@ -90,20 +90,20 @@ export function AuthProvider({ children }) {
   // function to check if the user is authenticated
   function isAuthenticated() {
     // if there is a token in the local storage try to log in
-    if (localStorage.getItem('token')) {
-      fetch('http://csi420-02-vm6.ucd.ie/dublinbus/current_user/', {
-        method: 'GET',
+    if (localStorage.getItem("token")) {
+      fetch("http://csi420-02-vm6.ucd.ie/dublinbus/current_user/", {
+        method: "GET",
         headers: {
-          Authorization: `JWT ${localStorage.getItem('token')}`
-        }
+          Authorization: `JWT ${localStorage.getItem("token")}`,
+        },
       })
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => res.json())
+        .then((json) => {
           // change this later when they send me back a user object
           // set the current user to the response if the toke is valid
           if (json.username) {
             setCurrentUser({ username: json.username });
-          } // logout if the response is not a user 
+          } // logout if the response is not a user
           else {
             logout();
           }
@@ -113,7 +113,7 @@ export function AuthProvider({ children }) {
 
   // function to log out
   function logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setCurrentUser(null);
   }
 
@@ -123,12 +123,8 @@ export function AuthProvider({ children }) {
     signin,
     isAuthenticated,
     logout,
-    errorMessage
-  }
+    errorMessage,
+  };
 
-  return (
-    <AuthContext.Provider value={value} >
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

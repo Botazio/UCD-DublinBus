@@ -1,12 +1,11 @@
 .searchbar {
-   margin-top: 60px;
+  margin-top: 60px;
 }
 .searchbar > div > input {
-   padding: 8px 15px;
-   font-size: 1rem;
-   border-radius: 20px;
+  padding: 8px 15px;
+  font-size: 1rem;
+  border-radius: 20px;
 }
 .submit_search {
-   width: 100%;
+  width: 100%;
 }
-

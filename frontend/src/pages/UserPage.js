@@ -1,13 +1,11 @@
 import NavBar from "../components/navbar/NavBar";
 
 const UserPage = () => {
-
-   return (
-      <>
-         <NavBar />
-
-      </>
-   );
-}
+  return (
+    <>
+      <NavBar />
+    </>
+  );
+};
 
 export default UserPage;

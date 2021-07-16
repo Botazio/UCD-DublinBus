@@ -1,16 +1,16 @@
 .container {
-   background-color: white;
-   display: flex;
-   border-radius: 25px;
+  background-color: white;
+  display: flex;
+  border-radius: 25px;
 }
 .container > div {
-   padding: 0px 20px;
-   height: 30px;
-   border-radius: 25px;
-   cursor: pointer;
-   display: flex;
-   align-items: center;
+  padding: 0px 20px;
+  height: 30px;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .active {
-   background-color: lightblue;
+  background-color: lightblue;
 }

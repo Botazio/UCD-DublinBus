@@ -6,17 +6,30 @@
   margin: 0 auto;
   position: relative;
   z-index: 100;
-  box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
+  box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
   padding: 0vh 5vh;
 }
 .navbar_logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 .login_icon {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.logo_navbar_phone {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .logo_navbar_phone {
+    display: block;
+    text-transform: uppercase;
+  }
+  .logo_navbar_desktop {
+    display: none;
+  }
 }
