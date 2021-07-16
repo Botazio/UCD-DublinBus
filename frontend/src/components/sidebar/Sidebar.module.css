@@ -22,6 +22,7 @@
   transition: 0.4s;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .button:hover {
   border-left: 10px solid #b82025;
