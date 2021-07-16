@@ -34,7 +34,12 @@
   background-color: #e8e7e2;
 }
 .map_switcher {
-  display: none;
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  right: 10px;
+  transform: translateY(-50%);
+  display: block;
 }
 .dummy_div {
   width: 100%;
@@ -50,17 +55,6 @@
 .infobar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-}
-
-@media screen and (max-width: 900px) {
-  .map_switcher {
-    position: absolute;
-    top: 50%;
-    z-index: 20;
-    right: 10px;
-    transform: translateY(-50%);
-    display: block;
-  }
 }
 
 @media screen and (max-width: 600px) {
