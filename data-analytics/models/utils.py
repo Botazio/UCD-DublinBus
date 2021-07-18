@@ -2,18 +2,22 @@ import datetime
 import glob
 import logging
 import pickle
+import math
 
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from statistics import mean
 import matplotlib.pyplot as plt
 from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import learning_curve
+import tensorflow as tf
+import keras
 
 sns.set_theme()
 
-def train_all_stop_pair_models(model):
+def train_all_stop_pair_models(model, model_name):
     """
     Train a model on each adjacent stop pair
 
@@ -24,7 +28,6 @@ def train_all_stop_pair_models(model):
     """
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    model_name = type(model).__name__
 
     logging.basicConfig(
         filename=f"/home/team13/logs/models/{model_name}/{current_time}",
@@ -118,17 +121,35 @@ def train_model(stop_pair_df, model):
         shuffle=False
     )
 
-    # Perform cross-validation
-    average_cv_rmse = time_series_cross_validate(x_train, y_train, model)
-    logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
+    # check whether we're using a keras neural network
+    keras_model_classes = (tf.keras.Model, keras.Model, tf.estimator.Estimator)
+    if isinstance(model, keras_model_classes):
 
-    # Train on full training set now and calculate unseen test set metrics
-    predictions = model.fit(x_train, y_train).predict(x_test)
-    test_rmse = mean_squared_error(y_test, predictions, squared=False)
-    logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
+        # TODO: What about cross-validation?
+        history = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=30)
+        print(model.summary())
 
-    # Train on full data (train and test) before finally saving
-    trained_model = model.fit(x_full, y_full)
+        test_mse = model.evaluate(x_test.to_numpy(), y_test.to_numpy())
+        print(f"Test RMSE: {math.sqrt(test_mse)}")
+
+        # TODO: Does this match the console loss?
+        average_cv_rmse = math.sqrt(history.history['loss'][-1])
+        test_rmse = math.sqrt(test_mse)
+        trained_model = model
+
+    # otherwise we're using a simple sklearn model (e.g., linear regression)
+    else:
+        # Perform cross-validation
+        average_cv_rmse = time_series_cross_validate(x_train, y_train, model)
+        logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
+
+        # Train on full training set now and calculate unseen test set metrics
+        predictions = model.fit(x_train, y_train).predict(x_test)
+        test_rmse = mean_squared_error(y_test, predictions, squared=False)
+        logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
+
+        # Train on full data (train and test) before finally saving
+        trained_model = model.fit(x_full, y_full)
 
     return average_cv_rmse, test_rmse, trained_model
 
@@ -189,23 +210,23 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     _, axes = plt.subplots(1, 2, figsize=(20, 5))
 
     axes[0].plot(
-        stop_pairs_metrics['num_rows'],
+        stop_pairs_metrics['num_training_rows'],
         stop_pairs_metrics['average_cv_rmse'],
         'o'
     )
     axes[0].legend(loc="best")
-    axes[0].set_title("Average CV RMSE vs. Number of Rows per Stop Pair")
-    axes[0].set_xlabel("Number of Rows")
+    axes[0].set_title("Average CV RMSE vs. Number of Training Rows per Stop Pair")
+    axes[0].set_xlabel("Number of Training Rows")
     axes[0].set_ylabel("RMSE")
 
     axes[1].plot(
-        stop_pairs_metrics['num_rows'],
+        stop_pairs_metrics['num_training_rows'],
         stop_pairs_metrics['test_rmse'],
         'o'
     )
     axes[1].legend(loc="best")
     axes[1].set_title("Test RMSE vs. Number of Rows per Stop Pair")
-    axes[1].set_xlabel("Number of Rows")
+    axes[1].set_xlabel("Number of Training Rows")
     axes[1].set_ylabel("RMSE")
 
     plt.savefig(f"/home/team13/model_output/{model_name}/" +
@@ -358,3 +379,60 @@ def plot_fit_time_curves(fit_times, cv_scores, train_sizes, axes):
     axes[2].set_xlabel("fit_times")
     axes[2].set_ylabel("Score")
     axes[2].set_title("Cross-Validation Score (Negative RMSE)")
+
+def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
+    """
+    Take a row of input data and a trained keras model for a particular stop pair
+    and make many predictions. This can be used to generate a probability distribution
+    of predictions.
+
+    Args
+    ---
+        inputs: numpy array
+            A row of input data in the form of a numpy array
+
+        trained_nn_model: keras model
+            A trained neural network model from keras
+
+        num_predictions: int, default 100
+            The number of predictions to make
+
+    Returns
+    ---
+    An array of predictions for the input row
+    """
+
+    predictions = []
+    for _ in range(num_predictions):
+        pred = trained_nn_model.predict(inputs)
+        predictions.append(pred[0][0])
+
+    return predictions
+
+def plot_probabilistic_predictions(stop_pair, predictions):
+    """
+    Take an array of predictions for a journey between two stops
+    and draw a probability density curve
+
+    Args
+    ---
+        stop_pair: str
+            The stop pair that the predictions were generated for
+
+        predictions: array-like
+            An array of predictions for a particular input
+
+    Returns
+    ---
+    A probability density curve
+    """
+
+    _, axes = plt.subplots(1, 1, figsize=(20, 5))
+
+    # TODO: Why use kdeplot?
+    sns.kdeplot(predictions, shade=True)
+    # Plot mean as a red line
+    plt.axvline(mean(predictions), color='red')
+
+    plt.savefig(f"/home/team13/model_output/NeuralNetwork/" +
+        f"NeuralNetwork_predictions{stop_pair}.png")
