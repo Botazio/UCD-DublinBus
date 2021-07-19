@@ -2,7 +2,7 @@ import useFetch from "../../helpers/useFetch";
 import Waiting from "../waiting/Waiting";
 import StopBusTimesCSS from "./StopBusTimes.module.css";
 
-const StopBusTimes = ({ selectedStop }) => {
+const StopBusTimes = ({ selectedStop, waitingColor, waitingSize }) => {
   // Fetch the selected stop
   const {
     data: fetchedStop,
@@ -16,15 +16,12 @@ const StopBusTimes = ({ selectedStop }) => {
   if (error) return <div>Unable to get the bus times</div>;
 
   // Wait for the data
-  if (isPending) return <Waiting />;
+  if (isPending) return <div className={StopBusTimesCSS.waiting_wrapper}><Waiting variant={waitingColor} size={waitingSize} /></div>;
 
   return (
-    <div className={StopBusTimesCSS.wrapper}>
-      <div className={StopBusTimesCSS.slide}>
-        <p id={StopBusTimesCSS.stop_name}>{fetchedStop.stop_name}</p>
-        {handleTimes()}
-      </div>
-    </div>
+    <>
+      {handleTimes()}
+    </>
   );
 
   // Function that orders the arrivals depending on the time

@@ -2,6 +2,7 @@
   background-color: white;
   display: flex;
   border-radius: 25px;
+  box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
 }
 .container > div {
   padding: 0px 20px;

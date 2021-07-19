@@ -1,11 +1,10 @@
 /* Styles for the toogle button */
 .display_markers_switch {
-  margin-top: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: rgba(255, 255, 255, 0.3);
-  width: 70%;
+  width: 100%;
   padding: 10px;
   border-radius: 10px;
 }
@@ -15,6 +14,7 @@
   display: inline-block;
   width: 46px;
   height: 22px;
+  margin-left: 10px;
 }
 
 /* Hide default HTML checkbox */

@@ -18,4 +18,5 @@
 [data-reach-combobox-option] {
   padding: 5px 5px !important;
   text-transform: capitalize;
+  font-size: 0.9rem;
 }

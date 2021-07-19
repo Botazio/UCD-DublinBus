@@ -1,11 +1,25 @@
 .searchbar {
   margin-top: 60px;
+  width: 70%;
 }
 .searchbar > div > input {
-  padding: 8px 15px;
+  line-height: 30px;
   font-size: 1rem;
   border-radius: 20px;
 }
 .submit_search {
   width: 100%;
+}
+.stop_bus_times_title {
+  align-self: flex-start;
+  padding: 5px;
+}
+.options {
+  top: 70px;
+  right: 20px;
+  position: absolute;
+  z-index: 1;
+}
+.options > svg {
+  cursor: pointer;
 }
