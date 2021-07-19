@@ -103,8 +103,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# Set the environment variable DB to 'local' if you want to use the local mySQL DB
-if os.environ.get('DB') == 'local':
+# Set the environment variable DB to 'local_mysql' if you want to use the local mySQL DB
+if os.environ.get('DB') == 'local_mysql':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -114,6 +114,14 @@ if os.environ.get('DB') == 'local':
             'HOST': '127.0.0.1',
             'PORT': '3306',
         },
+    }
+# Set the environment variable DB to 'local_sqlite3' if you want to use the local sqlite3 DB
+elif os.environ.get('DB') == 'local_sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 # The default is the AWS mySQL DB
 else:

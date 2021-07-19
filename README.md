@@ -10,14 +10,21 @@ LOCAL_MYSQL_PASSWORD=LOCAL_MYSQL_PASSWORD
 ```
 
 ## Databases
-By default the Django backend will use the MySQL instance hosted by AWS. To switch to a local MySQL instance instead you can set the following environment variable:
+By default the Django backend will use the MySQL instance hosted by AWS. 
+
+To switch to a local MySQL instance instead you can set the following environment variable:
 ```bash
-export DB='local'
+export DB='local_mysql'
 ```
 This requires that the MySQL database is setup correctly on the local host.
 
+To switch to a local SQLite instance you can set the following environment variable:
+```bash
+export DB='local_sqlite3'
+```
+
 ### Database Creation
-Before running the setup_db.py script, the DJANGO_BACKEND environmental variable must be set, which specifies the path to the django project root directory e.g.
+Before running the setup_db.sh script, the DJANGO_BACKEND environmental variable must be set, which specifies the path to the django project root directory e.g.
 ```bash
 export DJANGO_BACKEND='/home/team13/UCD-DublinBus/backend'
 ```
