@@ -41,7 +41,7 @@ between 600px-900px */
   }
   .container > div {
     padding: 0px 20px;
-    height: 40px;
+    height: 35px;
     width: auto;
     border-radius: 25px;
     cursor: pointer;
@@ -52,8 +52,11 @@ between 600px-900px */
     display: block;
   }
   .container > div > svg {
-    fill: rgba(0,0,0, 0.9);
+    fill: rgba(0,0,0, 0.6);
     margin-right: 5px;
+  }
+  .active > svg {
+    fill: rgba(0,0,0, 0.9)!important;
   }
 }
 
