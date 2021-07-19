@@ -5,5 +5,5 @@ class DublinBusTests(TestCase):
 
     def test_404(self):
         """Test 404 responses from invalid IDs"""
-        response = self.client.get('/dublinbus/stop/abc/')
+        response = self.client.get('/stop/abc/')
         self.assertEqual(response.status_code, 404)

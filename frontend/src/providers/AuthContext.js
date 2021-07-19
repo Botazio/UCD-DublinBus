@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
     // set the error to null
     setErrorMessage(null);
 
-    fetch("http://csi420-02-vm6.ucd.ie/dublinbus/users/", {
+    fetch("http://csi420-02-vm6.ucd.ie/users/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export function AuthProvider({ children }) {
   function isAuthenticated() {
     // if there is a token in the local storage try to log in
     if (localStorage.getItem("token")) {
-      fetch("http://csi420-02-vm6.ucd.ie/dublinbus/current_user/", {
+      fetch("http://csi420-02-vm6.ucd.ie/current_user/", {
         method: "GET",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`,

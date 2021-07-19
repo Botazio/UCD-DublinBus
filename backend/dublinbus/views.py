@@ -1,15 +1,19 @@
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
+from django.contrib.auth import get_user_model
 
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
 
-from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, UserSerializerWithToken
+from .serializers import UserSerializerWithToken, \
+    FavouriteStopSerializer, \
+    FavouriteJourneySerializer
+from .models import FavouriteStop, FavouriteJourney
+from .permissions import IsOwner, IsUser
 
 def index(request):
     """Temporary homepage for the application"""
@@ -155,34 +159,114 @@ def predict(request):
 
     return JsonResponse({"prediction": total_time})
 
-@api_view(['GET'])
-def current_user(request):
+class FavouriteStopView(APIView):
     """
-    Function-based view.
-    Determine the current user by their token, and return their data
+    Get, Post or Delete a FavouriteStop instance(s) for the currently authenticated user.
     """
 
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    permission_classes = [IsOwner]
 
-
-class UserList(APIView):
-    """
-    Class-based view.
-    Create a new user.
-    """
-
-    permission_classes = (permissions.AllowAny,)
+    def get(self, request):
+        """Return a list of all the FavouriteStops for the currently authenticated user."""
+        favourite_stops = FavouriteStop.objects.filter(owner=self.request.user)
+        serializer = FavouriteStopSerializer(favourite_stops, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        '''When a request is routed to this view, a UserSerializerWithToken serializer object
-        is instantiated with the data the user entered into the signup form'''
-        serializer = UserSerializerWithToken(data=request.data)
-        #  The serializer checks whether or not the data is valid
+        """Create a new FavouriteStop for the currently authenticated user."""
+        serializer = FavouriteStopSerializer(data=request.data)
         if serializer.is_valid():
-            # if it is, save the new user
-            serializer.save()
-            # and return that user’s data in the response including the token
+            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
+            serializer.save(owner=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the FavouriteStop object for the currently authenticated user."""
+        try:
+            return FavouriteStop.objects.get(pk=primary_key)
+        except FavouriteStop.DoesNotExist as favourite_stop_not_exist:
+            raise Http404(f"Cannot find FavouriteStop: {primary_key}") from favourite_stop_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a FavouriteStop for the currently authenticated user."""
+        favourite_stop = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favourite_stop)
+        favourite_stop.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FavouriteJourneyView(APIView):
+    """
+    Get, Post or Delete a FavouriteJourney instance(s) for the currently authenticated user.
+    """
+
+    permission_classes = [IsOwner]
+
+    def get(self, request):
+        """Return a list of all the FavouriteJourneys for the currently authenticated user."""
+        favourite_journeys = FavouriteJourney.objects.filter(owner=self.request.user)
+        serializer = FavouriteJourneySerializer(favourite_journeys, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new FavouriteJourney for the currently authenticated user."""
+        serializer = FavouriteJourneySerializer(data=request.data)
+        if serializer.is_valid():
+            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
+            serializer.save(owner=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the FavouriteJourneys object for the currently authenticated user."""
+        try:
+            return FavouriteJourney.objects.get(pk=primary_key)
+        except FavouriteJourney.DoesNotExist as favourite_journey_not_exist:
+            raise Http404(
+                f"Cannot find FavouriteJourney: {primary_key}"
+                ) from favourite_journey_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a FavouriteJourney for the currently authenticated user."""
+        favourite_journey = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favourite_journey)
+        favourite_journey.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserView(APIView):
+    """
+    Get, Post or Delete a User instance.
+    """
+
+    permission_classes = [IsUser]   # [ IsUser | IsAdminUser ]
+
+    def get(self, request):
+        """Return the User details for the currently authenticated user."""
+        serializer = UserSerializerWithToken(request.user)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new User for the currently authenticated user."""
+        serializer = UserSerializerWithToken(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the User object for the currently authenticated user."""
+        try:
+            return get_user_model().objects.get(pk=primary_key)
+        except get_user_model().DoesNotExist as user_not_exist:
+            raise Http404(f"Cannot find User: {primary_key}") from user_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a User for the currently authenticated user."""
+        user = self.get_object(primary_key)
+        self.check_object_permissions(self.request, user)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
