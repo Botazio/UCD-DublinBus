@@ -9,7 +9,7 @@ const StopBusTimes = ({ selectedStop, waitingColor, waitingSize }) => {
     isPending,
     error,
   } = useFetch(
-    "http://csi420-02-vm6.ucd.ie/dublinbus/stop/" + selectedStop.stop_id
+    "http://csi420-02-vm6.ucd.ie/stop/" + selectedStop.stop_id
   );
 
   // Error handling when fetching for the data
