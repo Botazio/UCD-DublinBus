@@ -24,9 +24,9 @@ export DB='local_sqlite3'
 ```
 
 ### Database Creation
-Before running the setup_db.sh script, the DJANGO_BACKEND environmental variable must be set, which specifies the path to the django project root directory e.g.
+Before running the setup_db.sh script, the GTFS_STATIC_DIR environmental variable must be set, which specifies the path to where the GTFS static files are located e.g.
 ```bash
-export DJANGO_BACKEND='/home/team13/UCD-DublinBus/backend'
+export GTFS_STATIC_DIR='/home/team13/UCD-DublinBus/backend/dublinbus/scripts/gtfs_static'
 ```
 
 ## Data Analytics

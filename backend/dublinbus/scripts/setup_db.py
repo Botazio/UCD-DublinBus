@@ -5,8 +5,7 @@ from csv import reader
 import pandas as pd
 from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
 
-BASE_DIR = os.environ.get('DJANGO_BACKEND')
-GTFS_STATIC_DIR = BASE_DIR + "/dublinbus/scripts/gtfs_static"
+GTFS_STATIC_DIR = os.environ.get('GTFS_STATIC_DIR')
 
 # Deleting all records in database, order of deletion matters
 Line.objects.all().delete() # FK stop
