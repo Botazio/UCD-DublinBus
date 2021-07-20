@@ -19,9 +19,9 @@ inputs = keras.Input(shape=(8,))
 x = normalizer(inputs)
 
 if sys.argv[1] == "small":
-    x = Dense(16, activation='relu')(inputs)
+    x = Dense(8, activation='relu')(inputs)
     x = Dropout(dropout_rate)(x, training=True)
-    x = Dense(16, activation='relu')(x)
+    x = Dense(8, activation='relu')(x)
     x = Dropout(dropout_rate)(x, training=True)
 elif sys.argv[1] == "medium":
     x = Dense(64, activation='relu')(inputs)

@@ -126,7 +126,7 @@ def train_model(stop_pair_df, model):
     if isinstance(model, keras_model_classes):
 
         # TODO: What about cross-validation?
-        history = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=30)
+        history = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
         print(model.summary())
 
         test_mse = model.evaluate(x_test.to_numpy(), y_test.to_numpy())
@@ -232,7 +232,7 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     plt.savefig(f"/home/team13/model_output/{model_name}/" +
         f"{model_name}_metrics_{current_time}.png")
 
-def generate_learning_fit_time_curves(model, stop_pair, current_time):
+def generate_learning_fit_time_curves(model, stop_pair):
     """
     Plot learning and fit time curves for a model for a particular stop pair. The
     final plot consists of three plots:
@@ -250,20 +250,18 @@ def generate_learning_fit_time_curves(model, stop_pair, current_time):
             for. In the format "X_to_Y" where X and Y are station
             numbers
 
-        current_time: str
-            The time these statistics were generated to use in the
-            file name
-
     Returns
     ---
     Saves a learning curve plot for a stop pair
     """
 
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
     stop_pair_df = pd.read_parquet(
         f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
     )
 
-    y_full = stop_pair_df['TRAVEL_TIME']
+    y_full = stop_pair_df['travel_time']
     features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
                 'lagged_rain', 'temp', 'bank_holiday']
     x_full = stop_pair_df[features]
@@ -277,7 +275,8 @@ def generate_learning_fit_time_curves(model, stop_pair, current_time):
         # Higher score is better in this case (less negative)
         scoring='neg_root_mean_squared_error',
         return_times=True,
-        train_sizes=np.linspace(0.1, 1.0, 10)
+        train_sizes=np.linspace(0.01, 1.0, 10),
+        shuffle=False
     )
 
     _, axes = plt.subplots(1, 3, figsize=(20, 5))
