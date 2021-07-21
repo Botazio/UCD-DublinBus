@@ -1,0 +1,15 @@
+.infobox {
+   height: 500px;
+   width: 600px;
+   padding: 10px 30px;
+}
+
+
+@media screen and (max-width: 600px) {
+   .infobox {
+      width: 100%;
+      padding: 0px 20px;
+      display: flex;
+      flex-direction: column;
+   }
+}

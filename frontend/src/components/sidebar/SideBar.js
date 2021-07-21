@@ -16,7 +16,7 @@ const SideBar = () => {
 
   // We need to create a portal for the list icon that control the visibility of the sidebar.
   // This is because the list icon is in the navbar
-  const domNodeList = document.getElementById("list_icon");
+  const domNodeList = document.getElementById("icon");
 
   // For phone we display the section the user is on instead of the application logo
   const domNodeLogo = document.getElementById("logo_navbar_phone");
@@ -41,6 +41,7 @@ const SideBar = () => {
         <SideBarSwitch sideBar={sideBar} setSideBar={setSideBar} />,
         domNodeList
       )}
+
       {/* Renders the active button if there is one, renders 'DUBLIN BUS' in case there is none.
          Only for phone. The visibility is control in the css styles for the navbar. */}
       {ReactDOM.createPortal(

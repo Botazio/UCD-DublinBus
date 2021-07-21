@@ -16,7 +16,7 @@
   font-family: "Roboto", sans-serif;
 }
 .login_icon, 
-.list_icon {
+.custom_icon {
   display: flex;
   align-items: center;
   justify-content: center;

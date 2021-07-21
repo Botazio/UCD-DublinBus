@@ -1,5 +1,5 @@
 import InfobarCSS from "./Infobar.module.css";
-import { ReactComponent as Close } from "./fixtures/icon-close.svg";
+import { ReactComponent as Close } from "../../fixtures/icons/icon-close.svg";
 import Directions from "../directions/Directions";
 import Stops from "../stops/Stops";
 import NearMe from "../near-me/NearMe";
