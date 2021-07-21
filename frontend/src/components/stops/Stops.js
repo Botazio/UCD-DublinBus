@@ -36,7 +36,7 @@ const Stops = () => {
   if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
   // Wait for the data
-  if (isPending) return <Waiting />;
+  if (isPending) return <Waiting variant="dark" />;
 
   return (
     <>
@@ -79,6 +79,8 @@ const Stops = () => {
         <StopBusArrivals
           selectedStop={selectedStop}
           setSelectedStop={setSelectedStop}
+          waitingColor="dark"
+          waitingSize="small"
         />
       </Card>
       )}

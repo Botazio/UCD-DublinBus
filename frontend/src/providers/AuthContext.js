@@ -15,13 +15,13 @@ export function AuthProvider({ children }) {
   const [errorMessage, setErrorMessage] = useState();
 
   // function to sign up
-  function signup(username, password) {
-    const body = { username: username, password: password };
+  function signup(username, email, password) {
+    const body = { username: username, email: email, password: password };
 
     // set the error to null
     setErrorMessage(null);
 
-    fetch("http://csi420-02-vm6.ucd.ie/dublinbus/users/", {
+    fetch("http://csi420-02-vm6.ucd.ie/users/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
       body: JSON.stringify(body),
     })
       .then((res) => {
+        console.log(res);
         if (!res.ok) {
           throw Error();
         }
@@ -91,7 +92,7 @@ export function AuthProvider({ children }) {
   function isAuthenticated() {
     // if there is a token in the local storage try to log in
     if (localStorage.getItem("token")) {
-      fetch("http://csi420-02-vm6.ucd.ie/dublinbus/current_user/", {
+      fetch("http://csi420-02-vm6.ucd.ie/users/", {
         method: "GET",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`,

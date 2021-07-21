@@ -35,7 +35,7 @@ const NearMeStops = ({ position, distance, resultsDisplayed }) => {
       return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
-   if (isPending) return <Waiting />;
+   if (isPending) return <Waiting variant="dark" />;
 
    // If there are no stops around display an error
    if (nearStops === "no stops") {

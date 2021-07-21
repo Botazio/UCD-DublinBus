@@ -4,6 +4,7 @@
   border-radius: 15px;
   outline: none;
   text-overflow: ellipsis;
+  border: 1px solid lightgray;
 }
 .search_input:first-letter {
   text-transform: capitalize;

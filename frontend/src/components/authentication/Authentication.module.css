@@ -1,7 +1,7 @@
 .wrapper {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(90deg, #ff8283, #e74545);
+  background-image: linear-gradient(to right top, #8c33ca, #764fd9, #5d63e4, #4274ea, #2583ed, #2c92f0, #3da0f1, #53adf1, #77bff4, #99d0f7, #bae1fb, #dbf2ff);
   display: flex;
   flex-direction: column;
   justify-content: center;

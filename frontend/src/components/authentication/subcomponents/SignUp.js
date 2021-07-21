@@ -144,7 +144,7 @@ const SignUp = () => {
       setLoading(true);
       // try to sign in with the information the user has provided
       // this can triggered an error in the backend if the user does not exist
-      signup(usernameRef.current.value, passwordRef.current.value);
+      signup(usernameRef.current.value, emailRef.current.value, passwordRef.current.value);
     } catch {
       setError("Failed to create an account");
     }
