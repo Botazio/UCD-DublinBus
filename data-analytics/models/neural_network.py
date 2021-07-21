@@ -2,9 +2,7 @@ import datetime
 import sys
 
 from tensorflow.keras.layers.experimental.preprocessing import Normalization
-from sklearn.model_selection import TimeSeriesSplit, train_test_split
-from keras.models import Model
-from keras.layers import Input, Dense, Dropout
+from keras.layers import Dense, Dropout
 import keras
 from .utils import train_all_stop_pair_models
 

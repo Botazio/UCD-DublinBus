@@ -1,8 +1,14 @@
 from datetime import datetime, timedelta, timezone
-import pickle
 import requests
 from django.conf import settings
 from dublinbus.models import Calendar
+from quantile_dotplot import ntile_dotplot
+from statistics import mean
+import keras
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
 
 def request_realtime_nta_data():
     """
@@ -119,7 +125,7 @@ def date_to_service_ids(current_date):
     day = current_date.strftime("%A").lower()
     return list(Calendar.objects.filter(**{day: True}).values_list('service_id', flat=True))
 
-def predict_adjacent_stop(departure_stop_num, arrival_stop_num):
+def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=100):
     """
     Predict the time to travel between two adjacent stops on the same route trip.
     This method uses stop numbers and not stop IDs since stop IDs are not available
@@ -139,10 +145,84 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num):
         a KeyError in the case a prediction cannot be found between two stops.
     """
 
-    model = pickle.load(open(
-        "./model_output/historical_averages/historical_averages.pickle",
-        "rb"
-        )
+    trained_nn_model = keras.models.load_model(
+        f"/home/team13/model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork/"
     )
 
-    return model[f"{departure_stop_num}_to_{arrival_stop_num}"]
+    # TODO: Get features from user
+    inputs = pd.read_parquet(
+        f"/home/team13/data/adjacent_stop_pairs_with_features/{departure_stop_num}_to_{arrival_stop_num}.parquet"
+    )
+    features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
+                'lagged_rain', 'temp', 'bank_holiday']
+    input_row = inputs[features].head(1).to_numpy()
+
+    predictions = make_probabilistic_predictions(input_row, trained_nn_model, num_predictions=num_predictions)
+    plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
+
+    return predictions
+
+def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
+    """
+    Take a row of input data and a trained keras model for a particular stop pair
+    and make many predictions. This can be used to generate a probability distribution
+    of predictions.
+
+    Args
+    ---
+        inputs: numpy array
+            A row of input data in the form of a numpy array
+
+        trained_nn_model: keras model
+            A trained neural network model from keras
+
+        num_predictions: int, default 100
+            The number of predictions to make
+
+    Returns
+    ---
+    A numpy array of predictions for the input row
+    """
+
+    predictions = np.array([])
+    for _ in range(num_predictions):
+        pred = trained_nn_model.predict(inputs)
+        predictions = np.append(predictions, pred[0])
+
+    return predictions
+
+def plot_probabilistic_predictions(stop_pair, predictions):
+    """
+    Take an array of predictions for a journey between two stops
+    and draw a probability density curve
+
+    Args
+    ---
+        stop_pair: str
+            The stop pair that the predictions were generated for
+
+        predictions: array-like
+            An array of predictions for a particular input
+
+    Returns
+    ---
+    A probability density curve and a quantile dotplot
+    """
+
+    _, axes = plt.subplots(1, 2, figsize=(20, 5))
+
+    # Kernel density estimate (KDE)
+    # Used as alternative to histogram to visualise distribution
+    sns.kdeplot(predictions, shade=True, ax=axes[0])
+    # Plot mean as a red line
+    axes[0].axvline(mean(predictions), color='red')
+
+    ntile_dotplot(predictions, dots=20, edgecolor="k", linewidth=2, ax=axes[1])
+
+    axes[1].set_xlabel("Journey Time (seconds)")
+    for spine in ("left", "right", "top"):
+        axes[1].spines[spine].set_visible(False)
+    axes[1].yaxis.set_visible(False)
+
+    plt.savefig(f"/home/team13/model_output/NeuralNetwork/" +
+        f"NeuralNetwork_predictions{stop_pair}.png")

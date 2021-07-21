@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
 from django.contrib.auth import get_user_model
+import numpy as np
 
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
@@ -139,7 +140,12 @@ def predict(request):
     arrival_stop_sequence = StopTime.objects.filter(
         trip_id=trip_id, stop_id=arrival_stop_id)[0].stop_sequence
 
-    total_time = 0
+    # Number of total predictions for the journey
+    num_predictions = 1000
+
+    # Array of predictions for the journey
+    total_times = np.zeros(num_predictions)
+
     for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
         departure_stop = StopTime.objects.get(
             trip_id=trip_id, stop_sequence=stop_sequence).stop_id
@@ -150,14 +156,20 @@ def predict(request):
         arrival_stop_num = Stop.objects.get(stop_id=arrival_stop).stop_num
 
         try:
-            total_time += utils.predict_adjacent_stop(
-                departure_stop_num, arrival_stop_num)
+            stop_pair_time_predictions = utils.predict_adjacent_stop(
+                departure_stop_num, arrival_stop_num,
+                num_predictions=num_predictions
+            )
+
+            # Add predictions for current adjacent stop pair to total journey
+            # prediction
+            total_times += stop_pair_time_predictions
         except KeyError as exc:
             raise Http404(
                 f"Cannot find a prediction from {departure_stop_num} to {arrival_stop_num}"
                 ) from exc
 
-    return JsonResponse({"prediction": total_time})
+    return JsonResponse({"prediction": total_times.tolist()})
 
 class FavouriteStopView(APIView):
     """

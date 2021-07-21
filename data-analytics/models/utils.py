@@ -6,9 +6,8 @@ import math
 
 import pandas as pd
 import numpy as np
-import seaborn as sns
-from statistics import mean
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import learning_curve
@@ -40,16 +39,18 @@ def train_all_stop_pair_models(model, model_name):
     stop_pairs_metrics = []
 
     # Train a model for each adjacent stop pair
-    for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
+    for stop_pair_file in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*")[:10]:
 
-        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['date', 'time_arrival'])
+        stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
+
+        stop_pair = stop_pair_file.split('/')[-1].split('.')[0]
         metrics = {
-            'stop_pair': stop_pair.split('/')[-1],
+            'stop_pair': stop_pair,
             'num_rows': stop_pair_df.shape[0]
         }
 
         logging.info(
-            f"{stop_pair_df.shape[0]} rows for {stop_pair.split('/')[-1]}")
+            f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
         if stop_pair_df.shape[0] > 50:
 
@@ -62,7 +63,7 @@ def train_all_stop_pair_models(model, model_name):
             stop_pairs_metrics.append(metrics)
 
             # Add trained model to dict
-            trained_models[stop_pair.split('/')[-1]] = trained_model
+            trained_models[stop_pair] = trained_model
 
     logging.info(
         "Model training complete. Writing out metrics and pickle files for each" +
@@ -76,12 +77,17 @@ def train_all_stop_pair_models(model, model_name):
     pd.DataFrame(stop_pairs_metrics).to_csv(f'/home/team13/model_output/{model_name}/' +
         f"/{model_name}_metrics_{current_time}.csv", index=False)
 
-    # Write out trained models as pickle files
-    with open(
-        f"/home/team13/model_output/{model_name}/" +
-            f"/{model_name}_{current_time}.pickle",
-            'wb') as pickle_file:
-        pickle.dump(trained_models, pickle_file)
+    if model_name != "NeuralNetwork":
+        # Write out trained models as pickle files
+        with open(
+            f"/home/team13/model_output/{model_name}/" +
+                f"/{model_name}_{current_time}.pickle",
+                'wb') as pickle_file:
+            pickle.dump(trained_models, pickle_file)
+    else:
+        for stop_pair, model in trained_models.items():
+            model.save(f"/home/team13/model_output/{model_name}/" +
+                f"/{stop_pair}_{model_name}")
 
 def train_model(stop_pair_df, model):
     """
@@ -210,7 +216,7 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     _, axes = plt.subplots(1, 2, figsize=(20, 5))
 
     axes[0].plot(
-        stop_pairs_metrics['num_training_rows'],
+        stop_pairs_metrics['num_rows'],
         stop_pairs_metrics['average_cv_rmse'],
         'o'
     )
@@ -220,13 +226,13 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     axes[0].set_ylabel("RMSE")
 
     axes[1].plot(
-        stop_pairs_metrics['num_training_rows'],
+        stop_pairs_metrics['num_rows'],
         stop_pairs_metrics['test_rmse'],
         'o'
     )
     axes[1].legend(loc="best")
     axes[1].set_title("Test RMSE vs. Number of Rows per Stop Pair")
-    axes[1].set_xlabel("Number of Training Rows")
+    axes[1].set_xlabel("Number of Rows")
     axes[1].set_ylabel("RMSE")
 
     plt.savefig(f"/home/team13/model_output/{model_name}/" +
@@ -275,7 +281,7 @@ def generate_learning_fit_time_curves(model, stop_pair):
         # Higher score is better in this case (less negative)
         scoring='neg_root_mean_squared_error',
         return_times=True,
-        train_sizes=np.linspace(0.01, 1.0, 10),
+        train_sizes=np.linspace(0.01, 1.0, 30),
         shuffle=False
     )
 
@@ -378,60 +384,3 @@ def plot_fit_time_curves(fit_times, cv_scores, train_sizes, axes):
     axes[2].set_xlabel("fit_times")
     axes[2].set_ylabel("Score")
     axes[2].set_title("Cross-Validation Score (Negative RMSE)")
-
-def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
-    """
-    Take a row of input data and a trained keras model for a particular stop pair
-    and make many predictions. This can be used to generate a probability distribution
-    of predictions.
-
-    Args
-    ---
-        inputs: numpy array
-            A row of input data in the form of a numpy array
-
-        trained_nn_model: keras model
-            A trained neural network model from keras
-
-        num_predictions: int, default 100
-            The number of predictions to make
-
-    Returns
-    ---
-    An array of predictions for the input row
-    """
-
-    predictions = []
-    for _ in range(num_predictions):
-        pred = trained_nn_model.predict(inputs)
-        predictions.append(pred[0][0])
-
-    return predictions
-
-def plot_probabilistic_predictions(stop_pair, predictions):
-    """
-    Take an array of predictions for a journey between two stops
-    and draw a probability density curve
-
-    Args
-    ---
-        stop_pair: str
-            The stop pair that the predictions were generated for
-
-        predictions: array-like
-            An array of predictions for a particular input
-
-    Returns
-    ---
-    A probability density curve
-    """
-
-    _, axes = plt.subplots(1, 1, figsize=(20, 5))
-
-    # TODO: Why use kdeplot?
-    sns.kdeplot(predictions, shade=True)
-    # Plot mean as a red line
-    plt.axvline(mean(predictions), color='red')
-
-    plt.savefig(f"/home/team13/model_output/NeuralNetwork/" +
-        f"NeuralNetwork_predictions{stop_pair}.png")
