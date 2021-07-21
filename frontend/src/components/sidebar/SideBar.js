@@ -2,8 +2,10 @@ import ReactDOM from "react-dom";
 import SidebarCSS from "./Sidebar.module.css";
 import InfoBar from "../infobar/InfoBar";
 import { useState } from "react";
-import SideBarSwitch from "../sidebar-switch/SideBarSwitch";
+import SideBarSwitch from "./subcomponents/SideBarSwitch";
 
+// Main component of the bus page. Handles which section is active
+// Passes that state to the infobar
 const SideBar = () => {
   // States to control when to display the sideBar and the infoBar
   const [sideBar, setSideBar] = useState(true);
@@ -14,115 +16,62 @@ const SideBar = () => {
 
   // We need to create a portal for the list icon that control the visibility of the sidebar.
   // This is because the list icon is in the navbar
-  const domNodeList = document.getElementById("list_icon");
+  const domNodeList = document.getElementById("icon");
 
   // For phone we display the section the user is on instead of the application logo
   const domNodeLogo = document.getElementById("logo_navbar_phone");
 
+  // Buttons displayed on the sidebar 
+  const sectionButton = (text) => {
+    return (
+      <div className={SidebarCSS.button + " " + (buttonActive === text ? SidebarCSS.active : "")}
+        value={text}
+        onClick={() => handleClick(text)}
+      >
+        <p>{text}</p>
+        <p>&#10095;</p>
+      </div>
+    );
+  };
+
   return (
     <>
+      {/* Portal that sends the list icon to the navbar */}
       {ReactDOM.createPortal(
         <SideBarSwitch sideBar={sideBar} setSideBar={setSideBar} />,
         domNodeList
       )}
+
       {/* Renders the active button if there is one, renders 'DUBLIN BUS' in case there is none.
-         Only for phone. It is control in the css styles for the navbar. */}
+         Only for phone. The visibility is control in the css styles for the navbar. */}
       {ReactDOM.createPortal(
         buttonActive ? buttonActive : "DUBLIN BUS",
         domNodeLogo
       )}
 
-      <div
-        className={
-          SidebarCSS.sidebar +
-          " " +
-          (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)
-        }
-      >
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "directions" ? SidebarCSS.active : "")
-          }
-          value={"directions"}
-          onClick={() => handleClick("directions")}
-        >
-          <p>Directions</p>
-          <p>&#10095;</p>
-        </div>
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "stops" ? SidebarCSS.active : "")
-          }
-          value={"stops"}
-          onClick={() => handleClick("stops")}
-        >
-          <p>Stops</p>
-          <p>&#10095;</p>
-        </div>
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "lines" ? SidebarCSS.active : "")
-          }
-          value={"lines"}
-          onClick={() => handleClick("lines")}
-        >
-          <p>Lines</p>
-          <p>&#10095;</p>
-        </div>
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "near me" ? SidebarCSS.active : "")
-          }
-          value={"near me"}
-          onClick={() => handleClick("near me")}
-        >
-          <p>Near me</p>
-          <p>&#10095;</p>
-        </div>
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "favorites" ? SidebarCSS.active : "")
-          }
-          value={"favorites"}
-          onClick={() => handleClick("favorites")}
-        >
-          <p>Favorites</p>
-          <p>&#10095;</p>
-        </div>
-        <div
-          className={
-            SidebarCSS.button +
-            " " +
-            (buttonActive === "weather" ? SidebarCSS.active : "")
-          }
-          value={"favorites"}
-          onClick={() => handleClick("weather")}
-        >
-          <p>Weather</p>
-          <p>&#10095;</p>
-        </div>
+      {/* The classname depends on the sidebar state */}
+      <div className={SidebarCSS.sidebar + " " + (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)}>
+        {/* Render the section buttons */}
+        {sectionButton("directions")}
+        {sectionButton("stops")}
+        {sectionButton("lines")}
+        {sectionButton("near me")}
+        {sectionButton("favorites")}
+        {sectionButton("weather")}
       </div>
 
-      <InfoBar
+      {/* Render the infobar if it is active */}
+      {infoBar && <InfoBar
         sideBar={sideBar}
-        infoBar={infoBar}
         setInfoBar={setInfoBar}
         buttonActive={buttonActive}
         setButtonActive={setButtonActive}
-      />
+      />}
     </>
   );
 
+  // Function triggered when one of the buttons is clicked
+  // Changes the button active and opens the infobar 
   function handleClick(value) {
     setInfoBar(true);
     setButtonActive(value);

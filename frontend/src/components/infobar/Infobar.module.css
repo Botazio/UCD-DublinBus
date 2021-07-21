@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 5;
   left: 150px;
-  width: 300px;
+  width: 325px;
   background-color: #ff8283;
   height: 100%;
   transition: 0.5s;
@@ -19,7 +19,7 @@
 .close_button {
   position: absolute;
   right: 15px;
-  top: 15px;
+  top: 17.5px;
   height: 30px;
   width: 30px;
   cursor: pointer;
@@ -34,7 +34,16 @@
   background-color: #e8e7e2;
 }
 .map_switcher {
-  display: none;
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  right: 10px;
+  transform: translateY(-50%);
+  display: block;
+}
+.dummy_div {
+  width: 100%;
+  min-height: 60px;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -63,5 +72,9 @@
     right: 50%;
     transform: translateX(50%);
     display: block;
+  }
+  .dummy_div {
+    width: 100%;
+    min-height: 65px;
   }
 }

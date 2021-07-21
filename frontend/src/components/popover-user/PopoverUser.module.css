@@ -1,12 +1,5 @@
-.icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgb(182, 53, 92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+.avatar{
+  background-color: rgb(182, 53, 92)!important;
 }
 .pointer {
   cursor: pointer;
@@ -41,16 +34,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-/* Stops being able to select the text inside the icon */
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                   supported by Chrome and Opera */
 }
 .popover_header {
   display: flex;

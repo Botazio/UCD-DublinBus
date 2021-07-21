@@ -1,61 +1,68 @@
 import StopSearchBar from "../stop-searchbar/StopSearchBar";
 import StopsCSS from "./Stops.module.css";
-import Waiting from "../waiting/Waiting";
-import FetchError from "../fetch-error/FetchError";
-import { useState } from "react";
-import StopBusTimes from "../stop-bus-times/StopBusTimes";
+import Waiting from "../../reusable-components/waiting/Waiting";
+import CustomError from "../../reusable-components/error/CustomError";
+import { useEffect, useState } from "react";
+import StopBusArrivals from "../stop-bus-arrivals/StopBusArrivals";
 import MarkerClusters from "../marker-clusters/MarkerClusters";
 import { useGoogleMap } from "@react-google-maps/api";
-import MarkersSwitch from "../markers-switch/MarkersSwitch";
-import CustomMarker from "../custom-marker/CustomMarker";
+import MarkersSwitch from "./subcomponents/MarkersSwitch";
+import CustomMarker from "../../reusable-components/custom-marker/CustomMarker";
 import Card from "../../reusable-components/card/Card";
-import PopoverOptions from "../popover-options/PopoverOptions";
+import PopoverOptions from "../../reusable-components/popover-options/PopoverOptions";
 import { useStops } from "../../providers/StopsContext";
 
 // This component is the main component for the stops system.
-// The subcomponents are inserted in this component
 const Stops = () => {
   // State to select a stop. It is handled by the StopSearchBar component
   const [selectedStop, setSelectedStop] = useState(null);
   // State for the button that controls if the markers should be displayed
   const [displayMarkers, setDisplayMarkers] = useState(true);
 
-  // reference to the map
+  // reference to the map using the GoogleMap provider
   const mapRef = useGoogleMap();
+
+  // Center the map view to the selected stop position
+  useEffect(() => {
+    if (selectedStop) {
+      mapRef.panTo({ lat: selectedStop.stop_lat, lng: selectedStop.stop_lon });
+    }
+  }, [mapRef, selectedStop]);
 
   // Get the data from the provider
   const { data: stops, isPending, error } = useStops();
 
   // Error handling when fetching for the data
-  if (error)
-    return <FetchError height="60" message="Unable to fetch the data" />;
+  if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
   // Wait for the data
   if (isPending) return <Waiting />;
 
   return (
     <>
-      {/* Display the searchbar */}
-      <div className={StopsCSS.searchbar}>
-        <StopSearchBar
-          placeholder={"Search Stop..."}
-          stops={stops}
-          setSelectedStop={setSelectedStop}
-        />
-      </div>
-
-      {/* Display the options in a popover */}
-      {stops && (
-        <div className={StopsCSS.options}>
-          <PopoverOptions>
-            <MarkersSwitch
-              displayMarkers={displayMarkers}
-              setDisplayMarkers={setDisplayMarkers}
-              mapRef={mapRef}
-            />
-          </PopoverOptions>
+      <div className={StopsCSS.header}>
+        {/* Display the searchbar */}
+        <div className={StopsCSS.searchbar}>
+          <StopSearchBar
+            placeholder={"Search Stop..."}
+            stops={stops}
+            setSelectedStop={setSelectedStop}
+          />
         </div>
-      )}
+
+        {/* Display the options in a popover */}
+        {stops && (
+          <div className={StopsCSS.options}>
+            <PopoverOptions>
+              <MarkersSwitch
+                displayMarkers={displayMarkers}
+                setDisplayMarkers={setDisplayMarkers}
+                mapRef={mapRef}
+              />
+            </PopoverOptions>
+          </div>
+        )}
+      </div>
 
       {/* Display the markers and clusters */}
       {displayMarkers && (
@@ -67,21 +74,20 @@ const Stops = () => {
       )}
 
       {/* If there is a stop selected display the next buses*/}
-      {selectedStop && (<Card>
+      {selectedStop && (<Card variant="last">
         <h4 className={StopsCSS.stop_bus_times_title}>{selectedStop.stop_name}</h4>
-        <StopBusTimes
+        <StopBusArrivals
           selectedStop={selectedStop}
           setSelectedStop={setSelectedStop}
         />
       </Card>
       )}
 
-      {/* If there is a stop selected display a marker at that stop */}
+      {/* If there is a stop selected display a marker at that stop and center the view on it*/}
       {selectedStop && (
         <CustomMarker
           id={selectedStop.stop_id}
           position={{ lat: selectedStop.stop_lat, lng: selectedStop.stop_lon }}
-          mapRef={mapRef}
         />
       )}
     </>

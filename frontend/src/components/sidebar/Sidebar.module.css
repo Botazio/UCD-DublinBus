@@ -22,13 +22,28 @@
   transition: 0.4s;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .button:hover {
   border-left: 10px solid #b82025;
 }
+.button > p {
+  text-transform: capitalize;
+}
 .active {
   background-color: #ff8283;
 }
+.list_icon {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.list_icon_active svg {
+  fill: #b82025;
+  transition: 0.5s;
+}
+
 
 @media screen and (max-width: 600px) {
   .sidebar {

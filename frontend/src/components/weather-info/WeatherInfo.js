@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import useFetch from "../../helpers/useFetch";
 import { Chart } from "react-google-charts";
-import FetchError from "../fetch-error/FetchError";
-import Waiting from "../waiting/Waiting";
+import CustomError from "../../reusable-components/error/CustomError";
+import Waiting from "../../reusable-components/waiting/Waiting";
 import WeatherInfoCSS from "./WeatherInfo.module.css";
 import ScrollMenu from "react-horizontal-scrolling-menu";
 import { ReactComponent as Humidity } from "./fixtures/icon-humidity.svg";
@@ -53,7 +53,7 @@ const options = {
     fontName: "Roboto, sans-serif",
     color: "black",
   },
-  legend: "none",
+  legend: 'bottom'
 };
 
 export default function WeatherInfo() {
@@ -71,7 +71,7 @@ export default function WeatherInfo() {
   // Error handling when fetching for the data
   if (error)
     return (
-      <FetchError height="60" message="Unable to fetch the weather data" />
+      <CustomError height="60" message="Unable to fetch the weather data" />
     );
 
   // Wait for the data

@@ -16,7 +16,10 @@
 
 /* Styles for the comboboxes */
 [data-reach-combobox-option] {
-  padding: 5px 5px !important;
+  padding: 10px 5px !important;
   text-transform: capitalize;
   font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }

@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 60px;
   margin-bottom: 30px;
 }
 .weather_slides_wrapper {
@@ -141,6 +140,7 @@
   align-self: flex-start;
 }
 #weather_chart {
+  padding-bottom: 15px;
   width: 90%;
   border-radius: 20px;
   background-color: rgba(255, 255, 255, 0.3);
@@ -168,7 +168,7 @@
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.3);
-  padding: 20px;
+  padding: 20px 20px 30px 20px;
   border-radius: 20px;
 }
 .details_items {

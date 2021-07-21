@@ -8,18 +8,22 @@ import { useAuth } from "../../../providers/AuthContext";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 
+// This component provides a signup form to login into the application
 const SignUp = () => {
+  // Reference to the HTML elements
   const usernameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
+  // Authentication hook
   const { signup, errorMessage } = useAuth();
+  // States for the form. Display error messages and avoids sending the form multiple times
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Uses the error from the context to display a message
   useEffect(() => {
-    setError(errorMessage);
+    setError(errorMessage); // Comes from the auth hook after getting an error from the backend
   }, [errorMessage]);
 
   // Set the error to null the first time the component renders
@@ -28,6 +32,7 @@ const SignUp = () => {
   }, []);
 
   return (
+    /* Google and Facebook buttons */
     <div className={AuthenticationCSS.signup_tab}>
       <div className={AuthenticationCSS.buttons_wrapper}>
         <button className={AuthenticationCSS.google_button}>
@@ -43,6 +48,7 @@ const SignUp = () => {
       {/* If there is an error display it */}
       {error && <div className={AuthenticationCSS.error_wrapper}>{error}</div>}
 
+      {/* Form to fill with email, username, password and password confirm */}
       <form className={AuthenticationCSS.form} onSubmit={handleSubmit}>
         <div className={AuthenticationCSS.username_wrapper}>
           <div>
@@ -109,6 +115,9 @@ const SignUp = () => {
     </div>
   );
 
+  // Function that controls the logic of the form after submission.
+  // Uses the context(AuthContext) signup function to change the state of the application 
+  // if the response from the backend is ok (the user is created correctly)
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -131,7 +140,10 @@ const SignUp = () => {
 
     try {
       setError("");
+      // set Loading to true so the user can not send the same information twice
       setLoading(true);
+      // try to sign in with the information the user has provided
+      // this can triggered an error in the backend if the user does not exist
       signup(usernameRef.current.value, passwordRef.current.value);
     } catch {
       setError("Failed to create an account");

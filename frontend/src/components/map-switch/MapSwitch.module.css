@@ -1,17 +1,62 @@
 .container {
-  background-color: white;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
   border-radius: 25px;
   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
+  background-color: white;
 }
 .container > div {
-  padding: 0px 20px;
-  height: 30px;
+  height: 60px;
   border-radius: 25px;
+  padding:0;
+  width: 40px;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+.container > div > p {
+  display: none;
+}
+.container > div > svg {
+  fill: rgba(0,0,0, 0.6);
+  margin-right: 0px;
+}
+.container > div:hover > svg {
+  fill: rgba(0,0,0, 0.9);
 }
 .active {
   background-color: lightblue;
 }
+
+/* Display the switcher on the right side when the screen width is 
+between 600px-900px */
+@media screen and (max-width: 600px) {
+  .container {
+    flex-direction: row;
+    height: auto;  
+  }
+  .container > div {
+    padding: 0px 20px;
+    height: 35px;
+    width: auto;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  .container > div > p {
+    display: block;
+  }
+  .container > div > svg {
+    fill: rgba(0,0,0, 0.6);
+    margin-right: 5px;
+  }
+  .active > svg {
+    fill: rgba(0,0,0, 0.9)!important;
+  }
+}
+
