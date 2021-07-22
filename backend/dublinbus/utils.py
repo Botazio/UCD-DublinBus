@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
+from statistics import mean
 import requests
 from django.conf import settings
 from dublinbus.models import Calendar
 from quantile_dotplot import ntile_dotplot
-from statistics import mean
 import keras
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -146,18 +146,23 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
     """
 
     trained_nn_model = keras.models.load_model(
-        f"/home/team13/model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork/"
+        "/home/team13/model_output/NeuralNetwork/" +
+            f"{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork/"
     )
 
-    # TODO: Get features from user
     inputs = pd.read_parquet(
-        f"/home/team13/data/adjacent_stop_pairs_with_features/{departure_stop_num}_to_{arrival_stop_num}.parquet"
+        "/home/team13/data/adjacent_stop_pairs_with_features/" +
+            f"{departure_stop_num}_to_{arrival_stop_num}.parquet"
     )
     features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
                 'lagged_rain', 'temp', 'bank_holiday']
     input_row = inputs[features].head(1).to_numpy()
 
-    predictions = make_probabilistic_predictions(input_row, trained_nn_model, num_predictions=num_predictions)
+    predictions = make_probabilistic_predictions(
+        input_row,
+        trained_nn_model,
+        num_predictions=num_predictions
+    )
     plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
 
     return predictions
@@ -224,5 +229,5 @@ def plot_probabilistic_predictions(stop_pair, predictions):
         axes[1].spines[spine].set_visible(False)
     axes[1].yaxis.set_visible(False)
 
-    plt.savefig(f"/home/team13/model_output/NeuralNetwork/" +
+    plt.savefig("/home/team13/model_output/NeuralNetwork/" +
         f"NeuralNetwork_predictions{stop_pair}.png")

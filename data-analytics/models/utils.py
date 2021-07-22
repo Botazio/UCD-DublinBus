@@ -16,7 +16,7 @@ import keras
 
 sns.set_theme()
 
-def train_all_stop_pair_models(model, model_name):
+def train_all_stop_pair_models(model, model_name, normalizer=None):
     """
     Train a model on each adjacent stop pair
 
@@ -39,7 +39,7 @@ def train_all_stop_pair_models(model, model_name):
     stop_pairs_metrics = []
 
     # Train a model for each adjacent stop pair
-    for stop_pair_file in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*")[:10]:
+    for stop_pair_file in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
 
         stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
 
@@ -55,7 +55,7 @@ def train_all_stop_pair_models(model, model_name):
         if stop_pair_df.shape[0] > 50:
 
             # Train model
-            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model)
+            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model, normalizer)
 
             # Add metrics for this stop pair
             metrics['average_cv_rmse'] = average_cv_rmse
@@ -85,11 +85,11 @@ def train_all_stop_pair_models(model, model_name):
                 'wb') as pickle_file:
             pickle.dump(trained_models, pickle_file)
     else:
-        for stop_pair, model in trained_models.items():
-            model.save(f"/home/team13/model_output/{model_name}/" +
+        for stop_pair, trained_model in trained_models.items():
+            trained_model.save(f"/home/team13/model_output/{model_name}/" +
                 f"/{stop_pair}_{model_name}")
 
-def train_model(stop_pair_df, model):
+def train_model(stop_pair_df, model, normalizer):
     """
     Train a model on one adjacent stop pair
 
@@ -131,17 +131,15 @@ def train_model(stop_pair_df, model):
     keras_model_classes = (tf.keras.Model, keras.Model, tf.estimator.Estimator)
     if isinstance(model, keras_model_classes):
 
-        # TODO: What about cross-validation?
-        history = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
-        print(model.summary())
+        normalizer.adapt(x_train)
 
-        test_mse = model.evaluate(x_test.to_numpy(), y_test.to_numpy())
-        print(f"Test RMSE: {math.sqrt(test_mse)}")
+        trained_model = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
+        print(trained_model.summary())
 
-        # TODO: Does this match the console loss?
-        average_cv_rmse = math.sqrt(history.history['loss'][-1])
-        test_rmse = math.sqrt(test_mse)
-        trained_model = model
+        test_rmse = math.sqrt(trained_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+        print(f"Test RMSE: {math.sqrt(test_rmse)}")
+
+        average_cv_rmse = math.sqrt(trained_model.history['loss'][-1])
 
     # otherwise we're using a simple sklearn model (e.g., linear regression)
     else:
