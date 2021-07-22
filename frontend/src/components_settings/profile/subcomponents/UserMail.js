@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core";
 import { useState } from "react";
 import { useAuth } from "../../../providers/AuthContext";
 import ProfileCSS from "../Profile.module.css";
-import Action from "./Action";
+import Action from "../../../reusable-components/action/Action";
 
 const UserMail = () => {
    const [action, setAction] = useState(false);

@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", json.token);
 
         // set the current user to the response
-        setCurrentUser({ username: json.username });
+        setCurrentUser(json.user);
       })
       .catch((err) => {
         if (err.name === "AbortError") {
@@ -101,9 +101,9 @@ export function AuthProvider({ children }) {
         .then((res) => res.json())
         .then((json) => {
           // change this later when they send me back a user object
-          // set the current user to the response if the toke is valid
+          // set the current user to the response if the token is valid
           if (json.username) {
-            setCurrentUser({ username: json.username });
+            setCurrentUser(json);
           } // logout if the response is not a user
           else {
             logout();

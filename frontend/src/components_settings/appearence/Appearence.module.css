@@ -1,0 +1,173 @@
+.header_title > h2{
+   font-weight: 500;
+   margin-bottom: 10px;
+   padding-bottom: 5px;
+   border-bottom: 1px solid lightgray;
+}
+.header_info > p {
+   margin-bottom: 10px;
+}
+.theme_wrapper {
+   display: flex;
+   justify-content: space-around;
+   width: 100%;
+   flex-wrap: wrap;
+}
+.theme_box {
+   flex: 1;
+   border: 1px solid lightgray;
+   border-radius: 5px;
+   margin-top: 5px;
+   height: fit-content;
+}
+.theme_box:first-child {
+   margin-right: 10px;
+}
+.theme_header {
+   background-color: #fafafa;
+   padding: 15px;
+   border-radius: 5px;
+   border-bottom: 1px solid lightgray;
+}
+.theme_header > h3 {
+   font-size: 1rem;
+   font-weight: 500;
+}
+.theme_info {
+   padding: 15px;
+   font-size: 0.9rem;
+   display: flex;
+   flex-direction: column;
+}
+.theme_info > button {
+   margin-top: 15px;
+}
+/* Styles for the box examples */
+.display_theme_box {
+   width: 95%;
+   margin: 10px;
+   height: 140px;
+   border: 1px solid lightgray;
+   align-self: center;
+   border-radius: 5px;
+}
+.display_theme_navbar {
+   width: 100%;
+   height: 30px;
+   display: flex;
+   align-items: center;
+   border-radius: 3px;
+}
+.display_theme_button {
+   width: 30px;
+   height: 10px;
+   margin-left: 10px;
+   border-radius: 10px;
+}
+.display_theme_body {
+   margin-top: 20px;
+   width: 100%;
+   height: 60px;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-around;
+}
+.display_theme_body_menu {
+   height: 100%;
+   width: 50%;
+}
+.display_theme_body_bar {
+   margin-top: 10px;
+   width: 100%;
+   height: 15px;
+   display: flex;
+   align-items: center;
+}
+.display_theme_button_color {
+   width: 30px;
+   height: 8px;
+   margin-left: 10px;
+   border-radius: 10px;
+}
+.display_theme_body_sidebar {
+   width: 30%;
+   height: 40px;
+   display: flex;
+   justify-content: flex-end;
+}
+.display_theme_body_sidebar > svg {
+   margin: 3px;
+}
+/* Styles for the buttons and color pickers*/
+.pre_themes_wrapper,
+.cus_themes_wrapper {
+   margin-top: 10px;
+   min-height: 40px;
+   display: flex;
+   align-items: center;
+}
+.cus_themes_wrapper {
+   justify-content: space-between;
+   flex-wrap: wrap;
+}
+.pre_themes_button {
+   height: 40px;
+   width: 40px;
+   border-radius: 50%;
+   border: 1px solid lightgray;
+   margin-right: 15px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+}
+.pre_themes_button > div {
+   width: 38px;
+   height: 38px;
+   border-radius: 50%;
+   transition: 0.3s;
+}
+.pre_themes_button:hover > div{
+   width: 25px;
+   height: 25px;
+}
+#pre_themes_button1 {
+   background-color: white;
+}
+#pre_themes_button2 {
+   background-color: black;
+}
+#pre_themes_button3 {
+   background-color: darkslategray;
+}
+.cus_themes_button {
+   height: 40px;
+   width: 40px;
+   border-radius: 50%;
+   border: 1px solid lightgray;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+}
+.cus_themes_popover > div:first-child {
+   margin-bottom: 10px;
+   font-size: 1rem;
+   font-weight: 500;
+}
+.cus_themes_popover > div:first-child::first-letter{
+   text-transform: capitalize;
+}
+
+@media screen and (max-width: 600px) {
+   .theme_wrapper {
+      flex-direction: column;
+      justify-content: center;
+   }
+   .theme_box:first-child {
+      margin: 0;
+   }
+   .theme_box:last-child {
+      margin-top: 15px;
+   }
+}
