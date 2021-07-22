@@ -12,6 +12,7 @@ const defaultTheme = createTheme({
       icons: "#000000",
       fontColor: "#000000"
    },
+   map: "defaultThemeLight"
 });
 
 const CustomThemeProvider = (props) => {

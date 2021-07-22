@@ -1,17 +1,9 @@
-.header_title > h2{
-   font-weight: 500;
-   margin-bottom: 10px;
-   padding-bottom: 5px;
-   border-bottom: 1px solid lightgray;
-}
-.header_info > p {
-   margin-bottom: 10px;
-}
 .theme_wrapper {
    display: flex;
    justify-content: space-around;
    width: 100%;
    flex-wrap: wrap;
+   margin-bottom: 15px;
 }
 .theme_box {
    flex: 1;
@@ -44,8 +36,8 @@
 }
 /* Styles for the box examples */
 .display_theme_box {
-   width: 95%;
-   margin: 10px;
+   width: 100%;
+   margin-top: 10px;
    height: 140px;
    border: 1px solid lightgray;
    align-self: center;
@@ -98,9 +90,20 @@
 .display_theme_body_sidebar > svg {
    margin: 3px;
 }
+/* Styles for the map examples */
+.display_theme_map {
+   width: 100%;
+   height: 300px;
+   margin-top: 10px;
+   border: 1px solid lightgray;
+   align-self: center;
+   border-radius: 5px;
+   overflow: hidden;
+}
 /* Styles for the buttons and color pickers*/
 .pre_themes_wrapper,
-.cus_themes_wrapper {
+.cus_themes_wrapper,
+.map_themes_wrapper {
    margin-top: 10px;
    min-height: 40px;
    display: flex;
@@ -110,7 +113,8 @@
    justify-content: space-between;
    flex-wrap: wrap;
 }
-.pre_themes_button {
+.pre_themes_button,
+.map_themes_button {
    height: 40px;
    width: 40px;
    border-radius: 50%;
@@ -121,23 +125,28 @@
    align-items: center;
    cursor: pointer;
 }
-.pre_themes_button > div {
+.pre_themes_button > div,
+.map_themes_button > div {
    width: 38px;
    height: 38px;
    border-radius: 50%;
    transition: 0.3s;
 }
-.pre_themes_button:hover > div{
+.pre_themes_button:hover > div,
+.map_themes_button:hover > div {
    width: 25px;
    height: 25px;
 }
-#pre_themes_button1 {
+#pre_themes_button1,
+#map_themes_button1 {
    background-color: white;
 }
-#pre_themes_button2 {
+#pre_themes_button2,
+#map_themes_button2 {
    background-color: black;
 }
-#pre_themes_button3 {
+#pre_themes_button3,
+#map_themes_button3 {
    background-color: darkslategray;
 }
 .cus_themes_button {

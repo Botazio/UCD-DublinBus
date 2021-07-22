@@ -17,19 +17,8 @@
 .delete_account_wrapper {
    margin-top: 20px;
 }
-.username_header > h2,
-.usermail_header > h2,
-.delete_account_header > h2 {
-   font-weight: 500;
-   margin-bottom: 10px;
-   padding-bottom: 5px;
-   border-bottom: 1px solid lightgray;
-}
-.delete_account_header > h2 {
-   color:  rgb(203, 36, 49);
-}
-.username_info > p,
-.usermail_info > p,
-.delete_account_info > p {
+.username_wrapper > p,
+.usermail_wrapper > p,
+.delete_account_wrapper > p {
    margin-bottom: 10px;
 }
