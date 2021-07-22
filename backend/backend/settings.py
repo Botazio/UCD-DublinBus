@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import environ
 import datetime
+import environ
+
 
 # Initialise environment variables
 env = environ.Env()
