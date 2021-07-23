@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+from os import path
 
 def request_realtime_nta_data():
     """
@@ -139,33 +140,44 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         departure_stop_num: int
             The number of the departure stop (e.g., 768)
 
+        num_predictions: int
+            The number of predictions to return
+
     Returns
     ---
-        An int for the predicted travel time between the two adjacent stops. Returns
-        a KeyError in the case a prediction cannot be found between two stops.
+        An array of predictions for the travel time between the two adjacent stops. Returns
+        an array of the expected travel times if a prediction cannot be found.
     """
 
-    trained_nn_model = keras.models.load_model(
-        "/home/team13/model_output/NeuralNetwork/" +
-            f"{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork/"
-    )
+    model_path = f"./model_output/NeuralNetwork/f{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork"
 
-    inputs = pd.read_parquet(
-        "/home/team13/data/adjacent_stop_pairs_with_features/" +
-            f"{departure_stop_num}_to_{arrival_stop_num}.parquet"
-    )
-    features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
-                'lagged_rain', 'temp', 'bank_holiday']
-    input_row = inputs[features].head(1).to_numpy()
+    if path.exists(model_path):
+        trained_nn_model = keras.models.load_model(model_path)
 
-    predictions = make_probabilistic_predictions(
-        input_row,
-        trained_nn_model,
-        num_predictions=num_predictions
-    )
-    plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
+        inputs = pd.read_parquet(
+            "/home/team13/data/adjacent_stop_pairs_with_features/" +
+                f"{departure_stop_num}_to_{arrival_stop_num}.parquet"
+        )
+        features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
+                    'lagged_rain', 'temp', 'bank_holiday']
+        input_row = inputs[features].head(1).to_numpy()
 
-    return predictions
+        predictions = make_probabilistic_predictions(
+            input_row,
+            trained_nn_model,
+            num_predictions=num_predictions
+        )
+        plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
+
+        return predictions
+
+    # no model exists for this stop pair so just use expected times
+    else:
+
+        timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
+        prediction = timetable_2021.loc[timetable_2021['stop_pair'] == f"{departure_stop_num}_to_{arrival_stop_num}", "expected_travel_time"].values
+
+        return np.repeat(prediction, num_predictions)
 
 def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
     """
