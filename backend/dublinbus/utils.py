@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from statistics import mean
+from os import path
 import requests
 from django.conf import settings
 from dublinbus.models import Calendar
@@ -9,7 +10,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
-from os import path
 
 def request_realtime_nta_data():
     """
@@ -149,7 +149,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         an array of the expected travel times if a prediction cannot be found.
     """
 
-    model_path = f"./model_output/NeuralNetwork/f{departure_stop_num}_to_{arrival_stop_num}_NeuralNetwork"
+    model_path = "./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}"
 
     if path.exists(model_path):
         trained_nn_model = keras.models.load_model(model_path)
@@ -172,12 +172,13 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         return predictions
 
     # no model exists for this stop pair so just use expected times
-    else:
+    timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
+    prediction = timetable_2021.loc[
+                    timetable_2021['stop_pair'] == f"{departure_stop_num}_to_{arrival_stop_num}",
+                    "expected_travel_time"
+                ].values
 
-        timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
-        prediction = timetable_2021.loc[timetable_2021['stop_pair'] == f"{departure_stop_num}_to_{arrival_stop_num}", "expected_travel_time"].values
-
-        return np.repeat(prediction, num_predictions)
+    return np.repeat(prediction, num_predictions)
 
 def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
     """
