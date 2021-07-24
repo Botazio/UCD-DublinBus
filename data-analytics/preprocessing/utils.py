@@ -44,6 +44,57 @@ def create_adjacent_stop_pairs(trips):
 
     return pd.concat(stop_pairs)
 
+def normalise_time(time_str):
+    """
+    Some of the raw Dublin Bus data has invalid times for hours after midnight
+    (e.g., 25:00 for 1am). This function corrects any time string with this
+    problem so that we can work with it using Pandas datetimes
+
+    Args
+    ---
+        time_str: str
+            A time as a string
+
+    Returns
+    ---
+    A time string with only the hour corrected if necessary
+    """
+
+    hour = time_str.split(":")[0]
+    if int(hour) >= 24:
+        normalised_hour = int(hour) % 24
+        return time_str.replace(hour, f"{normalised_hour:02}")
+
+    return time_str
+
+def parse_stop_num(stop_name, stop_id):
+    """
+    The 2021 Dublin Bus data uses Stop IDs instead of the actual stop
+    numbers presented to the public. This method tries to extract the stop
+    number from the stop name and if this fails it tries to extract it from
+    the ID instead.
+
+    Args
+    ---
+        stop_name: str
+            The stop name as a string
+
+        stop_id: str
+            The stop ID as a string
+
+    Returns
+    ---
+    An int for the extracted stop number
+    """
+
+    try:
+        stop_num = int(stop_name.split(" ")[-1])
+    except ValueError:
+        # stop number isn't in the name
+        # try parse out of ID instead
+        stop_num = int(stop_id.split("DB")[-1])
+
+    return stop_num
 
 bank_holidays_2018 = [
     # New Year's Day

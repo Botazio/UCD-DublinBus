@@ -149,18 +149,23 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         an array of the expected travel times if a prediction cannot be found.
     """
 
-    model_path = "./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}"
+    model_path = f"./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}/"
 
     if path.exists(model_path):
         trained_nn_model = keras.models.load_model(model_path)
 
-        inputs = pd.read_parquet(
-            "/home/team13/data/adjacent_stop_pairs_with_features/" +
-                f"{departure_stop_num}_to_{arrival_stop_num}.parquet"
-        )
-        features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
-                    'lagged_rain', 'temp', 'bank_holiday']
-        input_row = inputs[features].head(1).to_numpy()
+        mock_features = {
+            'sin_day': 0.082424,
+            'cos_day': -0.022153,
+            'sin_time': -0.308382,
+            'cos_time': -0.307183,
+            'rain': 0,
+            'lagged_rain': 0,
+            'temp': 10.0,
+            'bank_holiday': 0
+        }
+
+        input_row = np.reshape(np.fromiter(mock_features.values(), dtype=float), (1, 8))
 
         predictions = make_probabilistic_predictions(
             input_row,
@@ -242,5 +247,5 @@ def plot_probabilistic_predictions(stop_pair, predictions):
         axes[1].spines[spine].set_visible(False)
     axes[1].yaxis.set_visible(False)
 
-    plt.savefig("/home/team13/model_output/NeuralNetwork/" +
+    plt.savefig("./model_output/NeuralNetwork/" +
         f"NeuralNetwork_predictions{stop_pair}.png")
