@@ -2,18 +2,21 @@ import datetime
 import glob
 import logging
 import pickle
+import math
 
 import pandas as pd
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import learning_curve
+import tensorflow as tf
+import keras
 
 sns.set_theme()
 
-def train_all_stop_pair_models(model):
+def train_all_stop_pair_models(model, model_name, normalizer=None):
     """
     Train a model on each adjacent stop pair
 
@@ -24,7 +27,6 @@ def train_all_stop_pair_models(model):
     """
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    model_name = type(model).__name__
 
     logging.basicConfig(
         filename=f"/home/team13/logs/models/{model_name}/{current_time}",
@@ -37,21 +39,23 @@ def train_all_stop_pair_models(model):
     stop_pairs_metrics = []
 
     # Train a model for each adjacent stop pair
-    for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
+    for stop_pair_file in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
 
-        stop_pair_df = pd.read_parquet(stop_pair).sort_values(['date', 'time_arrival'])
+        stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
+
+        stop_pair = stop_pair_file.split('/')[-1].split('.')[0]
         metrics = {
-            'stop_pair': stop_pair.split('/')[-1],
+            'stop_pair': stop_pair,
             'num_rows': stop_pair_df.shape[0]
         }
 
         logging.info(
-            f"{stop_pair_df.shape[0]} rows for {stop_pair.split('/')[-1]}")
+            f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
         if stop_pair_df.shape[0] > 50:
 
             # Train model
-            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model)
+            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model, normalizer)
 
             # Add metrics for this stop pair
             metrics['average_cv_rmse'] = average_cv_rmse
@@ -59,7 +63,7 @@ def train_all_stop_pair_models(model):
             stop_pairs_metrics.append(metrics)
 
             # Add trained model to dict
-            trained_models[stop_pair.split('/')[-1]] = trained_model
+            trained_models[stop_pair] = trained_model
 
     logging.info(
         "Model training complete. Writing out metrics and pickle files for each" +
@@ -73,14 +77,19 @@ def train_all_stop_pair_models(model):
     pd.DataFrame(stop_pairs_metrics).to_csv(f'/home/team13/model_output/{model_name}/' +
         f"/{model_name}_metrics_{current_time}.csv", index=False)
 
-    # Write out trained models as pickle files
-    with open(
-        f"/home/team13/model_output/{model_name}/" +
-            f"/{model_name}_{current_time}.pickle",
-            'wb') as pickle_file:
-        pickle.dump(trained_models, pickle_file)
+    if model_name != "NeuralNetwork":
+        # Write out trained models as pickle files
+        with open(
+            f"/home/team13/model_output/{model_name}/" +
+                f"/{model_name}_{current_time}.pickle",
+                'wb') as pickle_file:
+            pickle.dump(trained_models, pickle_file)
+    else:
+        for stop_pair, trained_model in trained_models.items():
+            trained_model.save(f"/home/team13/model_output/{model_name}/" +
+                f"/{stop_pair}_{model_name}")
 
-def train_model(stop_pair_df, model):
+def train_model(stop_pair_df, model, normalizer):
     """
     Train a model on one adjacent stop pair
 
@@ -118,17 +127,33 @@ def train_model(stop_pair_df, model):
         shuffle=False
     )
 
-    # Perform cross-validation
-    average_cv_rmse = time_series_cross_validate(x_train, y_train, model)
-    logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
+    # check whether we're using a keras neural network
+    keras_model_classes = (tf.keras.Model, keras.Model, tf.estimator.Estimator)
+    if isinstance(model, keras_model_classes):
 
-    # Train on full training set now and calculate unseen test set metrics
-    predictions = model.fit(x_train, y_train).predict(x_test)
-    test_rmse = mean_squared_error(y_test, predictions, squared=False)
-    logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
+        normalizer.adapt(x_train)
 
-    # Train on full data (train and test) before finally saving
-    trained_model = model.fit(x_full, y_full)
+        trained_model = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
+        print(trained_model.summary())
+
+        test_rmse = math.sqrt(trained_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+        print(f"Test RMSE: {math.sqrt(test_rmse)}")
+
+        average_cv_rmse = math.sqrt(trained_model.history['loss'][-1])
+
+    # otherwise we're using a simple sklearn model (e.g., linear regression)
+    else:
+        # Perform cross-validation
+        average_cv_rmse = time_series_cross_validate(x_train, y_train, model)
+        logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
+
+        # Train on full training set now and calculate unseen test set metrics
+        predictions = model.fit(x_train, y_train).predict(x_test)
+        test_rmse = mean_squared_error(y_test, predictions, squared=False)
+        logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
+
+        # Train on full data (train and test) before finally saving
+        trained_model = model.fit(x_full, y_full)
 
     return average_cv_rmse, test_rmse, trained_model
 
@@ -194,8 +219,8 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
         'o'
     )
     axes[0].legend(loc="best")
-    axes[0].set_title("Average CV RMSE vs. Number of Rows per Stop Pair")
-    axes[0].set_xlabel("Number of Rows")
+    axes[0].set_title("Average CV RMSE vs. Number of Training Rows per Stop Pair")
+    axes[0].set_xlabel("Number of Training Rows")
     axes[0].set_ylabel("RMSE")
 
     axes[1].plot(
@@ -211,7 +236,7 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     plt.savefig(f"/home/team13/model_output/{model_name}/" +
         f"{model_name}_metrics_{current_time}.png")
 
-def generate_learning_fit_time_curves(model, stop_pair, current_time):
+def generate_learning_fit_time_curves(model, stop_pair):
     """
     Plot learning and fit time curves for a model for a particular stop pair. The
     final plot consists of three plots:
@@ -229,20 +254,18 @@ def generate_learning_fit_time_curves(model, stop_pair, current_time):
             for. In the format "X_to_Y" where X and Y are station
             numbers
 
-        current_time: str
-            The time these statistics were generated to use in the
-            file name
-
     Returns
     ---
     Saves a learning curve plot for a stop pair
     """
 
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
     stop_pair_df = pd.read_parquet(
         f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
     )
 
-    y_full = stop_pair_df['TRAVEL_TIME']
+    y_full = stop_pair_df['travel_time']
     features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
                 'lagged_rain', 'temp', 'bank_holiday']
     x_full = stop_pair_df[features]
@@ -256,7 +279,8 @@ def generate_learning_fit_time_curves(model, stop_pair, current_time):
         # Higher score is better in this case (less negative)
         scoring='neg_root_mean_squared_error',
         return_times=True,
-        train_sizes=np.linspace(0.1, 1.0, 10)
+        train_sizes=np.linspace(0.01, 1.0, 30),
+        shuffle=False
     )
 
     _, axes = plt.subplots(1, 3, figsize=(20, 5))

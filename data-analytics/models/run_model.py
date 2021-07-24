@@ -19,11 +19,12 @@ if len(sys.argv) < 1:
                     "Please choose either 'train' or 'learning-curve'")
     sys.exit()
 
-model = model_lookup[sys.argv[1]]
+model_name = sys.argv[1]
+model = model_lookup[model_name]
 mode = sys.argv[2]
 
 if mode == "train":
-    train_all_stop_pair_models(model)
+    train_all_stop_pair_models(model, model_name)
 elif mode == "learning-curve":
     stop_pair = sys.argv[3]
     generate_learning_fit_time_curves(model, stop_pair)
