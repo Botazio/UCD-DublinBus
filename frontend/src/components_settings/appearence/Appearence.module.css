@@ -15,6 +15,9 @@
 .theme_box:first-child {
    margin-right: 10px;
 }
+.theme_box:last-child {
+   margin-bottom: 20px;
+}
 .theme_header {
    background-color: #fafafa;
    padding: 15px;
@@ -95,10 +98,12 @@
    width: 100%;
    height: 300px;
    margin-top: 10px;
-   border: 1px solid lightgray;
    align-self: center;
    border-radius: 5px;
    overflow: hidden;
+}
+.display_theme_map > img {
+   border-radius: 5px;
 }
 /* Styles for the buttons and color pickers*/
 .pre_themes_wrapper,
@@ -118,6 +123,7 @@
    height: 40px;
    width: 40px;
    border-radius: 50%;
+   box-sizing: content-box;
    border: 1px solid lightgray;
    margin-right: 15px;
    display: flex;
@@ -127,8 +133,8 @@
 }
 .pre_themes_button > div,
 .map_themes_button > div {
-   width: 38px;
-   height: 38px;
+   width: 40px;
+   height: 40px;
    border-radius: 50%;
    transition: 0.3s;
 }
@@ -145,9 +151,11 @@
 #map_themes_button2 {
    background-color: black;
 }
-#pre_themes_button3,
-#map_themes_button3 {
+#pre_themes_button3 {
    background-color: darkslategray;
+}
+#map_themes_button3 {
+   background-color: gray;
 }
 .cus_themes_button {
    height: 40px;

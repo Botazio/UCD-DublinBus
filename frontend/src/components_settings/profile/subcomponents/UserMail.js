@@ -28,7 +28,7 @@ const UserMail = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="email" color="primary" buttonMessage="Change my email" setAction={setAction} />}
+         {action && <Action message={actionMessage} type="email" color="primary" buttonMessage="Change my email" inputField="true" setAction={setAction} />}
       </>
    );
 };

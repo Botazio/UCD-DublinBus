@@ -75,7 +75,7 @@ export default function WeatherInfo() {
     );
 
   // Wait for the data
-  if (isPendingWeather) return <Waiting />;
+  if (isPendingWeather) return <Waiting variant="dark" />;
 
   // Get the data in a google data table
   const forecastWeather = [];

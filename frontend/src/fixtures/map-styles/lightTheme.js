@@ -1,4 +1,4 @@
-const mapStytles = [
+const lightTheme = [
   {
     featureType: "all",
     elementType: "labels",
@@ -202,4 +202,4 @@ const mapStytles = [
   },
 ];
 
-export default mapStytles;
+export default lightTheme;

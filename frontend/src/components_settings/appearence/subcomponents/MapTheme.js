@@ -15,7 +15,10 @@ const useStyles = makeStyles((theme) => ({
 
 // Defines how the map looks offering the user to select between predefined options
 const MapTheme = () => {
+   // Controls when to display the action message
    const [action, setAction] = useState(false);
+
+   // Calls the current theme and uses it to create the styles for the button
    const currentTheme = useTheme();
    const [boxTheme, setBoxTheme] = useState(currentTheme);
    const classes = useStyles(currentTheme);
@@ -30,8 +33,14 @@ const MapTheme = () => {
             </div>
             <div className={AppearenceCSS.theme_info}>
                <p>Select one of our predefined themes using the buttons down below.</p>
+
+               {/* Mini map to see the different types of maps */}
                <DisplayMapBox boxTheme={boxTheme} />
+
+               {/* Buttons that control the state of the box theme */}
                <MapThemesButtons setBoxTheme={setBoxTheme} />
+
+               {/* Compares the current theme to the box theme */}
                {JSON.stringify(currentTheme.map) !== JSON.stringify(boxTheme.map) &&
                   <Button
                      classes={{ root: classes.root }} onClick={() => setAction(true)}>change theme
@@ -40,9 +49,15 @@ const MapTheme = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="theme" color="primary" buttonMessage="Change map" setAction={setAction} />}
+         {action && <Action message={actionMessage} type="theme" color="primary" buttonMessage="Change map" setAction={setAction} handleSubmit={handleSubmit} />}
       </>
    );
+
+   // This function is called by the action subcomponent 
+   function handleSubmit(user, setCurrentUser) {
+      setCurrentUser(...user, user.map = boxTheme.map);
+      setAction(false);
+   }
 };
 
 export default MapTheme;

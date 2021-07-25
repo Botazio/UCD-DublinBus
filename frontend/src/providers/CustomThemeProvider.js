@@ -12,12 +12,14 @@ const defaultTheme = createTheme({
       icons: "#000000",
       fontColor: "#000000"
    },
-   map: "defaultThemeLight"
+   map: "defaultThemeGrey"
 });
 
 const CustomThemeProvider = (props) => {
    const [theme, setTheme] = useState(defaultTheme);
    const { currentUser } = useAuth();
+
+   console.log(currentUser);
 
    useEffect(() => {
       if (currentUser && currentUser.theme) {

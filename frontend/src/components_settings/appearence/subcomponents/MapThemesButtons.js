@@ -9,8 +9,8 @@ const defaultThemeDark = createTheme({
    map: "defaultThemeDark",
 });
 
-const defaultThemeDarkGray = createTheme({
-   map: "defaultThemeDarkGray",
+const defaultThemeGrey = createTheme({
+   map: "defaultThemeGrey",
 });
 
 const MapThemesButtons = ({ setBoxTheme }) => {
@@ -22,7 +22,7 @@ const MapThemesButtons = ({ setBoxTheme }) => {
          <div className={AppearenceCSS.map_themes_button} onClick={() => setBoxTheme(defaultThemeDark)}>
             <div id={AppearenceCSS.map_themes_button2}></div>
          </div>
-         <div className={AppearenceCSS.map_themes_button} onClick={() => setBoxTheme(defaultThemeDarkGray)}>
+         <div className={AppearenceCSS.map_themes_button} onClick={() => setBoxTheme(defaultThemeGrey)}>
             <div id={AppearenceCSS.map_themes_button3}></div>
          </div>
       </div>

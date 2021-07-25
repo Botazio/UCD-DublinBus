@@ -14,8 +14,8 @@ const theme = createTheme({
 });
 
 // This component displays a customized action when one of the buttons in the settings section is clicked
-const Action = ({ message, buttonMessage, type, color, setAction }) => {
-   const { currentUser } = useAuth();
+const Action = ({ message, buttonMessage, type, color, inputField, setAction, handleSubmit }) => {
+   const { currentUser, setCurrentUser } = useAuth();
 
    return (
       <>
@@ -24,14 +24,14 @@ const Action = ({ message, buttonMessage, type, color, setAction }) => {
                <h3>{message}</h3>
                <IconClose height={"14"} onClick={() => setAction(false)} />
             </div>
-            {type !== "delete" && type !== "photo" && type !== "theme" &&
+            {inputField &&
                <div className={ActionCSS.action_info}>
                   <TextField id="outlined-basic" variant="outlined" size="small" fullWidth={true} />
                   <p>Choose a new {type}</p>
                </div>}
             <div className={ActionCSS.action_submit}>
                <ThemeProvider theme={theme}>
-                  <Button variant="contained" fullWidth={true} color={color}>
+                  <Button variant="contained" fullWidth={true} color={color} onClick={() => handleSubmit(currentUser, setCurrentUser)}>
                      {buttonMessage}
                   </Button>
                </ThemeProvider>
@@ -45,6 +45,7 @@ const Action = ({ message, buttonMessage, type, color, setAction }) => {
             </div>}
          </div>
 
+         {/* Translucid dark background for the action component. */}
          <div className={ActionCSS.action_background_wrapper} onClick={() => setAction(false)}>
          </div>
       </>

@@ -29,7 +29,7 @@ const SideBar = () => {
         onClick={() => handleClick(text)}
       >
         <p>{text}</p>
-        <p>&#10095;</p>
+
       </div>
     );
   };

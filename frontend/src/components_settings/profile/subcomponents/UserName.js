@@ -23,7 +23,7 @@ const UserName = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="name" color="primary" buttonMessage="Change my username" setAction={setAction} />}
+         {action && <Action message={actionMessage} type="name" color="primary" buttonMessage="Change my username" inputField="true" setAction={setAction} />}
       </>
    );
 };
