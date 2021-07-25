@@ -12,39 +12,39 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
 
    useEffect(() => {
       if (type === "primary") {
-         setColor(boxTheme.user.primary);
+         setColor(boxTheme.theme.primary);
       }
       if (type === "background primary") {
-         setColor(boxTheme.user.background_primary);
+         setColor(boxTheme.theme.background_primary);
       }
       if (type === "background secondary") {
-         setColor(boxTheme.user.background_secondary);
+         setColor(boxTheme.theme.background_secondary);
       }
       if (type === "divider") {
-         setColor(boxTheme.user.divider);
+         setColor(boxTheme.theme.divider);
       }
       if (type === "icons & font color") {
-         setColor(boxTheme.user.icons);
+         setColor(boxTheme.theme.icons);
       }
       // eslint-disable-next-line
    }, []);
 
    useEffect(() => {
       if (type === "primary") {
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, primary: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, primary: color } });
       }
       if (type === "background primary") {
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, background_primary: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, background_primary: color } });
       }
       if (type === "background secondary") {
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, background_secondary: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, background_secondary: color } });
       }
       if (type === "divider") {
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, divider: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, divider: color } });
       }
       if (type === "icons & font color") {
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, icons: color } });
-         setBoxTheme({ ...boxTheme, user: { ...boxTheme.user, fontColor: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, icons: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, fontColor: color } });
       }
       // eslint-disable-next-line
    }, [color]);

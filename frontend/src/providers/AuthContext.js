@@ -122,6 +122,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    setCurrentUser,
     signup,
     signin,
     isAuthenticated,

@@ -2,7 +2,7 @@ import AppearenceCSS from "../Appearence.module.css";
 import { createTheme } from '@material-ui/core/styles';
 
 const defaultThemeLight = createTheme({
-   user: {
+   theme: {
       primary: "#0094EC",
       divider: "#D3D3D3",
       background_primary: "#FFFFFF",
@@ -13,7 +13,7 @@ const defaultThemeLight = createTheme({
 });
 
 const defaultThemeDark = createTheme({
-   user: {
+   theme: {
       primary: "#239C7D",
       divider: "#FFFFFF",
       background_primary: "#010409",
@@ -24,7 +24,7 @@ const defaultThemeDark = createTheme({
 });
 
 const defaultThemeDarkGray = createTheme({
-   user: {
+   theme: {
       primary: "#7F7DA2",
       divider: "#BFFCFC",
       background_primary: "#2F4F4F",

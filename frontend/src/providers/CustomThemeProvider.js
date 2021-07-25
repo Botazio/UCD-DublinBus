@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 const defaultTheme = createTheme({
-   user: {
+   theme: {
       primary: "#0094EC",
       divider: "#D3D3D3",
       background_primary: "#FFFFFF",
@@ -12,18 +12,21 @@ const defaultTheme = createTheme({
       icons: "#000000",
       fontColor: "#000000"
    },
-   map: "defaultThemeGrey"
+   map: "defaultThemeLight"
 });
 
 const CustomThemeProvider = (props) => {
    const [theme, setTheme] = useState(defaultTheme);
    const { currentUser } = useAuth();
 
-   console.log(currentUser);
-
+   // If there is a user set up the theme to the user preferences
    useEffect(() => {
+      // This will change in the moment the backend provides users with default theme
       if (currentUser && currentUser.theme) {
          setTheme(currentUser.theme);
+      }
+      if (currentUser && currentUser.map) {
+         setTheme({ ...defaultTheme, map: currentUser.map });
       }
       else {
          setTheme(defaultTheme);

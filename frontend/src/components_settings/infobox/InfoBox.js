@@ -1,6 +1,7 @@
 import Profile from "../profile/Profile";
 import Appearence from "../appearence/Appearence";
 import InfoBoxCSS from "./InfoBox.module.css";
+import Markers from "../markers/Markers";
 
 const InfoBox = ({ buttonActive }) => {
    return (
@@ -9,7 +10,7 @@ const InfoBox = ({ buttonActive }) => {
          {buttonActive === "profile" && <Profile />}
          {buttonActive === "appearence" && <Appearence />}
          {buttonActive === "favorites" && <Profile />}
-         {buttonActive === "markers" && <Profile />}
+         {buttonActive === "markers" && <Markers />}
       </div>
    );
 };

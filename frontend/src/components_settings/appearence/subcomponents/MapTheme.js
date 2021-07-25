@@ -7,9 +7,9 @@ import MapThemesButtons from "./MapThemesButtons";
 
 const useStyles = makeStyles((theme) => ({
    root: {
-      border: "1px solid" + theme.user.primary,
-      color: theme.user.primary,
-      backgroundColor: theme.user.background_1
+      border: "1px solid" + theme.theme.primary,
+      color: theme.theme.primary,
+      backgroundColor: theme.theme.background_1
    },
 }));
 
@@ -55,7 +55,7 @@ const MapTheme = () => {
 
    // This function is called by the action subcomponent 
    function handleSubmit(user, setCurrentUser) {
-      setCurrentUser(...user, user.map = boxTheme.map);
+      setCurrentUser({ ...user, map: boxTheme.map });
       setAction(false);
    }
 };

@@ -8,9 +8,9 @@ import Action from "../../../reusable-components/action/Action";
 
 const useStyles = makeStyles((theme) => ({
    root: {
-      border: "1px solid" + theme.user.primary,
-      color: theme.user.primary,
-      backgroundColor: theme.user.background_1
+      border: "1px solid" + theme.theme.primary,
+      color: theme.theme.primary,
+      backgroundColor: theme.theme.background_1
    },
 }));
 
@@ -34,7 +34,7 @@ const ThemeBox = ({ title, info, type }) => {
                <DisplayThemeBox boxTheme={boxTheme} />
                {type === "predefined" && <PreThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
                {type === "custom" && <CusThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
-               {JSON.stringify(currentTheme.user) !== JSON.stringify(boxTheme.user) &&
+               {JSON.stringify(currentTheme.theme) !== JSON.stringify(boxTheme.theme) &&
                   <Button
                      classes={{ root: classes.root }} onClick={() => setAction(true)}>change theme
                   </Button>}
