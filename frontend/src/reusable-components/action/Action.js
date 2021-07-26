@@ -20,15 +20,24 @@ const Action = ({ message, buttonMessage, type, color, inputField, setAction, ha
    return (
       <>
          <div className={ActionCSS.action_wrapper}>
+            {/* Action header */}
             <div className={ActionCSS.action_header}>
                <h3>{message}</h3>
                <IconClose height={"14"} onClick={() => setAction(false)} />
             </div>
+            {/* In case input field is true display a text field */}
             {inputField &&
                <div className={ActionCSS.action_info}>
                   <TextField id="outlined-basic" variant="outlined" size="small" fullWidth={true} />
                   <p>Choose a new {type}</p>
                </div>}
+            {/* In case type is password display a second text field */}
+            {type === "password" &&
+               <div className={ActionCSS.action_info}>
+                  <TextField id="outlined-basic" variant="outlined" size="small" fullWidth={true} />
+                  <p>Confirm your {type}</p>
+               </div>}
+            {/* Submit button */}
             <div className={ActionCSS.action_submit}>
                <ThemeProvider theme={theme}>
                   <Button variant="contained" fullWidth={true} color={color} onClick={() => handleSubmit(currentUser, setCurrentUser)}>
@@ -36,6 +45,7 @@ const Action = ({ message, buttonMessage, type, color, inputField, setAction, ha
                   </Button>
                </ThemeProvider>
             </div>
+            {/* In case type is photo display a button to remove the photo */}
             {type === "photo" && <div className={ActionCSS.action_submit}>
                <ThemeProvider theme={theme}>
                   <Button variant="contained" fullWidth={true} color="secondary">

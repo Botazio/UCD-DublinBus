@@ -14,11 +14,13 @@
 }
 .username_wrapper,
 .usermail_wrapper,
+.userpassword_wrapper,
 .delete_account_wrapper {
    margin-top: 20px;
 }
 .username_wrapper > p,
 .usermail_wrapper > p,
+.userpassword_wrapper > p,
 .delete_account_wrapper > p {
    margin-bottom: 10px;
 }

@@ -14,22 +14,22 @@ function App() {
     <Router>
       <AuthProvider>
         <CustomThemeProvider>
-          <Switch>
-            <Route exact path="/">
-              <StopsProvider>
+          <StopsProvider>
+            <Switch>
+              <Route exact path="/">
                 <BusPage />
-              </StopsProvider>
-            </Route>
-            <NoUserRoute exact path="/login">
-              <AuthenticationPage />
-            </NoUserRoute>
-            <PrivateRoute exact path="/user">
-              <UserPage />
-            </PrivateRoute>
-            <Route path="*">
-              <NotFound />
-            </Route>
-          </Switch>
+              </Route>
+              <NoUserRoute exact path="/login">
+                <AuthenticationPage />
+              </NoUserRoute>
+              <PrivateRoute exact path="/user">
+                <UserPage />
+              </PrivateRoute>
+              <Route path="*">
+                <NotFound />
+              </Route>
+            </Switch>
+          </StopsProvider>
         </CustomThemeProvider>
       </AuthProvider>
     </Router>
