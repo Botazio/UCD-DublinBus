@@ -28,8 +28,10 @@ admin.site.register(Route)
 admin.site.register(Calendar)
 admin.site.register(Trip)
 admin.site.register(Line)
-admin.site.register(FavouriteStop)
-admin.site.register(FavouriteJourney)
+admin.site.register(FavoriteStop)
+admin.site.register(FavoriteJourney)
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Marker)
+admin.site.register(Theme)
 
 
