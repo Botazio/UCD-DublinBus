@@ -43,8 +43,6 @@ const AllStops = () => {
    const { currentUser } = useAuth();
    const favoriteStops = currentUser.favouritestops;
 
-   console.log(stops);
-
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {
       if (stops) {

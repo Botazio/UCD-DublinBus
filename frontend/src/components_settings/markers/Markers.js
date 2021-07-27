@@ -37,7 +37,7 @@ const Markers = () => {
    const classes = useStyles(currentTheme);
 
    // Get the current user from the provider
-   const { currentUser, setCurrentUser } = useAuth();
+   const { currentUser } = useAuth();
    // State for the pagination in the results
    const [page, setPage] = useState(1);
 
@@ -78,7 +78,7 @@ const Markers = () => {
          {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
             <div className={MarkersCSS.action_button}>
                <Button
-                  classes={{ root: classes.root }} fullWidth="true" onClick={() => setAction(true)}>change markers
+                  classes={{ root: classes.root }} fullWidth={true} onClick={() => setAction(true)}>change markers
                </Button>
             </div>}
 

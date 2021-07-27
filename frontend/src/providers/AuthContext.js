@@ -103,9 +103,9 @@ export function AuthProvider({ children }) {
           // change this later when they send me back a user object
           // set the current user to the response if the token is valid
           if (json.username) {
-            // localStorage.removeItem("token");
-            // localStorage.setItem("token", json.token);
-            // setCurrentUser(json);
+            localStorage.removeItem("token");
+            localStorage.setItem("token", json.token);
+            setCurrentUser(json);
           } // logout if the response is not a user
           else {
             logout();
