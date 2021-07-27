@@ -8,7 +8,7 @@ const MarkersSwitch = ({ displayMarkers, setDisplayMarkers }) => {
     <FormControlLabel
       value="start"
       control={<Switch checked={displayMarkers} color="primary" onChange={() => handleChange()} />}
-      label="DisplayMarkers"
+      label="Display markers"
       labelPlacement="start"
       style={{ margin: '0px 5px' }}
     />
