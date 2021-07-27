@@ -133,10 +133,10 @@ def train_model(stop_pair_df, model, normalizer):
 
         normalizer.adapt(x_train)
 
+        print(model.summary())
         trained_model = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
-        print(trained_model.summary())
 
-        test_rmse = math.sqrt(trained_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+        test_rmse = math.sqrt(model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
         print(f"Test RMSE: {math.sqrt(test_rmse)}")
 
         average_cv_rmse = math.sqrt(trained_model.history['loss'][-1])

@@ -4,3 +4,5 @@ __pycache__/
 google_transit_dublinbus/
 *.out
 *.log
+*.csv
+*.txt

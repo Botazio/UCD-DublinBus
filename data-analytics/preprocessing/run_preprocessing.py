@@ -19,6 +19,8 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
+stop_pairs_2021 = list(pd.read_csv("~/model_output/stop_pairs_2021.csv")['stop_pair'].unique())
+
 if sys.argv[1] == "create_adjacent_stop_pairs":
 
     conn = sqlite3.connect("/home/team13/db/database/DublinBusHistoric_typed.db")
@@ -63,17 +65,20 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
                 stop_pairs_df.groupby(['departure_stop', 'arrival_stop'])[
                     ['travel_time']].mean().index
         ):
-            res = stop_pairs_df[(stop_pairs_df['departure_stop'] == dep_stop) & (
-                stop_pairs_df['arrival_stop'] == arr_stop)]
 
-            path = f"/home/team13/data/adjacent_stop_pairs/{int(dep_stop)}_to_{int(arr_stop)}/"
+            if f"{int(dep_stop)}_to_{int(arr_stop)}" in stop_pairs_2021:
 
-            if not os.path.exists(path):
-                os.mkdir(path)
+                res = stop_pairs_df[(stop_pairs_df['departure_stop'] == dep_stop) & (
+                    stop_pairs_df['arrival_stop'] == arr_stop)]
 
-            file_name = f'{int(dep_stop)}_to_{int(arr_stop)}_{query_date}'
-            res.sort_values('time_departure').to_parquet(
-                path + f'{file_name}.parquet', index=False)
+                path = f"/home/team13/data/adjacent_stop_pairs/{int(dep_stop)}_to_{int(arr_stop)}/"
+
+                if not os.path.exists(path):
+                    os.mkdir(path)
+
+                file_name = f'{int(dep_stop)}_to_{int(arr_stop)}_{query_date}'
+                res.sort_values('time_departure').to_parquet(
+                    path + f'{file_name}.parquet', index=False)
 
 elif sys.argv[1] == "features":
     for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs/*"):
@@ -84,7 +89,7 @@ elif sys.argv[1] == "features":
 
         stop_pair = stop_pair.split("/")[-1]
 
-        stop_pair_df = pd.concat(dfs)
+        stop_pair_df = pd.concat(dfs, ignore_index=True)
 
         logging.info(f"{stop_pair_df.shape[0]} rows for {stop_pair}")
 
