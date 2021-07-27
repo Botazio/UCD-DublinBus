@@ -1,10 +1,20 @@
 from datetime import datetime, timedelta, timezone
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
+from django.contrib.auth import get_user_model
+import numpy as np
 
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import UserSerializerWithToken, \
+    FavouriteStopSerializer, \
+    FavouriteJourneySerializer
+from .models import FavouriteStop, FavouriteJourney
+from .permissions import IsOwner, IsUser
 
 def index(request):
     """Temporary homepage for the application"""
@@ -15,10 +25,8 @@ def stops(request):
 
     stops_list = list(Stop.objects.values())
     for stop_detail in stops_list:
-        stop_detail['stop_number'] = stop_detail['stop_name'].split("stop ")[-1]
-        stop_id=stop_detail['stop_id']
-        lines = Stop.objects.get(stop_id=stop_id).line_set.all().values_list('line', flat=True)
-        stop_detail['stop_lines'] = list(lines)
+        stop_detail['stop_lines'] = list(Stop.objects.get(stop_id=stop_detail['stop_id'])  \
+                                           .line_set.all().values_list('line', flat=True))
 
     return JsonResponse(stops_list, safe=False)
 
@@ -54,7 +62,7 @@ def stop(request, stop_id):
     for stop_time in stop_time_details:
 
         # Only get details for trips that operate on the current day
-        if stop_time.trip.service_id in utils.date_to_service_ids(current_date):
+        if stop_time.trip.calendar.service_id in utils.date_to_service_ids(current_date):
 
             delay = utils.get_realtime_dublin_bus_delay(realtime_updates,
                                                     stop_time.trip.trip_id,
@@ -64,7 +72,12 @@ def stop(request, stop_id):
                 'route_id': stop_time.trip.route.route_id,
                 'trip_id': stop_time.trip.trip_id,
                 'direction': stop_time.trip.direction_id,
-                'service_id': stop_time.trip.service_id,
+                'final_destination_stop_name': StopTime.objects \
+                                            .filter(trip_id=stop_time.trip.trip_id) \
+                                            .order_by('-stop_sequence')[:1] \
+                                            .first().stop.stop_name,
+                'line': stop_time.trip.route.route_short_name,
+                'service_id': stop_time.trip.calendar.service_id,
                 'scheduled_arrival_time': stop_time.arrival_time,
                 'scheduled_departure_time': stop_time.departure_time,
                 'stop_sequence': stop_time.stop_sequence,
@@ -127,7 +140,12 @@ def predict(request):
     arrival_stop_sequence = StopTime.objects.filter(
         trip_id=trip_id, stop_id=arrival_stop_id)[0].stop_sequence
 
-    total_time = 0
+    # Number of total predictions for the journey
+    num_predictions = 1000
+
+    # Array of predictions for the journey
+    total_times = np.zeros(num_predictions)
+
     for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
         departure_stop = StopTime.objects.get(
             trip_id=trip_id, stop_sequence=stop_sequence).stop_id
@@ -138,11 +156,129 @@ def predict(request):
         arrival_stop_num = Stop.objects.get(stop_id=arrival_stop).stop_num
 
         try:
-            total_time += utils.predict_adjacent_stop(
-                departure_stop_num, arrival_stop_num)
+            stop_pair_time_predictions = utils.predict_adjacent_stop(
+                departure_stop_num, arrival_stop_num,
+                num_predictions=num_predictions
+            )
+
+            # Add predictions for current adjacent stop pair to total journey
+            # prediction
+            total_times += stop_pair_time_predictions
         except KeyError as exc:
             raise Http404(
                 f"Cannot find a prediction from {departure_stop_num} to {arrival_stop_num}"
                 ) from exc
 
-    return JsonResponse({"prediction": total_time})
+    return JsonResponse({"prediction": total_times.tolist()})
+
+class FavouriteStopView(APIView):
+    """
+    Get, Post or Delete a FavouriteStop instance(s) for the currently authenticated user.
+    """
+
+    permission_classes = [IsOwner]
+
+    def get(self, request):
+        """Return a list of all the FavouriteStops for the currently authenticated user."""
+        favourite_stops = FavouriteStop.objects.filter(owner=self.request.user)
+        serializer = FavouriteStopSerializer(favourite_stops, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new FavouriteStop for the currently authenticated user."""
+        serializer = FavouriteStopSerializer(data=request.data)
+        if serializer.is_valid():
+            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
+            serializer.save(owner=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the FavouriteStop object for the currently authenticated user."""
+        try:
+            return FavouriteStop.objects.get(pk=primary_key)
+        except FavouriteStop.DoesNotExist as favourite_stop_not_exist:
+            raise Http404(f"Cannot find FavouriteStop: {primary_key}") from favourite_stop_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a FavouriteStop for the currently authenticated user."""
+        favourite_stop = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favourite_stop)
+        favourite_stop.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FavouriteJourneyView(APIView):
+    """
+    Get, Post or Delete a FavouriteJourney instance(s) for the currently authenticated user.
+    """
+
+    permission_classes = [IsOwner]
+
+    def get(self, request):
+        """Return a list of all the FavouriteJourneys for the currently authenticated user."""
+        favourite_journeys = FavouriteJourney.objects.filter(owner=self.request.user)
+        serializer = FavouriteJourneySerializer(favourite_journeys, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new FavouriteJourney for the currently authenticated user."""
+        serializer = FavouriteJourneySerializer(data=request.data)
+        if serializer.is_valid():
+            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
+            serializer.save(owner=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the FavouriteJourneys object for the currently authenticated user."""
+        try:
+            return FavouriteJourney.objects.get(pk=primary_key)
+        except FavouriteJourney.DoesNotExist as favourite_journey_not_exist:
+            raise Http404(
+                f"Cannot find FavouriteJourney: {primary_key}"
+                ) from favourite_journey_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a FavouriteJourney for the currently authenticated user."""
+        favourite_journey = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favourite_journey)
+        favourite_journey.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserView(APIView):
+    """
+    Get, Post or Delete a User instance.
+    """
+
+    permission_classes = [IsUser]   # [ IsUser | IsAdminUser ]
+
+    def get(self, request):
+        """Return the User details for the currently authenticated user."""
+        serializer = UserSerializerWithToken(request.user)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new User for the currently authenticated user."""
+        serializer = UserSerializerWithToken(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the User object for the currently authenticated user."""
+        try:
+            return get_user_model().objects.get(pk=primary_key)
+        except get_user_model().DoesNotExist as user_not_exist:
+            raise Http404(f"Cannot find User: {primary_key}") from user_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a User for the currently authenticated user."""
+        user = self.get_object(primary_key)
+        self.check_object_permissions(self.request, user)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        

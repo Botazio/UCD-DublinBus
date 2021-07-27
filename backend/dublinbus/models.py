@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from .managers import CustomUserManager
 
 class Stop(models.Model):
     """
@@ -51,6 +55,53 @@ class Route(models.Model):
     route_long_name = models.CharField(max_length=200)
     route_type = models.IntegerField()
 
+    def __str__(self):
+        return str(self.route_id)
+
+class Calendar(models.Model):
+    """
+    A class to represent a set of dates when service is available for routes.
+    Attributes
+    ---
+        service_id: str
+            Uniquely identifies a set of dates when service is available for one or more routes.
+            Each service_id value can appear at most once in a calendar.txt file.
+        monday: bool
+            Indicates whether the service operates on all Mondays
+            in the date range specified by the start_date and end_date fields.
+            1 - Service is available for all Mondays in the date range.
+            0 - Service is not available for Mondays in the date range.
+        tuesday: bool
+            Functions in the same way as monday except applies to Tuesdays.
+        wednesday: bool
+            Functions in the same way as monday except applies to Wednesdays.
+        thursday: bool
+            Functions in the same way as monday except applies to Thursdays.
+        friday: bool
+            Functions in the same way as monday except applies to Fridays.
+        saturday: bool
+            Functions in the same way as monday except applies to Saturdays.
+        sunday: bool
+            Functions in the same way as monday except applies to Sundays.
+        start_date: date
+            Start service day for the service interval.
+        end_date: date
+            End service day for the service interval. This service day is included in the interval.
+    """
+
+    service_id = models.CharField(max_length=20, primary_key=True)
+    monday = models.BooleanField()
+    tuesday = models.BooleanField()
+    wednesday = models.BooleanField()
+    thursday = models.BooleanField()
+    friday = models.BooleanField()
+    saturday = models.BooleanField()
+    sunday = models.BooleanField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return str(self.service_id)
 
 class Trip(models.Model):
     """
@@ -62,7 +113,8 @@ class Trip(models.Model):
     ---
         trip_id: str
             The ID for that trip assigned by Dublin Bus.
-        service_id: str
+        calendar: Calendar
+            The Calendar that this Trip is associated with.
             The service ID from calendar.txt. Indicates what
             days of the week the trip is running on.
         shape_id:
@@ -76,12 +128,14 @@ class Trip(models.Model):
     """
 
     trip_id = models.CharField(max_length=120, primary_key=True)
-    service_id = models.CharField(max_length=120)
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     shape_id = models.CharField(max_length=120)
     trip_headsign = models.CharField(max_length=120)
     direction_id = models.IntegerField()
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.trip_id)
 
 class StopTime(models.Model):
     """
@@ -95,8 +149,8 @@ class StopTime(models.Model):
             The time that the bus is scheduled to arrive
         departure_time: timestamp
             The time that the bus is scheduled to leave
-        stop_id: str
-            The ID for the stop
+        stop: Stop
+            The Stop that this StopTime is associated with.
         stop_sequence: int
             The stop number for this stop on this trip starting
             from 1. For example, 3 is the third stop on this trip.
@@ -112,7 +166,7 @@ class StopTime(models.Model):
 
     arrival_time = models.TimeField()
     departure_time = models.TimeField()
-    stop_id = models.CharField(max_length=120)
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
     stop_sequence = models.IntegerField()
     stop_headsign = models.CharField(max_length=120)
     pickup_type = models.IntegerField()
@@ -134,3 +188,59 @@ class Line(models.Model):
     """
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
     line = models.CharField(max_length=10)
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    """
+    A class that represents the users in the system.
+    """
+    username = models.CharField(max_length=40, unique=True) # added in
+    email = models.EmailField(_('email address'), unique=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    USERNAME_FIELD = 'username'    # 'email'
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
+
+class FavouriteStop(models.Model):
+    """
+    A class that represents the users favourite Dublin Bus stops.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('dublinbus.CustomUser',
+                              related_name='favouritestops',
+                              on_delete=models.CASCADE) # auth.User
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['created']
+        unique_together = (("stop", "owner"),) # "surrogate" primary key column
+
+    def __str__(self):
+        return str(self.owner) + ' - ' + str(self.stop_id)
+
+class FavouriteJourney(models.Model):
+    """
+    A class that represents the users favourite Dublin Bus journeys.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('dublinbus.CustomUser',
+                              related_name='favouritejourneys',
+                              on_delete=models.CASCADE) # auth.User
+    stop_origin = models.ForeignKey(Stop,
+                                    on_delete=models.CASCADE,
+                                    related_name='stop_origin')
+    stop_destination = models.ForeignKey(Stop,
+                                         on_delete=models.CASCADE,
+                                         related_name='stop_destination')
+
+    class Meta:
+        ordering = ['created']
+        unique_together = (("stop_origin", "stop_destination", "owner"),)
+
+    def __str__(self):
+        return str(self.owner) + ' - ' + str(self.stop_origin) + ' -> ' + str(self.stop_destination)
