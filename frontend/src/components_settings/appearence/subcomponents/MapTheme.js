@@ -1,29 +1,28 @@
-import { Button, makeStyles, useTheme } from "@material-ui/core";
+import { useTheme } from "@material-ui/core";
+import { useEffect } from "react";
 import { useState } from "react";
 import Action from "../../../reusable-components/action/Action";
+import PrimaryButton from "../../../reusable-components/custom-buttons/PrimaryButton";
 import AppearenceCSS from "../Appearence.module.css";
 import DisplayMapBox from "./DisplayMapBox";
 import MapThemesButtons from "./MapThemesButtons";
-
-const useStyles = makeStyles((theme) => ({
-   root: {
-      border: "1px solid" + theme.theme.primary,
-      color: theme.theme.primary,
-      backgroundColor: theme.theme.background_1
-   },
-}));
 
 // Defines how the map looks offering the user to select between predefined options
 const MapTheme = () => {
    // Controls when to display the action message
    const [action, setAction] = useState(false);
+   // State to control the theme in the boxTheme
+   const [boxTheme, setBoxTheme] = useState();
 
-   // Calls the current theme and uses it to create the styles for the button
+   // Calls the current theme and set the boxTheme to the current theme the first time
+   // the component renders
    const currentTheme = useTheme();
-   const [boxTheme, setBoxTheme] = useState(currentTheme);
-   const classes = useStyles(currentTheme);
+   useEffect(() => {
+      setBoxTheme(currentTheme);
+   }, [currentTheme]);
 
-   const actionMessage = "Change map";
+   // Do not return anything if there is no boxTheme 
+   if (!boxTheme) return "";
 
    return (
       <>
@@ -38,18 +37,18 @@ const MapTheme = () => {
                <DisplayMapBox boxTheme={boxTheme} />
 
                {/* Buttons that control the state of the box theme */}
-               <MapThemesButtons setBoxTheme={setBoxTheme} />
+               <MapThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />
 
                {/* Compares the current theme to the box theme */}
                {JSON.stringify(currentTheme.map) !== JSON.stringify(boxTheme.map) &&
-                  <Button
-                     classes={{ root: classes.root }} onClick={() => setAction(true)}>change theme
-                  </Button>}
+                  <PrimaryButton
+                     onClick={() => setAction(true)}>change theme
+                  </PrimaryButton>}
             </div>
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="theme" color="primary" buttonMessage="Change map" setAction={setAction} handleSubmit={handleSubmit} />}
+         {action && <Action message={"Change map theme"} type="theme" color="primary" buttonMessage="Change map" setAction={setAction} handleSubmit={handleSubmit} />}
       </>
    );
 

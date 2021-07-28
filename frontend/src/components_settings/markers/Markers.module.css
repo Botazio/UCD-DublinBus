@@ -23,9 +23,6 @@
    outline: none;
    font-size: 1rem;
 }
-.searchbar:focus {
-   box-shadow: 0 0 0 1pt black;
-}
 .action_button {
    width: 100%;
    display: flex;

@@ -6,7 +6,8 @@ import { useTheme } from "@material-ui/core";
 import { useEffect } from "react";
 
 // Small reusable component that displays a container for each stop
-// The container takes the primary color with opacity from the theme provider when it is clicked 
+// The container changes the background with colors from the provider
+// when it is clicked 
 const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
    const [active, setActive] = useState(false);
 
@@ -49,6 +50,7 @@ const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
       <div
          className={FavoritesCSS.stop_wrapper}
          onClick={() => handleClick()}
+         /* Change the background depending on the state */
          style={{ backgroundColor: handleStyle() }}>
          <div className={FavoritesCSS.stop_header}>
             <div className={FavoritesCSS.stop_title}>

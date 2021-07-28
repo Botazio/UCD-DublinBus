@@ -4,6 +4,7 @@ import InfoBoxCSS from "./InfoBox.module.css";
 import Markers from "../markers/Markers";
 import Favorites from "../favorites/Favorites";
 
+// Renders a different section depending in which button is active 
 const InfoBox = ({ buttonActive }) => {
    return (
       <div className={InfoBoxCSS.infobox}>

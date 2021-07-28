@@ -4,6 +4,8 @@ import AllStops from "./AllStops";
 import MyStops from "./MyStops";
 import FavoritesCSS from "../../Favorites.module.css";
 
+// This is the main component for the favorite stops section
+// Allows the user to switch between all stops and the user favorite stops
 const FavoriteStops = () => {
    // This is state is used as a toogle. If it is false stops is active,
    // if it is true mystops is active.
