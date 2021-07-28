@@ -18,7 +18,7 @@ from .serializers import UserSerializerWithToken, \
     FavoriteStopSerializer, \
     FavoriteJourneySerializer, \
     MarkerSerializer, \
-    ThemeSerializer, \ 
+    ThemeSerializer, \
     UserSerializer
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 from .permissions import IsOwner, IsUser

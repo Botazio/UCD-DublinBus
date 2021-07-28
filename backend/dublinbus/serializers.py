@@ -23,21 +23,21 @@ class FavoriteJourneySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
-    
+
     class Meta:
         model = get_user_model()
-        fields = ('date_joined', 
-                  'is_staff', 
-                  'is_superuser', 
-                  'username', 
-                  'password', 
-                  'email', 
-                  'favoritestops', 
-                  'favoritejourneys', 
-                  'pk', 
-                  'image', 
-                  'theme', 
-                  'map', 
+        fields = ('date_joined',
+                  'is_staff',
+                  'is_superuser',
+                  'username',
+                  'password',
+                  'email',
+                  'favoritestops',
+                  'favoritejourneys',
+                  'pk',
+                  'image',
+                  'theme',
+                  'map',
                   'markers')
         depth = 1
 
@@ -76,28 +76,30 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('date_joined', 
-                  'is_staff', 
-                  'is_superuser', 
-                  'username', 
-                  'password', 
-                  'token', 
-                  'email', 
-                  'favoritestops', 
-                  'favoritejourneys', 
-                  'pk', 
-                  'image', 
-                  'theme', 
-                  'map', 
+        fields = ('date_joined',
+                  'is_staff',
+                  'is_superuser',
+                  'username',
+                  'password',
+                  'token',
+                  'email',
+                  'favoritestops',
+                  'favoritejourneys',
+                  'pk',
+                  'image',
+                  'theme',
+                  'map',
                   'markers')
         depth = 1
-        
+ 
 class MarkerSerializer(serializers.ModelSerializer):
+    '''MarkerSerializer'''
     class Meta:
         model = Marker
         fields = '__all__'
 
 class ThemeSerializer(serializers.ModelSerializer):
+    '''ThemeSerializer'''
     class Meta:
         model = Theme
         fields = '__all__'

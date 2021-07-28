@@ -198,12 +198,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(upload_to='dublinbus_images', default='default.png') 
+    image = models.ImageField(upload_to='dublinbus_images', default='default.png')
     map = models.CharField(max_length=120, default='defaultThemeLight')
-    
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'password']
-    
+
     objects = CustomUserManager()
 
     def __str__(self):
@@ -283,7 +283,7 @@ class Marker(models.Model):
     atm = models.BooleanField(default=False)
     bakery = models.BooleanField(default=False)
     bank = models.BooleanField(default=False)
-    bar = models.BooleanField(default=False)
+    bar_marker = models.BooleanField(default=False)
     beauty_salon = models.BooleanField(default=False)
     bicycle_store = models.BooleanField(default=False)
     book_store = models.BooleanField(default=False)
