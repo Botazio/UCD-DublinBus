@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from statistics import mean
 from os import path
+import environ
 import requests
 from django.conf import settings
 from dublinbus.models import Calendar
@@ -10,6 +11,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 def request_realtime_nta_data():
     """
@@ -99,10 +104,10 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
         tzinfo=timezone(timedelta(hours=1)))
 
     # subtract current_time from scheduled_arrival_datetime_obj
-    # To be able to subtract, both scheduled_arrival_datetime_obj and current_time must be
-    # datetime objects and in the same timezone
-    # scheduled_arrival_time given to second precision so removing microsecond
-    # precision from current_time
+    # To be able to subtract, both scheduled_arrival_datetime_obj
+    # and current_time must be datetime objects and in the same
+    # timezone scheduled_arrival_time given to second precision
+    # so removing microsecond precision from current_time
     time_delta = scheduled_arrival_datetime_obj - \
         current_time.replace(microsecond=0)
 
@@ -126,7 +131,7 @@ def date_to_service_ids(current_date):
     day = current_date.strftime("%A").lower()
     return list(Calendar.objects.filter(**{day: True}).values_list('service_id', flat=True))
 
-def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=100):
+def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=100):
     """
     Predict the time to travel between two adjacent stops on the same route trip.
     This method uses stop numbers and not stop IDs since stop IDs are not available
@@ -140,6 +145,9 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         departure_stop_num: int
             The number of the departure stop (e.g., 768)
 
+        features: dict
+            Dict of features
+
         num_predictions: int
             The number of predictions to return
 
@@ -152,20 +160,10 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
     model_path = f"./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}/"
 
     if path.exists(model_path):
+        print(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
         trained_nn_model = keras.models.load_model(model_path)
 
-        mock_features = {
-            'sin_day': 0.082424,
-            'cos_day': -0.022153,
-            'sin_time': -0.308382,
-            'cos_time': -0.307183,
-            'rain': 0,
-            'lagged_rain': 0,
-            'temp': 10.0,
-            'bank_holiday': 0
-        }
-
-        input_row = np.reshape(np.fromiter(mock_features.values(), dtype=float), (1, 8))
+        input_row = np.reshape(np.array(list(features.values())), (1, 8))
 
         predictions = make_probabilistic_predictions(
             input_row,
@@ -177,11 +175,13 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, num_predictions=
         return predictions
 
     # no model exists for this stop pair so just use expected times
+    print(f"No model found for {departure_stop_num}_to_{arrival_stop_num}." +
+                "Using timetable instead.")
     timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
-    prediction = timetable_2021.loc[
+    prediction = np.mean(timetable_2021.loc[
                     timetable_2021['stop_pair'] == f"{departure_stop_num}_to_{arrival_stop_num}",
                     "expected_travel_time"
-                ].values
+                ].values)
 
     return np.repeat(prediction, num_predictions)
 
@@ -249,3 +249,90 @@ def plot_probabilistic_predictions(stop_pair, predictions):
 
     plt.savefig("./model_output/NeuralNetwork/" +
         f"NeuralNetwork_predictions{stop_pair}.png")
+
+def check_bank_holiday(input_date):
+    """
+    Returns 1 if the inputted date is a bank holiday in Ireland
+    or 0 otherwise
+
+    Args
+    ---
+        input_date: datetime
+            A DateTime object
+
+    Returns
+    ---
+    An int which is 1 if it's a bank holiday or 0 otherwise
+    """
+
+    bank_holidays_2021 = [
+        # New Year's Day
+        datetime(2021, 1, 1),
+        # St Patricks' Day
+        datetime(2021, 3, 17),
+        # Easter Monday
+        datetime(2021, 4, 5),
+        # May Bank Holiday
+        datetime(2021, 5, 3),
+        # June Bank Holiday
+        datetime(2021, 6, 7),
+        # August Bank Holiday
+        datetime(2021, 8, 2),
+        # October Bank Holiday
+        datetime(2021, 10, 25),
+        # Christmas Day
+        datetime(2021, 12, 25),
+        # St Stephen's Day
+        datetime(2021, 12, 26),
+    ]
+
+    return input_date in bank_holidays_2021
+
+def get_weather_forecast(requested_datetime):
+    """
+    Get the weather forecast for a particular datetime for Dublin.
+    This currently only works for the next 48 hours because of API
+    limits.
+
+    Args
+    ---
+        requested_datetime: DateTime object
+            A DateTime in the next 48 hours
+
+    Returns
+    ---
+    A dict of weather forecasts for rain, temp and lagged_rain
+    """
+
+    weather_forecast = {}
+
+    # Get forecasted weather
+    weather_response = requests.get(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155" +
+            f"&exclude=current,minutely,alerts&units=metric&appid={env('OPENWEATHER_API_KEY')}"
+    ).json()
+    for hour in weather_response['hourly']:
+        open_weather_dt = datetime.fromtimestamp(hour['dt'])
+
+        if (open_weather_dt.date() == requested_datetime.date()
+                and open_weather_dt.hour == (requested_datetime.hour - 1)):
+
+            # rain is not included as a value if there is no rain
+            if "rain" not in hour:
+                weather_forecast['lagged_rain'] = 0
+            else:
+                weather_forecast['lagged_rain'] = hour['rain']['1h']
+
+        # Matches to the nearest hour
+        if (open_weather_dt.date() == requested_datetime.date()
+                and open_weather_dt.hour == requested_datetime.hour):
+
+            weather_forecast['temp'] = hour['temp']
+
+            # rain is not included as a value if there is no rain
+            if "rain" not in hour:
+                weather_forecast['rain'] = 0
+            else:
+                weather_forecast['rain'] = hour['rain']['1h']
+
+    return weather_forecast

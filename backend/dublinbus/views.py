@@ -1,4 +1,6 @@
+import math
 from datetime import datetime, timedelta, timezone
+from dateutil import tz
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
 from django.contrib.auth import get_user_model
@@ -10,6 +12,7 @@ import dublinbus.utils as utils
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from .serializers import UserSerializerWithToken, \
     FavouriteStopSerializer, \
     FavouriteJourneySerializer
@@ -119,7 +122,7 @@ def route(request, route_id):
 
     return JsonResponse(response)
 
-def predict(request):
+class Predict(APIView):
     """
     Predict travel time in seconds between two stops on the same route/trip.
     These stops do not need to necessarily be adjacent.
@@ -131,45 +134,106 @@ def predict(request):
     /dublinbus/predict?trip_id=<trip_A>&departure_stop_id=<stop_A>&arrival_stop_id=<stop_B>
     """
 
-    trip_id = request.GET["trip_id"]
-    departure_stop_id = request.GET["departure_stop_id"]
-    arrival_stop_id = request.GET["arrival_stop_id"]
+    permission_classes = [AllowAny]
 
-    departure_stop_sequence = StopTime.objects.filter(
-        trip_id=trip_id, stop_id=departure_stop_id)[0].stop_sequence
-    arrival_stop_sequence = StopTime.objects.filter(
-        trip_id=trip_id, stop_id=arrival_stop_id)[0].stop_sequence
+    def post(self, request):
+        """
+        Route for requesting a bus journey time prediction between stops.
 
-    # Number of total predictions for the journey
-    num_predictions = 1000
+        This route accepts POST requests with the following parameters:
 
-    # Array of predictions for the journey
-    total_times = np.zeros(num_predictions)
+            route_id: str
+                The route ID of the journey
 
-    for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
-        departure_stop = StopTime.objects.get(
-            trip_id=trip_id, stop_sequence=stop_sequence).stop_id
-        arrival_stop = StopTime.objects.get(
-            trip_id=trip_id, stop_sequence=stop_sequence + 1).stop_id
+            departure_stop_id: str
+                The stop ID of the departure stop in the journey
 
-        departure_stop_num = Stop.objects.get(stop_id=departure_stop).stop_num
-        arrival_stop_num = Stop.objects.get(stop_id=arrival_stop).stop_num
+            arrival_stop_id: str
+                The stop ID of the departure stop in the journey
 
-        try:
+            datetime: datetime str
+                The datetime for the prediction. This should be a date in the
+                future. Example format: 07/28/2021, 20:35:14
+
+            num_predictions: int (optional)
+                The number of requested predictions
+
+            Python Example:
+
+                import requests
+
+                data = {
+                    "route_id": "60-39A-b12-1",
+                    "departure_stop_id": "8250DB000767",
+                    "arrival_stop_id": "8250DB000768",
+                    "datetime": "07/28/2021, 20:35:14"
+                }
+
+                r = requests.post(
+                    'http://52.207.217.126/predict/',
+                    data = data
+                )
+
+        The route returns an array of predictions of the journey time
+
+        """
+
+        parsed_datetime = datetime.strptime(
+            request.data["datetime"],
+            "%m/%d/%Y, %H:%M:%S"
+        ).replace(tzinfo=tz.gettz('Europe/London'))
+
+        weather_forecast = utils.get_weather_forecast(parsed_datetime)
+
+        midnight = datetime(
+                            year=parsed_datetime.year,
+                            month=parsed_datetime.month,
+                            day=parsed_datetime.day
+                    ).replace(tzinfo=tz.gettz('Europe/London'))
+        seconds_since_midnight = (parsed_datetime - midnight).total_seconds()
+
+        features = {
+            'cos_time': math.cos(seconds_since_midnight),
+            'sin_time': math.sin(seconds_since_midnight),
+            'cos_day': math.cos(parsed_datetime.weekday()),
+            'sin_day': math.sin(parsed_datetime.weekday()),
+            'rain': weather_forecast['rain'],
+            'lagged_rain': weather_forecast['lagged_rain'],
+            'temp': weather_forecast['temp'],
+            'bank_holiday': utils.check_bank_holiday(parsed_datetime)
+        }
+
+        trip_id = Trip.objects.filter(
+            route=request.data['route_id']
+        ).values_list('trip_id', flat=True)[1]
+
+        departure_stop_sequence = StopTime.objects.filter(
+            trip_id=trip_id, stop_id=request.data['departure_stop_id'])[0].stop_sequence
+        arrival_stop_sequence = StopTime.objects.filter(
+            trip_id=trip_id, stop_id=request.data['arrival_stop_id'])[0].stop_sequence
+
+        # Array of predictions for the journey
+        total_times = np.zeros(int(request.data.get('num_predictions', 100)))
+
+        for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
+            departure_stop = StopTime.objects.get(
+                trip_id=trip_id, stop_sequence=stop_sequence).stop_id
+            arrival_stop = StopTime.objects.get(
+                trip_id=trip_id, stop_sequence=stop_sequence + 1).stop_id
+
             stop_pair_time_predictions = utils.predict_adjacent_stop(
-                departure_stop_num, arrival_stop_num,
-                num_predictions=num_predictions
+                Stop.objects.get(stop_id=departure_stop).stop_num,
+                Stop.objects.get(stop_id=arrival_stop).stop_num,
+                features,
+                num_predictions=int(request.data.get('num_predictions', 100))
             )
 
-            # Add predictions for current adjacent stop pair to total journey
-            # prediction
+            # Add predictions for current adjacent stop pair to
+            # total journey prediction
             total_times += stop_pair_time_predictions
-        except KeyError as exc:
-            raise Http404(
-                f"Cannot find a prediction from {departure_stop_num} to {arrival_stop_num}"
-                ) from exc
 
-    return JsonResponse({"prediction": total_times.tolist()})
+        return Response({"prediction": total_times.tolist()}, status=status.HTTP_200_OK)
+
 
 class FavouriteStopView(APIView):
     """
@@ -281,4 +345,3 @@ class UserView(APIView):
         self.check_object_permissions(self.request, user)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        

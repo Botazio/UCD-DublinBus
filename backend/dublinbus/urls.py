@@ -6,7 +6,7 @@ urlpatterns = [
     path('stop/<str:stop_id>/', views.stop, name='stop'),
     path('route/<str:route_id>/', views.route, name='route'),
     path('stops/', views.stops, name='stops'),
-    path('predict/', views.predict, name='predict'),
+    path('predict/', views.Predict.as_view(), name='predict'),
     path('users/', views.UserView.as_view()),
     path('users/<int:primary_key>/', views.UserView.as_view()),
     path('favouritestop/', views.FavouriteStopView.as_view()),
