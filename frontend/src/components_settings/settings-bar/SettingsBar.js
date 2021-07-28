@@ -8,7 +8,8 @@ import { ReactComponent as IconFav } from "./fixtures/icon-fav.svg";
 import { ReactComponent as IconMarker } from "./fixtures/icon-marker.svg";
 import InfoBox from "../infobox/InfoBox";
 
-
+// Main component of the settings page. Handles which section is active
+// Passes that state to the infobox
 const SettingsBar = () => {
    // States to control when to display the sideBar
    const [sideBar, setSideBar] = useState(false);

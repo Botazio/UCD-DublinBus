@@ -4,12 +4,14 @@ import ProfileCSS from "../Profile.module.css";
 import Action from "../../../reusable-components/action/Action";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 
+// This component renders a header and a button that allows the user 
+// to delete his account. The function to delete the account is passed 
+// to the action subcomponent
 const DeleteAccount = () => {
+   // State that controls when to display the action
    const [action, setAction] = useState(false);
 
-   const actionMessage = "Delete account";
-
-   // messages to display in the header
+   // Messages to display in the header
    const headerTitle = "Delete account";
    const headerBody = "Deleting your account is permanent. Are you sure you want to do it?";
 
@@ -23,7 +25,7 @@ const DeleteAccount = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="delete" color="secondary" buttonMessage="Delete" setAction={setAction} />}
+         {action && <Action message={"Delete account"} type="delete" color="secondary" buttonMessage="Delete" setAction={setAction} />}
       </>
    );
 };
