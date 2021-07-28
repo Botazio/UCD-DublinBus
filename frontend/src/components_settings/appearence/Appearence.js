@@ -16,6 +16,7 @@ const mapPrefBody = "Choose how the map looks!";
 const Profile = () => {
    return (
       <>
+         {/* Reusable header component */}
          <SettingsHeader title={themeTitle} body={themeBody} />
 
          <div className={AppearenceCSS.theme_wrapper}>
@@ -24,9 +25,12 @@ const Profile = () => {
             {/* Custom themes */}
             <ThemeBox title="Custom themes" info={cusThemeInfo} type="custom" />
          </div>
-         <SettingsHeader title={mapPrefTitle} body={mapPrefBody} />
-         <MapTheme />
 
+         {/* Reusable header component */}
+         <SettingsHeader title={mapPrefTitle} body={mapPrefBody} />
+
+         {/* Predifined map themes */}
+         <MapTheme />
       </>
    );
 };

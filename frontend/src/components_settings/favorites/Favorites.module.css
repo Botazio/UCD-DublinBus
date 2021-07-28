@@ -1,6 +1,7 @@
 .container {
    border: 1px solid lightgray;
    border-radius: 5px;
+   margin-bottom: 15px;
 }
 .switch_wrapper {
    display: flex;
@@ -31,7 +32,7 @@
 .active_header {
    background-color: #fafafa;
 }
-.info_box {
+.info_wrapper {
    padding: 15px;
 }
 .pagination {
@@ -43,9 +44,6 @@
    overflow: hidden;
    text-overflow: ellipsis;
    border-top: 1px solid lightgray;
-}
-.pagination > nav> ul {
-   flex-wrap: nowrap !important;
 }
 .searchbar {
    border: 1px solid lightgray;

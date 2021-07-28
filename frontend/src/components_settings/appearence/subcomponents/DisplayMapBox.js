@@ -3,6 +3,8 @@ import darkMap from "../fixtures/dark-theme.png";
 import greyMap from "../fixtures/grey-theme.png";
 import AppearenceCSS from "../Appearence.module.css";
 
+// This component changes the map theme for the small box 
+// that is used as example 
 const DisplayMapBox = ({ boxTheme }) => {
    return (
       <div className={AppearenceCSS.display_theme_map}>

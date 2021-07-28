@@ -1,5 +1,3 @@
-import { Button } from "@material-ui/core";
-import Pagination from "@material-ui/lab/Pagination";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useAuth } from "../../../../providers/AuthContext";
@@ -9,19 +7,11 @@ import Waiting from "../../../../reusable-components/waiting/Waiting";
 import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
 import StopsSearchBar from "./StopsSearchBar";
-import { useTheme } from "@material-ui/styles";
-import { makeStyles } from "@material-ui/styles";
 import Action from "../../../../reusable-components/action/Action";
+import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
+import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
 
-// Button styles
-const useStyles = makeStyles((theme) => ({
-   root: {
-      border: "1px solid" + theme.theme.primary,
-      color: theme.theme.primary,
-      backgroundColor: theme.theme.background_1
-   },
-}));
-
+// This component renders the managing system to add new favorite stops 
 const AllStops = () => {
    // Markers to be displayed on the page. They are filtered by the search bar 
    const [visibleStops, setVisibleStops] = useState();
@@ -34,10 +24,6 @@ const AllStops = () => {
 
    // Get the data from the provider
    const { data: stops, isPending, error } = useStops();
-
-   // Get the theme from the provider and style the button
-   const currentTheme = useTheme();
-   const classes = useStyles(currentTheme);
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
@@ -67,7 +53,7 @@ const AllStops = () => {
 
    return (
       <>
-         <div className={FavoritesCSS.info_box}>
+         <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
             {stops && <StopsSearchBar stops={stops} setVisibleStops={setVisibleStops} />}
 
@@ -78,14 +64,14 @@ const AllStops = () => {
 
             {/* Pagination for the results */}
             {visibleStops && <div className={FavoritesCSS.pagination}>
-               <Pagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 5)} color="primary" size="small" />
+               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 5)} color="primary" size="small" />
             </div>}
 
-            {/* Action button to save the changes */}
+            {/* Action button to save the changes. It is displayed if the active stops has at least one value */}
             {(activeStops.length !== 0) && <div className={FavoritesCSS.action_button}>
-               <Button
-                  classes={{ root: classes.root }} fullWidth={true} onClick={() => setAction(true)}>save changes
-               </Button>
+               <PrimaryButton
+                  fullWidth={true} onClick={() => setAction(true)}>save changes
+               </PrimaryButton>
             </div>}
          </div>
 
