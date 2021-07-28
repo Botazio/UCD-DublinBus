@@ -236,6 +236,12 @@ class Predict(APIView):
             # total journey prediction
             total_times += stop_pair_time_predictions
 
+
+        utils.plot_probabilistic_predictions(
+            f"{request.data['departure_stop_id']}_to_{request.data['arrival_stop_id']}",
+            total_times.tolist()
+        )
+
         return Response({"prediction": total_times.tolist()}, status=status.HTTP_200_OK)
 
 
