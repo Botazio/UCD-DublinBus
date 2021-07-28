@@ -283,7 +283,7 @@ class Marker(models.Model):
     atm = models.BooleanField(default=False)
     bakery = models.BooleanField(default=False)
     bank = models.BooleanField(default=False)
-    bar_marker = models.BooleanField(default=False)
+    bar = models.BooleanField(default=False)
     beauty_salon = models.BooleanField(default=False)
     bicycle_store = models.BooleanField(default=False)
     book_store = models.BooleanField(default=False)

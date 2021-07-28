@@ -91,7 +91,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                   'map',
                   'markers')
         depth = 1
- 
+
 class MarkerSerializer(serializers.ModelSerializer):
     '''MarkerSerializer'''
     class Meta:

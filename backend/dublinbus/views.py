@@ -350,7 +350,7 @@ class UserView(APIView):
         self.check_object_permissions(self.request, user)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        
+
     def put(self, request, primary_key):
         """ Update User fields for the currently authenticated user. """
         user = self.get_object(primary_key)
@@ -372,13 +372,14 @@ class MarkerView(APIView):
         serializer = MarkerSerializer(markers, many=True)
         return Response(serializer.data)
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(primary_key):
         """Return the Marker object for the currently authenticated user."""
         try:
-            return Marker.objects.get(pk=pk)
-        except Marker.DoesNotExist:
-            raise Http404
-   
+            return Marker.objects.get(pk=primary_key)
+        except Marker.DoesNotExist as marker_not_exist:
+            raise Http404(f"Cannot find Marker: {primary_key}") from marker_not_exist
+
     def put(self, request, primary_key):
         """ Update Marker fields for the currently authenticated user. """
         marker = self.get_object(primary_key)
@@ -400,12 +401,13 @@ class ThemeView(APIView):
         serializer = ThemeSerializer(themes, many=True)
         return Response(serializer.data)
 
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(primary_key):
         """Return the Theme object for the currently authenticated user."""
         try:
-            return Theme.objects.get(pk=pk)
-        except Theme.DoesNotExist:
-            raise Http404
+            return Theme.objects.get(pk=primary_key)
+        except Theme.DoesNotExist as theme_not_exist:
+            raise Http404(f"Cannot find Theme: {primary_key}") from theme_not_exist
 
     def put(self, request, primary_key):
         """ Update Theme fields for the currently authenticated user. """
