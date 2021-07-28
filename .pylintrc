@@ -1,5 +1,5 @@
 [MASTER]
-ignore=admin.py,apps.py,manage.py
+ignore=admin.py,apps.py,manage.py,test_preprocessing.py
 disable=C0114,W1201,W1203,E0402,W0632,E0611
 load-plugins=pylint_django
 django-settings-module=backend.settings
