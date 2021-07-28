@@ -359,7 +359,7 @@ class UserView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 class MarkerView(APIView):
     """
     Get or Put a Marker instance.
