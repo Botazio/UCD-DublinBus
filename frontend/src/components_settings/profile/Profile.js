@@ -1,6 +1,7 @@
 import DeleteAccount from "./subcomponents/DeleteAccount";
 import UserMail from "./subcomponents/UserMail";
 import UserName from "./subcomponents/UserName";
+import UserPassword from "./subcomponents/UserPassword";
 import UserPhoto from "./subcomponents/UserPhoto";
 
 
@@ -12,6 +13,7 @@ const Profile = () => {
          <UserPhoto />
          <UserName />
          <UserMail />
+         <UserPassword />
          <DeleteAccount />
       </>
    );

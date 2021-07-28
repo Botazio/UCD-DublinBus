@@ -20,7 +20,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: white;
+  border: 1px solid lightgray;
   padding: 20px;
   border-radius: 20px;
 }
@@ -100,7 +101,8 @@
 }
 .hourly_inner_wrapper {
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: white;
+  border: 1px solid lightgray;
   white-space: nowrap;
   width: 90%;
   border-radius: 20px;
@@ -143,7 +145,8 @@
   padding-bottom: 15px;
   width: 90%;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: white;
+  border: 1px solid lightgray;
 }
 
 /* Styles for the details */
@@ -167,7 +170,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: white;
+  border: 1px solid lightgray;
   padding: 20px 20px 30px 20px;
   border-radius: 20px;
 }

@@ -1,0 +1,9 @@
+.header_title > h2{
+   font-weight: 500;
+   margin-bottom: 10px;
+   padding-bottom: 5px;
+   border-bottom: 1px solid lightgray;
+}
+.header_info > p {
+   margin-bottom: 10px;
+}

@@ -29,7 +29,11 @@
   fill: rgba(0,0,0, 0.9);
 }
 .active {
-  background-color: lightblue;
+  background-color: #00B9FF;
+  color: white;
+}
+.active > svg {
+  fill: white!important;
 }
 
 /* Display the switcher on the right side when the screen width is 
@@ -54,9 +58,6 @@ between 600px-900px */
   .container > div > svg {
     fill: rgba(0,0,0, 0.6);
     margin-right: 5px;
-  }
-  .active > svg {
-    fill: rgba(0,0,0, 0.9)!important;
   }
 }
 

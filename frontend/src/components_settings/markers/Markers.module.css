@@ -1,0 +1,35 @@
+.switch_container {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   width: 100%;
+}
+.switch_container > h4 {
+   text-transform: capitalize;
+}
+.pagination {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 10px;
+}
+.searchbar {
+   border: 1px solid lightgray;
+   padding: 7px 10px;
+   width: 250px;
+   border-radius: 20px;
+   text-decoration: none;
+   outline: none;
+   font-size: 1rem;
+}
+.searchbar:focus {
+   box-shadow: 0 0 0 1pt black;
+}
+.action_button {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 10px;
+}

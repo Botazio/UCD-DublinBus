@@ -12,7 +12,7 @@
   display: none;
   overflow: visible;
   width: 225px;
-  margin-right: 10px;
+  margin-right: 20px;
   border: 1px solid #e3e9ed;
   border-radius: 3px;
   background: #fff;
@@ -50,11 +50,9 @@
   padding: 5px 10px;
   margin: 2px 0px;
   border-radius: 3px;
-  background-color: skyblue;
+  border: 1px solid #00B5F4;
+  background-color: #DBF2FF;
   cursor: pointer;
-}
-.popover_items > a > button:hover {
-  background-color: rgb(68, 181, 226);
 }
 .popover_items > h4 {
   margin: 2px 0px;

@@ -1,0 +1,112 @@
+.container {
+   border: 1px solid lightgray;
+   border-radius: 5px;
+}
+.switch_wrapper {
+   display: flex;
+   width: 100%;
+   align-items: center;
+   justify-content: space-between;
+   border-bottom: 1px solid lightgray;
+   border-radius: 5px 5px 0 0;
+}
+.switch_wrapper > div {
+   flex: 1;
+   cursor: pointer;
+   padding: 10px 10px;
+}
+.switch_wrapper > div:first-child {
+   border-right: 1px solid lightgray;
+   border-radius: 5px 0px 0px 0px;
+}
+.switch_wrapper > div:last-child {
+   border-radius: 0px 5px 0px 0px;
+}
+.switch_wrapper > div > h3 {
+   font-weight: 500;
+   font-size: 1rem;
+   width: fit-content;
+   padding-right: 10px;
+}
+.active_header {
+   background-color: #fafafa;
+}
+.info_box {
+   padding: 15px;
+}
+.pagination {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding-top: 10px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   border-top: 1px solid lightgray;
+}
+.pagination > nav> ul {
+   flex-wrap: nowrap !important;
+}
+.searchbar {
+   border: 1px solid lightgray;
+   padding: 7px 10px;
+   width: 250px;
+   border-radius: 20px;
+   text-decoration: none;
+   outline: none;
+   font-size: 1rem;
+   margin-bottom: 15px;
+}
+.searchbar:focus {
+   box-shadow: 0 0 0 1pt black;
+}
+.no_stops_message > h4 {
+   font-weight: 500;
+   font-size: 1rem;
+   margin-left: 5px;
+}
+.stop_wrapper {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 7px 5px;
+   border-top: 1px solid lightgray;
+   cursor: pointer;
+}
+.icon {
+   margin: 0px 10px;
+   width: 16px;
+   height: 16px;
+}
+.stop_title > h4 {
+   font-weight: 500;
+   font-size: 1rem;
+}
+.stop_lines {
+   display: flex;
+   align-items: center;
+   max-width: 300px;
+   flex-wrap: wrap;
+}
+.stop_lines > div {
+   padding: 3px;
+   border: 1px solid lightgray;
+   border-radius: 5px;
+   margin-right: 6px;
+   margin-top: 5px;
+   font-size: 0.8rem;
+}
+.action_button {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 10px;
+}
+
+
+@media screen and (max-width: 350px) {
+   .searchbar {
+      width: 100%;
+   }
+}

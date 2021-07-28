@@ -11,6 +11,7 @@
    align-items: center;
    width: 70%;
    background-color: white;
+   border: 1px solid lightgray;
    border-radius: 5px;
    padding: 5px;
 }
@@ -23,7 +24,8 @@
    cursor: pointer;
 }
 .toogle_buttons_active {
-   background-color: #ff8283;
+   background-color: #DBF2FF;
+   border: 1px solid #00B5F4;
 }
 .options {
    margin-top: 3px;
@@ -80,7 +82,7 @@
    align-items: center;
    justify-content: center;
    flex-direction: column;
-   border-top: 1px solid gray;
+   border-top: 1px solid lightgray;
    padding-top: 5px;
 }
 .popover {

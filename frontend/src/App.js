@@ -7,27 +7,30 @@ import UserPage from "./pages/UserPage";
 import NotFound from "./components/notfound/NotFound";
 import NoUserRoute from "./helpers/NoUserRoute";
 import { StopsProvider } from "./providers/StopsContext";
+import CustomThemeProvider from "./providers/CustomThemeProvider";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Switch>
-          <Route exact path="/">
-            <StopsProvider>
-              <BusPage />
-            </StopsProvider>
-          </Route>
-          <NoUserRoute exact path="/login">
-            <AuthenticationPage />
-          </NoUserRoute>
-          <PrivateRoute exact path="/user">
-            <UserPage />
-          </PrivateRoute>
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
+        <CustomThemeProvider>
+          <StopsProvider>
+            <Switch>
+              <Route exact path="/">
+                <BusPage />
+              </Route>
+              <NoUserRoute exact path="/login">
+                <AuthenticationPage />
+              </NoUserRoute>
+              <PrivateRoute exact path="/user">
+                <UserPage />
+              </PrivateRoute>
+              <Route path="*">
+                <NotFound />
+              </Route>
+            </Switch>
+          </StopsProvider>
+        </CustomThemeProvider>
       </AuthProvider>
     </Router>
   );

@@ -1,8 +1,11 @@
 import React from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import MapContainerCSS from "./MapContainer.module.css";
-import mapStyles from "../../fixtures/map-styles/mapStyles";
+import lightTheme from "../../fixtures/map-styles/lightTheme";
+import darkTheme from "../../fixtures/map-styles/darkTheme";
+import greyTheme from "../../fixtures/map-styles/greyTheme";
 import { useStops } from "../../providers/StopsContext";
+import { useTheme } from "@material-ui/core";
 
 // Google map libraries
 const libraries = ["places"];
@@ -16,10 +19,16 @@ const containerStyle = {
 
 // Options for the map.
 const options = {
-  styles: mapStyles,
   mapTypeControl: false,
   fullscreenControl: true,
   streetViewControl: false,
+};
+
+// dict for the mapStyles
+const mapStyles = {
+  "defaultThemeLight": lightTheme,
+  "defaultThemeDark": darkTheme,
+  "defaultThemeGrey": greyTheme
 };
 
 // Center of the map when it loads. In this case Dublin center
@@ -50,6 +59,9 @@ export default function MapContainer(props) {
   // We do not need to get the data in any variable
   useStops();
 
+  // Render a different map depending on the user settings
+  const mapTheme = mapStyles[useTheme().map];
+  options.styles = mapTheme;
   // Error handling when loading the map
   if (loadError) return "Error loading maps";
   if (!isLoaded) return "Loading Maps";

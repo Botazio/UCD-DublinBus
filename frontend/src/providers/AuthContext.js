@@ -15,8 +15,8 @@ export function AuthProvider({ children }) {
   const [errorMessage, setErrorMessage] = useState();
 
   // function to sign up
-  function signup(username, password) {
-    const body = { username: username, password: password };
+  function signup(username, email, password) {
+    const body = { username: username, email: email, password: password };
 
     // set the error to null
     setErrorMessage(null);
@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
       body: JSON.stringify(body),
     })
       .then((res) => {
+        console.log(res);
         if (!res.ok) {
           throw Error();
         }
@@ -39,7 +40,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", json.token);
 
         // set the current user to the response
-        setCurrentUser({ username: json.username });
+        setCurrentUser(json.user);
       })
       .catch((err) => {
         if (err.name === "AbortError") {
@@ -91,7 +92,7 @@ export function AuthProvider({ children }) {
   function isAuthenticated() {
     // if there is a token in the local storage try to log in
     if (localStorage.getItem("token")) {
-      fetch("http://csi420-02-vm6.ucd.ie/current_user/", {
+      fetch("http://csi420-02-vm6.ucd.ie/users/", {
         method: "GET",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`,
@@ -100,9 +101,11 @@ export function AuthProvider({ children }) {
         .then((res) => res.json())
         .then((json) => {
           // change this later when they send me back a user object
-          // set the current user to the response if the toke is valid
+          // set the current user to the response if the token is valid
           if (json.username) {
-            setCurrentUser({ username: json.username });
+            localStorage.removeItem("token");
+            localStorage.setItem("token", json.token);
+            setCurrentUser(json);
           } // logout if the response is not a user
           else {
             logout();
@@ -119,6 +122,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    setCurrentUser,
     signup,
     signin,
     isAuthenticated,

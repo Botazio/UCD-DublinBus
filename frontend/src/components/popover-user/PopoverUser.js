@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import PopoverUserCSS from "./PopoverUser.module.css";
 import { ReactComponent as IconPower } from "./fixtures/icon-power.svg";
 import Avatar from '@material-ui/core/Avatar';
+import { useLocation } from "react-use";
 
 // This component renders a popover when the user icon is clicked
 // Allows the user to logout or to go to the settings page
 const PopoverUser = ({ currentUser, logout }) => {
   const [active, setActive] = useState(false);
+
+  // Hook that gives us the url of the current page 
+  let location = useLocation().pathname;
 
   return (
     <div className={PopoverUserCSS.wrapper}>
@@ -27,9 +31,15 @@ const PopoverUser = ({ currentUser, logout }) => {
           </Avatar>
           <div className={PopoverUserCSS.popover_items}>
             <h4>{currentUser.username}</h4>
-            <Link to="/user">
+
+            {/* Render a different button depending on the url */}
+            {location === "/" && <Link to="/user">
               <button>Edit profile</button>
-            </Link>
+            </Link>}
+            {location === "/user" && <Link to="/">
+              <button>Homepage</button>
+            </Link>}
+
           </div>
         </div>
 
