@@ -348,9 +348,10 @@ class UserView(APIView):
         """Delete a User for the currently authenticated user."""
         user = self.get_object(primary_key)
         self.check_object_permissions(self.request, user)
-        # if the user had uploaded image (i.e. not using default icon) then delete file from /dublinbus_image
+        # if the user had uploaded image (i.e. not using default icon) 
         if user.image.name != 'default.png':
-            user.image.delete()      
+            # then delete file from /dublinbus_image
+            user.image.delete() 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -359,7 +360,8 @@ class UserView(APIView):
         user = self.get_object(primary_key)
         serializer = UserSerializerWithToken(user, data=request.data, partial=True)
         if serializer.is_valid():
-            # if put request contains image data and user is not using default image i.e. replacing custom icon with another custom icon
+            # if put request contains image data and user is not using default image 
+            # i.e. replacing custom icon with another custom icon
             if ('image' in request.data.keys()) & (user.image.name != 'default.png'):
                 print('Replacing custom icon with another custom icon.')
                 # then delete first custom icon
