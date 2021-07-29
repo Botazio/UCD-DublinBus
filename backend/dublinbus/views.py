@@ -1,4 +1,5 @@
 import math
+import logging
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from django.shortcuts import render
@@ -22,6 +23,15 @@ from .serializers import UserSerializerWithToken, \
     UserSerializer
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 from .permissions import IsOwner, IsUser
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def index(request):
     """Temporary homepage for the application"""
@@ -149,6 +159,9 @@ class Predict(APIView):
             route_id: str
                 The route ID of the journey
 
+            direction_id: int
+                The direction ID of the journey
+
             departure_stop_id: str
                 The stop ID of the departure stop in the journey
 
@@ -168,6 +181,7 @@ class Predict(APIView):
 
                 data = {
                     "route_id": "60-39A-b12-1",
+                    "direction_id": "1",
                     "departure_stop_id": "8250DB000767",
                     "arrival_stop_id": "8250DB000768",
                     "datetime": "07/28/2021, 20:35:14"
@@ -207,23 +221,38 @@ class Predict(APIView):
             'bank_holiday': utils.check_bank_holiday(parsed_datetime)
         }
 
-        trip_id = Trip.objects.filter(
-            route=request.data['route_id']
-        ).values_list('trip_id', flat=True)[1]
+        # Get a list of trip IDs that are valid for this particular
+        # day on this route in this direction. We are assuming that
+        # the sequence of stops is the same for all these trips so
+        # just use the first
+        trip_ids = Trip.objects.filter(
+            route=request.data['route_id'],
+            direction_id=request.data['direction_id'],
+            # Get the service IDs that are valid for the date
+            calendar_id__in=utils.date_to_service_ids(parsed_datetime)
+        ).values_list('trip_id', flat=True)
 
+        logging.info(f"Found {len(trip_ids)} trips. Taking first.")
+
+        # Get the sequence numbers so we can iterate through adjacent
+        # stop pairs
         departure_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['departure_stop_id'])[0].stop_sequence
+            trip_id=trip_ids.first(),
+            stop_id=request.data['departure_stop_id']
+        )[0].stop_sequence
         arrival_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['arrival_stop_id'])[0].stop_sequence
+            trip_id=trip_ids.first(),
+            stop_id=request.data['arrival_stop_id']
+        )[0].stop_sequence
 
-        # Array of predictions for the journey
+        # Empty array of predictions for the journey
         total_times = np.zeros(int(request.data.get('num_predictions', 100)))
 
         for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
             departure_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence).stop_id
+                trip_id=trip_ids.first(), stop_sequence=stop_sequence).stop_id
             arrival_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence + 1).stop_id
+                trip_id=trip_ids.first(), stop_sequence=stop_sequence + 1).stop_id
 
             stop_pair_time_predictions = utils.predict_adjacent_stop(
                 Stop.objects.get(stop_id=departure_stop).stop_num,
@@ -235,7 +264,6 @@ class Predict(APIView):
             # Add predictions for current adjacent stop pair to
             # total journey prediction
             total_times += stop_pair_time_predictions
-
 
         utils.plot_probabilistic_predictions(
             f"{request.data['departure_stop_id']}_to_{request.data['arrival_stop_id']}",

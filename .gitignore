@@ -6,3 +6,4 @@ google_transit_dublinbus/
 *.log
 *.csv
 *.txt
+model_output/
