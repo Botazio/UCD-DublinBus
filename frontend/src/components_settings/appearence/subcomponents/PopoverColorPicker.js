@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import AppearenceCSS from "../Appearence.module.css";
 
+// This component renders a popover with a HEX color picker in it
 const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
    // State to handle the color 
    const [color, setColor] = useState("");
    // State to handle the popover
    const [anchorEl, setAnchorEl] = useState(null);
 
+   // First time the component renders it sets the color of the circle
+   // to the current theme depending on the type.
    useEffect(() => {
       if (type === "primary") {
          setColor(boxTheme.theme.primary);
@@ -29,6 +32,8 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
       // eslint-disable-next-line
    }, []);
 
+   // Every time color changes it sets the box theme to that color depending on the type.
+   // All the other parts of the theme stays the same 
    useEffect(() => {
       if (type === "primary") {
          setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, primary: color } });
@@ -65,6 +70,8 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
       <>
          {/* Open the popover when the options icon is clicked */}
          <div className={AppearenceCSS.cus_themes_button} onClick={handlePopoverOpen} style={{ backgroundColor: color }}></div>
+
+         {/* Material UI standard popover */}
          <Popover
             open={open}
             anchorEl={anchorEl}
@@ -80,6 +87,7 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
             {/* Render the children inside the popover */}
             <div className={AppearenceCSS.cus_themes_popover} style={{ padding: "10px 15px" }}>
                <div><p>{type}</p></div>
+               {/* External component color picker */}
                {<HexColorPicker color={color} onChange={setColor} />}
             </div>
          </Popover>

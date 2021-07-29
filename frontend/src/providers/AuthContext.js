@@ -105,7 +105,6 @@ export function AuthProvider({ children }) {
           if (json.username) {
             localStorage.removeItem("token");
             localStorage.setItem("token", json.token);
-            setCurrentUser(json);
           } // logout if the response is not a user
           else {
             logout();

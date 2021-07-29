@@ -5,23 +5,14 @@ import defaultMarkers from "../../fixtures/markers/defaultMarkers";
 import { useState } from "react";
 import { useEffect } from "react";
 import SwitchMarker from "./subcomponents/SwitchMarker";
-import Pagination from "@material-ui/lab/Pagination";
 import MarkerSearchBar from "./subcomponents/MarkerSearchBar";
 import Action from "../../reusable-components/action/Action";
-import { Button, makeStyles, useTheme } from "@material-ui/core";
+import PrimaryButton from "../../reusable-components/custom-buttons/PrimaryButton";
+import PrimaryPagination from "../../reusable-components/custom-pagination/PrimaryPagination";
 
-// Messages to display in the reusable components
+// Messages to display in the header
 const markersTitle = "Markers preferences";
 const markersBody = "Choose which markers do you want Dublin Bus to display on the map!";
-
-// Button styles
-const useStyles = makeStyles((theme) => ({
-   root: {
-      border: "1px solid" + theme.theme.primary,
-      color: theme.theme.primary,
-      backgroundColor: theme.theme.background_1
-   },
-}));
 
 // This is the main component for the markers section
 const Markers = () => {
@@ -32,15 +23,13 @@ const Markers = () => {
    // State to control when to display and hide the action message
    const [action, setAction] = useState(false);
 
-   // Get the theme from the provider and style the button
-   const currentTheme = useTheme();
-   const classes = useStyles(currentTheme);
-
    // Get the current user from the provider
    const { currentUser } = useAuth();
    // State for the pagination in the results
    const [page, setPage] = useState(1);
 
+   // Set the initial state for the markers state to the current user markers
+   // This function happens the first time the component renders
    useEffect(() => {
       if (currentUser && currentUser.markers) {
          setMarkers(currentUser.markers);
@@ -57,10 +46,9 @@ const Markers = () => {
       setMarkers({ ...markers, [title]: !state });
    };
 
-   const actionMessage = "Change markers";
-
    return (
       <>
+         {/* Header for the section */}
          <SettingsHeader title={markersTitle} body={markersBody} />
 
          {/* Search bar */}
@@ -71,19 +59,20 @@ const Markers = () => {
 
          {/* Pagination for the results */}
          {visibleMarkers && <div className={MarkersCSS.pagination}>
-            <Pagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} color="primary" size="small" />
+            <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} size="small" />
          </div>}
 
-         {/* Action button to save the changes */}
+         {/* If current user markers are not the same as the local state for markers 
+         render a button to save the changes displaying an action */}
          {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
             <div className={MarkersCSS.action_button}>
-               <Button
-                  classes={{ root: classes.root }} fullWidth={true} onClick={() => setAction(true)}>change markers
-               </Button>
+               <PrimaryButton
+                  fullWidth={true} onClick={() => setAction(true)}>change markers
+               </PrimaryButton>
             </div>}
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="markers" color="primary" buttonMessage="Change markers" setAction={setAction} />}
+         {action && <Action message={"Change markers"} type="markers" color="primary" buttonMessage="Change markers" setAction={setAction} />}
       </>
    );
 };
