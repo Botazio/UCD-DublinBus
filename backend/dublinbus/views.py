@@ -6,7 +6,7 @@ from django.http import JsonResponse, Http404
 from django.contrib.auth import get_user_model
 import numpy as np
 
-from dublinbus.models import Route, Stop, Trip, StopTime
+from dublinbus.models import Route, Stop, Trip, StopTime, Calendar
 import dublinbus.utils as utils
 
 from rest_framework import status
@@ -125,6 +125,30 @@ def route(request, route_id):
     }
 
     return JsonResponse(response)
+
+def lines(request):
+    """
+    Get all of the lines in both directions for the bus network
+    """
+
+    # Get valid service IDs (current date is greater than start_date and
+    # less than end date)
+    service_ids = list(Calendar.objects
+                        .filter(
+                            start_date__lte=datetime.today(),
+                            end_date__gte=datetime.today()
+                        )
+                        .values_list('service_id', flat=True)
+                    )
+
+    result = Trip.objects.filter(
+                            calendar_id__in=service_ids
+                        ).values(
+                            "route_id", "direction_id", "trip_headsign",
+                            "route__route_short_name"
+                        ).distinct()
+
+    return JsonResponse(list(result), safe=False)
 
 class Predict(APIView):
     """
