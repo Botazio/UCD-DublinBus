@@ -170,7 +170,6 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
             trained_nn_model,
             num_predictions=num_predictions
         )
-        plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
 
         return predictions
 
@@ -249,6 +248,7 @@ def plot_probabilistic_predictions(stop_pair, predictions):
 
     plt.savefig("./model_output/NeuralNetwork/" +
         f"NeuralNetwork_predictions{stop_pair}.png")
+    plt.close()
 
 def check_bank_holiday(input_date):
     """
