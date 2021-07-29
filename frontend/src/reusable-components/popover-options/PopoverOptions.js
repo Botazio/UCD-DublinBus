@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 // This component displays a popover use to set up the options in the different sections
 // It acts as a wrapper 
-const PopoverOptions = (props) => {
+const PopoverOptions = ({ children, icon }) => {
    // State to handle the popover
    const [anchorEl, setAnchorEl] = useState(null);
 
@@ -23,7 +23,11 @@ const PopoverOptions = (props) => {
    return (
       <>
          {/* Open the popover when the options icon is clicked */}
-         <IconOptions height={20} width={20} fill={'black'} onClick={handlePopoverOpen} />
+         <div onClick={handlePopoverOpen} style={{ cursor: "pointer" }}>
+            {!icon && <IconOptions height={20} width={20} fill={'black'} />}
+            {icon && icon}
+         </div>
+
          <Popover
             open={open}
             anchorEl={anchorEl}
@@ -37,7 +41,7 @@ const PopoverOptions = (props) => {
             }}
             onClose={handlePopoverClose}>
             {/* Render the children inside the popover */}
-            <div style={{ padding: "10px 15px" }}>{props.children}</div>
+            <div style={{ padding: "15px 15px" }}>{children}</div>
          </Popover>
       </>
    );

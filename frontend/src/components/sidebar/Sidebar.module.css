@@ -61,7 +61,7 @@
     transform: translateX(0px);
   }
   .button {
-    padding: 12px 15px;
+    padding: 10px 15px;
   }
   .button:hover {
     border-left: 0px;

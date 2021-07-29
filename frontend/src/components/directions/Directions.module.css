@@ -1,34 +1,58 @@
-.container_dir_searcher {
-  width: 90%;
-  padding: 20px 0px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+.header_dir_searcher {
+  margin-left: 5%;
+  align-self: flex-start;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+.header_dir_searcher > svg {
+  cursor: pointer;
+}
+.searchbar_lines {
+  width: 70%;
+}
+.searchbar_lines > div > input {
+  line-height: 30px;
+  font-size: 1rem;
+  border-radius: 20px;
+}
+.searchbar_stops {
+  width: 90%;
+  margin-top: 10px;
+}
+.searchbar_stops > div > input {
+  line-height: 25px;
+  font-size: 0.9rem;
+  border-radius: 20px;
+}
+.searchbar_stops:first-child {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.select_time_container {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-.subcontainer_dir_searcher {
-  width: 70%;
-  margin: 5px 0px;
-  border-radius: 15px;
+.select_time_container > h4::first-letter {
+  text-transform: capitalize;
 }
-.hour_container_dir_searcher {
-  width: 90%;
-  padding: 12px 20px;
-  background-color: rgba(255, 255, 255, 0.3);
-  margin-top: 20px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-size: 0.9rem;
-}
-.hour_container_dir_searcher > input {
-  align-self: center;
-  border-radius: 15px;
-  padding: 4px 15px;
-  outline: none;
+.select_time_option {
   cursor: pointer;
-  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  width: 100px;
+}
+.select_time_option > svg {
+  font-size: 10px;
+  margin-right: 3px;
+}
+.select_time_option:first-child {
+  margin-bottom: 5px;
+}
+.select_date_hour {
+  display: flex;
+  justify-content: space-between;
+}
+.select_date_hour > div {
+  width: 45%;
 }
