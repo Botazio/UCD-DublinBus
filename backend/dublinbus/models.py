@@ -198,21 +198,24 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
+    image = models.ImageField(upload_to='dublinbus_images', default='default.png')
+    map = models.CharField(max_length=120, default='defaultThemeLight')
 
-    USERNAME_FIELD = 'username'    # 'email'
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'password']
 
     objects = CustomUserManager()
 
     def __str__(self):
         return self.email
 
-class FavouriteStop(models.Model):
+class FavoriteStop(models.Model):
     """
-    A class that represents the users favourite Dublin Bus stops.
+    A class that represents the user's favorite Dublin Bus stops.
     """
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey('dublinbus.CustomUser',
-                              related_name='favouritestops',
+                              related_name='favoritestops',
                               on_delete=models.CASCADE) # auth.User
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
 
@@ -223,13 +226,13 @@ class FavouriteStop(models.Model):
     def __str__(self):
         return str(self.owner) + ' - ' + str(self.stop_id)
 
-class FavouriteJourney(models.Model):
+class FavoriteJourney(models.Model):
     """
-    A class that represents the users favourite Dublin Bus journeys.
+    A class that represents the user's favorite Dublin Bus journeys.
     """
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey('dublinbus.CustomUser',
-                              related_name='favouritejourneys',
+                              related_name='favoritejourneys',
                               on_delete=models.CASCADE) # auth.User
     stop_origin = models.ForeignKey(Stop,
                                     on_delete=models.CASCADE,
@@ -244,3 +247,129 @@ class FavouriteJourney(models.Model):
 
     def __str__(self):
         return str(self.owner) + ' - ' + str(self.stop_origin) + ' -> ' + str(self.stop_destination)
+
+class Theme(models.Model):
+    """
+    A class that represents the user's selection of appearance options.
+    """
+    owner = models.OneToOneField('dublinbus.CustomUser',
+                              related_name='theme',
+                              on_delete=models.CASCADE,
+                                 primary_key=True,)
+    primary = models.CharField(max_length=120, default='#0094EC')
+    divider = models.CharField(max_length=120, default='#D3D3D3')
+    background_primary = models.CharField(max_length=120, default='#FFFFFF')
+    background_secondary = models.CharField(max_length=120, default='#fafafa')
+    icon_color = models.CharField(max_length=120, default='#000000')
+    font_color = models.CharField(max_length=120, default='#000000')
+    font_size = models.CharField(max_length=120, default='1rem')
+
+    def __str__(self):
+        return str(self.owner.username)
+
+class Marker(models.Model):
+    """
+    A class that represents the user's selection of markers to be displayed on the map.
+    """
+    owner = models.OneToOneField('dublinbus.CustomUser',
+                              related_name='markers',
+                              on_delete=models.CASCADE,
+                              primary_key=True,)
+    accounting = models.BooleanField(default=False)
+    airport = models.BooleanField(default=False)
+    amusement_park = models.BooleanField(default=False)
+    aquarium = models.BooleanField(default=False)
+    art_gallery = models.BooleanField(default=False)
+    atm = models.BooleanField(default=False)
+    bakery = models.BooleanField(default=False)
+    bank = models.BooleanField(default=False)
+    bar = models.BooleanField(default=False)
+    beauty_salon = models.BooleanField(default=False)
+    bicycle_store = models.BooleanField(default=False)
+    book_store = models.BooleanField(default=False)
+    bowling_alley = models.BooleanField(default=False)
+    cafe = models.BooleanField(default=False)
+    campground = models.BooleanField(default=False)
+    car_dealer = models.BooleanField(default=False)
+    car_rental = models.BooleanField(default=False)
+    car_repair = models.BooleanField(default=False)
+    car_wash = models.BooleanField(default=False)
+    casino = models.BooleanField(default=False)
+    cemetery = models.BooleanField(default=False)
+    church = models.BooleanField(default=False)
+    city_hall = models.BooleanField(default=False)
+    clothing_store = models.BooleanField(default=False)
+    convenience_store = models.BooleanField(default=False)
+    courthouse = models.BooleanField(default=False)
+    dentist = models.BooleanField(default=False)
+    department_store = models.BooleanField(default=False)
+    doctor = models.BooleanField(default=False)
+    drugstore = models.BooleanField(default=False)
+    electrician = models.BooleanField(default=False)
+    electronics_store = models.BooleanField(default=False)
+    embassy = models.BooleanField(default=False)
+    fire_station = models.BooleanField(default=False)
+    florist = models.BooleanField(default=False)
+    funeral_home = models.BooleanField(default=False)
+    furniture_store = models.BooleanField(default=False)
+    gas_station = models.BooleanField(default=False)
+    gym = models.BooleanField(default=False)
+    hair_care = models.BooleanField(default=False)
+    hardware_store = models.BooleanField(default=False)
+    hindu_temple = models.BooleanField(default=False)
+    home_goods_store = models.BooleanField(default=False)
+    hospital = models.BooleanField(default=False)
+    insurance_agency = models.BooleanField(default=False)
+    jewelry_store = models.BooleanField(default=False)
+    laundry = models.BooleanField(default=False)
+    lawyer = models.BooleanField(default=False)
+    library = models.BooleanField(default=False)
+    light_rail_station = models.BooleanField(default=False)
+    liquor_store = models.BooleanField(default=False)
+    local_government_office = models.BooleanField(default=False)
+    locksmith = models.BooleanField(default=False)
+    lodging = models.BooleanField(default=False)
+    meal_delivery = models.BooleanField(default=False)
+    meal_takeaway = models.BooleanField(default=False)
+    mosque = models.BooleanField(default=False)
+    movie_rental = models.BooleanField(default=False)
+    movie_theater = models.BooleanField(default=False)
+    moving_company = models.BooleanField(default=False)
+    museum = models.BooleanField(default=False)
+    night_club = models.BooleanField(default=False)
+    painter = models.BooleanField(default=False)
+    park = models.BooleanField(default=False)
+    parking = models.BooleanField(default=False)
+    pet_store = models.BooleanField(default=False)
+    pharmacy = models.BooleanField(default=False)
+    physiotherapist = models.BooleanField(default=False)
+    plumber = models.BooleanField(default=False)
+    police = models.BooleanField(default=False)
+    post_office = models.BooleanField(default=False)
+    primary_school = models.BooleanField(default=False)
+    real_estate_agency = models.BooleanField(default=False)
+    restaurant = models.BooleanField(default=False)
+    roofing_contractor = models.BooleanField(default=False)
+    rv_park = models.BooleanField(default=False)
+    school = models.BooleanField(default=False)
+    secondary_school = models.BooleanField(default=False)
+    shoe_store = models.BooleanField(default=False)
+    shopping_mall = models.BooleanField(default=False)
+    spa = models.BooleanField(default=False)
+    stadium = models.BooleanField(default=False)
+    storage = models.BooleanField(default=False)
+    store = models.BooleanField(default=False)
+    subway_station = models.BooleanField(default=False)
+    supermarket = models.BooleanField(default=False)
+    synagogue = models.BooleanField(default=False)
+    taxi_stand = models.BooleanField(default=False)
+    tourist_attraction = models.BooleanField(default=False)
+    train_station = models.BooleanField(default=False)
+    transit_station = models.BooleanField(default=False)
+    travel_agency = models.BooleanField(default=False)
+    university = models.BooleanField(default=False)
+    veterinary_care = models.BooleanField(default=False)
+    zoo = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.owner.username)

@@ -188,3 +188,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 NTA_DEVELOPER_KEY = env('NTA_DEVELOPER_KEY')
 
 AUTH_USER_MODEL = 'dublinbus.CustomUser'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

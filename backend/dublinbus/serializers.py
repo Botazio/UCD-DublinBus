@@ -1,35 +1,45 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
-from .models import FavouriteStop, Stop, FavouriteJourney
+from .models import FavoriteStop, Stop, FavoriteJourney, Marker, Theme
 
 
-class FavouriteStopSerializer(serializers.ModelSerializer):
-    '''FavouriteStopSerializer'''
+class FavoriteStopSerializer(serializers.ModelSerializer):
+    '''FavoriteStopSerializer'''
     stop = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
-        model = FavouriteStop
+        model = FavoriteStop
         fields = ('pk', 'created', 'owner', 'stop')
 
-class FavouriteJourneySerializer(serializers.ModelSerializer):
-    '''FavouriteJourneySerializer'''
+class FavoriteJourneySerializer(serializers.ModelSerializer):
+    '''FavoriteJourneySerializer'''
     stop_origin = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
     stop_destination = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
-        model = FavouriteJourney
+        model = FavoriteJourney
         fields = ('pk', 'created', 'owner', "stop_origin", "stop_destination")
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
-    favouritestops = serializers.PrimaryKeyRelatedField(many=True,
-                                                        queryset=FavouriteStop.objects.all())
-    favouritejourneys = serializers.PrimaryKeyRelatedField(many=True,
-                                                        queryset=FavouriteJourney.objects.all())
+
     class Meta:
-        model = get_user_model() # User
-        fields = ('pk', 'username', 'email', 'favouritestops', 'favouritejourneys')
+        model = get_user_model()
+        fields = ('date_joined',
+                  'is_staff',
+                  'is_superuser',
+                  'username',
+                  'password',
+                  'email',
+                  'favoritestops',
+                  'favoritejourneys',
+                  'pk',
+                  'image',
+                  'theme',
+                  'map',
+                  'markers')
+        depth = 1
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     ''' Serializer class for handling signups
@@ -58,8 +68,38 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         if password is not None:
             instance.set_password(password)
         instance.save()
+        marker = Marker.objects.create(owner=instance)
+        marker.save()
+        theme = Theme.objects.create(owner=instance)
+        theme.save()
         return instance
 
     class Meta:
-        model = get_user_model() # User
-        fields = ('token', 'password', 'pk', 'username', 'email', 'is_staff', 'is_superuser')
+        model = get_user_model()
+        fields = ('date_joined',
+                  'is_staff',
+                  'is_superuser',
+                  'username',
+                  'password',
+                  'token',
+                  'email',
+                  'favoritestops',
+                  'favoritejourneys',
+                  'pk',
+                  'image',
+                  'theme',
+                  'map',
+                  'markers')
+        depth = 1
+
+class MarkerSerializer(serializers.ModelSerializer):
+    '''MarkerSerializer'''
+    class Meta:
+        model = Marker
+        fields = '__all__'
+
+class ThemeSerializer(serializers.ModelSerializer):
+    '''ThemeSerializer'''
+    class Meta:
+        model = Theme
+        fields = '__all__'
