@@ -268,11 +268,11 @@ class FavoriteStopView(APIView):
 
     def post(self, request):
         """Create a new FavoriteStop for the currently authenticated user."""
-        stop = self.get_stop_object(request.data['stop'])
+        stop_details = self.get_stop_object(request.data['stop'])
         serializer = FavoriteStopSerializer(data=request.data)
         if serializer.is_valid():
             # Associating the user that created the FavoriteStop, with the FavoriteStop instance
-            serializer.save(owner=self.request.user, stop=stop)
+            serializer.save(owner=self.request.user, stop=stop_details)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -311,7 +311,7 @@ class FavoriteJourneyView(APIView):
             return Stop.objects.get(pk=primary_key)
         except Stop.DoesNotExist as stop_not_exist:
             raise Http404(f"Cannot find Stop: {primary_key}") from stop_not_exist
-            
+
     def post(self, request):
         """Create a new FavoriteJourney for the currently authenticated user."""
         stop_origin = self.get_stop_object(request.data['stop_origin'])
@@ -319,7 +319,9 @@ class FavoriteJourneyView(APIView):
         serializer = FavoriteJourneySerializer(data=request.data)
         if serializer.is_valid():
             # Associating the user that created the FavoriteStop, with the FavoriteStop instance
-            serializer.save(owner=self.request.user, stop_origin=stop_origin, stop_destination=stop_destination)
+            serializer.save(owner=self.request.user,
+                            stop_origin=stop_origin,
+                            stop_destination=stop_destination)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
