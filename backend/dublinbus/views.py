@@ -9,17 +9,18 @@ import numpy as np
 from dublinbus.models import Route, Stop, Trip, StopTime
 import dublinbus.utils as utils
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializerWithToken, \
     FavoriteStopSerializer, \
     FavoriteJourneySerializer, \
     MarkerSerializer, \
     ThemeSerializer, \
-    UserSerializer
+    UserSerializer, \
+    ChangePasswordSerializer
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 from .permissions import IsOwner, IsUser
 
@@ -433,3 +434,11 @@ class ThemeView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    Change password for Custom Users.
+    """
+    queryset = get_user_model().objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
