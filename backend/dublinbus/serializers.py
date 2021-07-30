@@ -103,7 +103,7 @@ class ThemeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Theme
         fields = '__all__'
-        
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
     '''ChangePasswordSerializer'''
     password = serializers.CharField(write_only=True, required=True)
