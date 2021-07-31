@@ -311,6 +311,8 @@ def get_weather_forecast(requested_datetime):
         "https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155" +
             f"&exclude=current,minutely,alerts&units=metric&appid={env('OPENWEATHER_API_KEY')}"
     ).json()
+
+    # Try 48 hour forecast hourly data first
     for hour in weather_response['hourly']:
         open_weather_dt = datetime.fromtimestamp(hour['dt'])
 
@@ -334,5 +336,26 @@ def get_weather_forecast(requested_datetime):
                 weather_forecast['rain'] = 0
             else:
                 weather_forecast['rain'] = hour['rain']['1h']
+
+            return weather_forecast
+
+    # Fall back to 7 day daily forecasts because no matches for 48 hourly forecast
+    for day in weather_response['daily']:
+
+        open_weather_dt = datetime.fromtimestamp(day['dt'])
+
+        if open_weather_dt.date() == requested_datetime.date():
+
+            weather_forecast['temp'] = day['temp']
+
+            # rain is not included as a value if there is no rain
+            if "rain" not in day:
+                weather_forecast['rain'] = 0
+                weather_forecast['lagged_rain'] = 0
+            else:
+                weather_forecast['rain'] = day['rain']
+                # Can't get proper lagged value for rain since
+                # it's not hourly
+                weather_forecast['lagged_rain'] = day['rain']
 
     return weather_forecast

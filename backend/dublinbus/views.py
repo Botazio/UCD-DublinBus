@@ -2,7 +2,7 @@ import math
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from django.shortcuts import render
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
 import numpy as np
 
@@ -188,6 +188,12 @@ class Predict(APIView):
         ).replace(tzinfo=tz.gettz('Europe/London'))
 
         weather_forecast = utils.get_weather_forecast(parsed_datetime)
+
+        # Could not find any matches in hourly or daily forecasts
+        if len(weather_forecast) == 0:
+            return HttpResponseBadRequest(
+                    f"Could not get weather forecast for {parsed_datetime}"
+                )
 
         midnight = datetime(
                             year=parsed_datetime.year,
