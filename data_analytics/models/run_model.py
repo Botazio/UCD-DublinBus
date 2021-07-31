@@ -24,7 +24,7 @@ model = model_lookup[model_name]
 mode = sys.argv[2]
 
 if mode == "train":
-    train_all_stop_pair_models(model, model_name)
+    train_all_stop_pair_models(model_name, model=model)
 elif mode == "learning-curve":
     stop_pair = sys.argv[3]
     generate_learning_fit_time_curves(model, stop_pair)
