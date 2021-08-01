@@ -155,6 +155,15 @@ def train_model(stop_pair_df, model, grid_search):
                 normalizer
             )
 
+            # Fit on full training set and get unseen test scores
+            final_model.fit(
+                x_train.to_numpy(),
+                y_train.to_numpy(),
+                epochs=grid_result.best_params_['epochs']
+            )
+            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+            logging.info(f"Unseen Test RMSE: {test_rmse}")
+
         # Skip grid search and use best known parameters from previous grid search
         else:
 
@@ -175,14 +184,8 @@ def train_model(stop_pair_df, model, grid_search):
                 f"Training RMSE: {average_cv_rmse}"
             )
 
-        # Fit on full training set and get unseen test scores
-        final_model.fit(
-            x_train.to_numpy(),
-            y_train.to_numpy(),
-            epochs=15 if not grid_search else grid_result.best_params_['epochs']
-        )
-        test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
-        logging.info(f"Unseen Test RMSE: {test_rmse}")
+            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+            logging.info(f"Unseen Test RMSE: {test_rmse}")
 
         # Finally fit on all data and save
         final_model.fit(
