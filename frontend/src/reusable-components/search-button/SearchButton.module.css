@@ -12,8 +12,9 @@
 .active {
   animation: pulse 2s infinite;
   cursor: pointer;
-  box-shadow: 0 0 0 0 rgba(135, 206, 235, 0.5);
-  background-color: lightblue;
+  box-shadow: 0 0 0 0 #0094EC40;
+  background-color: #00B9FF;
+  color: white;
 }
 
 @keyframes pulse {

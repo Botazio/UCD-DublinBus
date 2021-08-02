@@ -14,22 +14,19 @@ const useStyles = makeStyles((theme) => ({
    },
 }));
 
-const PrimaryHourPicker = () => {
-   // The first commit of Material-UI
-   const [selectedDate, setSelectedDate] = useState(new Date());
-
+const PrimaryHourPicker = ({ selectedHour, setSelectedHour }) => {
 
    // Calls the current theme and uses it to create the styles for the button
    const currentTheme = useTheme();
    const classes = useStyles(currentTheme);
 
-   const handleDateChange = (date) => {
-      setSelectedDate(date);
+   const handleHourChange = (hour) => {
+      setSelectedHour(hour);
    };
 
    return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-         <TimePicker autoOk value={selectedDate} onChange={handleDateChange} />
+         <TimePicker autoOk value={selectedHour} onChange={handleHourChange} />
       </MuiPickersUtilsProvider>
    );
 };

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import NearMeCSS from "./NearMe.module.css";
-import ToogleButtons from "./subcomponents/ToogleButtons";
 import PopoverOptions from "../../reusable-components/popover-options/PopoverOptions";
 import Slider from "@material-ui/core/Slider";
 import CustomMarker from "../../reusable-components/custom-marker/CustomMarker";
 import NearMeStops from "./subcomponents/NearMeStops";
 import iconBlueDot from "../../fixtures/icons/icon-bluedot.png";
 import { useGoogleMap } from "@react-google-maps/api";
+import StopsLinesToogle from "../../reusable-components/stops-lines-toogle/StopsLinesToogle";
 
 // This is the main component for the NearMe section
 const NearMe = () => {
@@ -42,7 +42,7 @@ const NearMe = () => {
       <>
          <div className={NearMeCSS.header}>
             {/* Toogle buttons to select between lines and stops */}
-            <ToogleButtons active={active} setActive={setActive} />
+            <StopsLinesToogle active={active} setActive={setActive} />
 
             {/* Popover options */}
             <div className={NearMeCSS.options}>

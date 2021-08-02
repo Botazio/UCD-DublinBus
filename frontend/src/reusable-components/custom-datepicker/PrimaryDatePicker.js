@@ -14,10 +14,7 @@ const useStyles = makeStyles((theme) => ({
    },
 }));
 
-const PrimaryDatePicker = () => {
-   // The first commit of Material-UI
-   const [selectedDate, setSelectedDate] = useState(new Date());
-
+const PrimaryDatePicker = ({ selectedDate, setSelectedDate }) => {
 
    // Calls the current theme and uses it to create the styles for the button
    const currentTheme = useTheme();

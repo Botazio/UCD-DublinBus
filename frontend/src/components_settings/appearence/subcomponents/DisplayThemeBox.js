@@ -18,7 +18,7 @@ const DisplayThemeBox = ({ boxTheme }) => {
                </div>
             </div>
             <div className={AppearenceCSS.display_theme_body_sidebar} style={{ backgroundColor: boxTheme.theme.background_secondary }}>
-               <IconClose fill={boxTheme.theme.icons} width="10px" height="10px" ></IconClose>
+               <IconClose fill={boxTheme.theme.icon_color} width="10px" height="10px" ></IconClose>
             </div>
          </div>
 

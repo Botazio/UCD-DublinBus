@@ -7,8 +7,9 @@ import DirectionsSearcher from "./subcomponents/DirectionsSearcher";
 // The subcomponents are called from this component
 const Directions = () => {
   // This state controls if a line has been selected before displaying
-  // the search bars
+  // the directions system
   const [activeLine, setActiveLine] = useState(4);
+
   return (
     <>
       {/* Search bar for the lines */}

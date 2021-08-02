@@ -7,7 +7,7 @@ import { useState } from "react";
 import PrimaryDatePicker from "../../../reusable-components/custom-datepicker/PrimaryDatePicker";
 import PrimaryHourPicker from "../../../reusable-components/custom-hourpicker/PrimaryHourPicker";
 
-const SelectDepartureTime = () => {
+const SelectDepartureTime = ({ selectedDate, setSelectedDate, selectedHour, setSelectedHour }) => {
    const [active, setActive] = useState("leave now");
 
    return (
@@ -30,8 +30,8 @@ const SelectDepartureTime = () => {
 
          {(active === "leave at") &&
             <div className={DirectionsCSS.select_date_hour}>
-               <PrimaryDatePicker />
-               <PrimaryHourPicker />
+               <PrimaryDatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+               <PrimaryHourPicker selectedHour={selectedHour} setSelectedHour={setSelectedHour} />
             </div>
          }
       </Card>

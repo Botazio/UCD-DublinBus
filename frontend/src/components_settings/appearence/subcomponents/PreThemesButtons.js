@@ -8,8 +8,8 @@ const defaultThemeLight = createTheme({
       divider: "#D3D3D3",
       background_primary: "#FFFFFF",
       background_secondary: "#fafafa",
-      icons: "#000000",
-      fontColor: "#000000"
+      icon_color: "#000000",
+      font_color: "#000000"
    },
 });
 
@@ -19,8 +19,8 @@ const defaultThemeDark = createTheme({
       divider: "#FFFFFF",
       background_primary: "#010409",
       background_secondary: "#282931",
-      icons: "#FFFFFF",
-      fontColor: "#FFFFFF",
+      icon_color: "#FFFFFF",
+      font_color: "#FFFFFF",
    },
 });
 
@@ -30,8 +30,8 @@ const defaultThemeDarkGray = createTheme({
       divider: "#BFFCFC",
       background_primary: "#2F4F4F",
       background_secondary: "#3A616E",
-      icons: "#BFFCFC",
-      fontColor: "#FFFFFF"
+      icon_color: "#BFFCFC",
+      font_color: "#FFFFFF"
    },
 });
 

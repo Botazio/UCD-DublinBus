@@ -1,10 +1,11 @@
 import InfobarCSS from "./Infobar.module.css";
-import { ReactComponent as Close } from "../../fixtures/icons/icon-close.svg";
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import Directions from "../directions/Directions";
 import Stops from "../stops/Stops";
 import NearMe from "../near-me/NearMe";
 import MapSwitch from "../map-switch/MapSwitch";
 import WeatherInfo from "../weather-info/WeatherInfo";
+import Favorites from "../favorites/Favorites";
 
 // InfoBar is a subcomponent of SideBar
 // Renders section component depending which one is active 
@@ -28,7 +29,7 @@ const InfoBar = ({
 
         {/* Icon to close the infobar */}
         <div className={InfobarCSS.close_button} onClick={() => handleClose()}>
-          <Close height={"15"} />
+          <CloseRoundedIcon fontSize="inherit" />
         </div>
 
         {/* This empty div sets up an space between the map switch and the rest of the components */}
@@ -38,6 +39,7 @@ const InfoBar = ({
         {buttonActive === "directions" && <Directions />}
         {buttonActive === "stops" && <Stops />}
         {buttonActive === "near me" && <NearMe />}
+        {buttonActive === "favorites" && <Favorites />}
         {buttonActive === "weather" && <WeatherInfo />}
       </div>
     </>
