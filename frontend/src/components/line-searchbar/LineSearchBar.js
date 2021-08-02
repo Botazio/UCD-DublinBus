@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import StopSearchBarCSS from "./LineSearchBar.module.css";
+import LineSearchBarCSS from "./LineSearchBar.module.css";
 import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
@@ -12,7 +12,7 @@ import {
 import "@reach/combobox/styles.css";
 
 
-const LineSearchBar = ({ placeholder, stops, setSelectedStop }) => {
+const LineSearchBar = ({ placeholder, lines, setSelectedLine }) => {
    // States
    const [term, setTerm] = React.useState("");
    const results = usePlaceMatch(term);
@@ -22,15 +22,18 @@ const LineSearchBar = ({ placeholder, stops, setSelectedStop }) => {
 
    return (
       <Combobox
-         onSelect={(stop_name) => {
-            setTerm(stop_name);
-            // Search for the station name and pass the full stop object to the function
-            const selectedStop = stops.find((stop) => stop.stop_name === stop_name);
-            handleSubmit(selectedStop);
+         onSelect={(name) => {
+            setTerm(name);
+            // Split the term
+            const trip_headsign = name.split(", ")[1];
+
+            // Search for the line name and pass the full line object to the function
+            const selectedLine = lines.find((line) => line.trip_headsign === trip_headsign);
+            handleSubmit(selectedLine);
          }}
       >
          <ComboboxInput
-            className={StopSearchBarCSS.search_input}
+            className={LineSearchBarCSS.search_input}
             placeholder={placeholder}
             autoComplete="off"
             value={term}
@@ -42,8 +45,8 @@ const LineSearchBar = ({ placeholder, stops, setSelectedStop }) => {
                   <ComboboxList>
                      {results.slice(0, 5).map((result) => (
                         <ComboboxOption
-                           key={"suggestion" + result.stop_number}
-                           value={result.stop_name}
+                           key={"suggestion" + result.trip_headsign}
+                           value={"Line " + result.route__route_short_name + ", " + result.trip_headsign}
                         />
                      ))}
                   </ComboboxList>
@@ -58,8 +61,8 @@ const LineSearchBar = ({ placeholder, stops, setSelectedStop }) => {
    );
 
    // When the user selects an option sets the state of the search to active
-   function handleSubmit(stop) {
-      setSelectedStop(stop);
+   function handleSubmit(line) {
+      setSelectedLine(line);
    }
 
    // Filter that return recommended options
@@ -68,7 +71,7 @@ const LineSearchBar = ({ placeholder, stops, setSelectedStop }) => {
       const throttledTerm = useThrottle(term, 100);
       /* eslint-disable */
       return useMemo(() => term === "" ? null :
-         matchSorter(stops, term, { keys: ["stop_name", "stop_number"] },
+         matchSorter(lines, term, { keys: ["route__route_short_name"] },
             { threshold: matchSorter.rankings.STARTS_WITH }), [throttledTerm]);
    }
 };

@@ -6,6 +6,9 @@ import darkTheme from "../../fixtures/map-styles/darkTheme";
 import greyTheme from "../../fixtures/map-styles/greyTheme";
 import { useStops } from "../../providers/StopsContext";
 import { useTheme } from "@material-ui/core";
+import { useLines } from "../../providers/LinesContext";
+import CustomError from "../../reusable-components/error/CustomError";
+import Waiting from "../../reusable-components/waiting/Waiting";
 
 // Google map libraries
 const libraries = ["places"];
@@ -53,18 +56,19 @@ export default function MapContainer(props) {
     mapRef.current = map;
   }, []);
 
-  // Call the stops hook to load the stops the every time the component renders
+  // Call the providers to load the data for every component
   // It is not a problem to call it multiple times because it only performs the fetch operation
   // the first time
   // We do not need to get the data in any variable
   useStops();
+  useLines();
 
   // Render a different map depending on the user settings
   const mapTheme = mapStyles[useTheme().map];
   options.styles = mapTheme;
   // Error handling when loading the map
-  if (loadError) return "Error loading maps";
-  if (!isLoaded) return "Loading Maps";
+  if (loadError) return <CustomError message="Error loading maps" height="60" />;
+  if (!isLoaded) return <Waiting variant="dark" />;
 
   return (
     <>

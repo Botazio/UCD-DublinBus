@@ -4,7 +4,7 @@ import { useAuth } from "../../../../providers/AuthContext";
 import CustomError from "../../../../reusable-components/error/CustomError";
 import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
-import StopsSearchBar from "./StopsSearchBar";
+import StopsSearchBar from "../../../../reusable-components/stops-searchbar/StopsSearchBar";
 import Action from "../../../../reusable-components/action/Action";
 import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
@@ -22,7 +22,7 @@ const MyStops = () => {
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
-   const favoriteStops = currentUser.favouritestops;
+   const favoriteStops = currentUser.favoritestops;
 
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {

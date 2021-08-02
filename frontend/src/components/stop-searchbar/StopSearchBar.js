@@ -10,12 +10,17 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
+import { useEffect } from "react";
 
 // This component gives stop suggestions to the user while input is being entered
-const StopSearchBar = ({ placeholder, stops, setSelectedStop }) => {
+const StopSearchBar = ({ placeholder, stops, selectedStop, setSelectedStop }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
+
+  useEffect(() => {
+    if (!selectedStop) setTerm("");
+  }, [selectedStop]);
 
   // Function that controls wheter the user enters new input
   const handleChange = (e) => setTerm(e.target.value);

@@ -8,6 +8,7 @@ import NotFound from "./components/notfound/NotFound";
 import NoUserRoute from "./helpers/NoUserRoute";
 import { StopsProvider } from "./providers/StopsContext";
 import CustomThemeProvider from "./providers/CustomThemeProvider";
+import { LinesProvider } from "./providers/LinesContext";
 
 function App() {
   return (
@@ -15,20 +16,22 @@ function App() {
       <AuthProvider>
         <CustomThemeProvider>
           <StopsProvider>
-            <Switch>
-              <Route exact path="/">
-                <BusPage />
-              </Route>
-              <NoUserRoute exact path="/login">
-                <AuthenticationPage />
-              </NoUserRoute>
-              <PrivateRoute exact path="/user">
-                <UserPage />
-              </PrivateRoute>
-              <Route path="*">
-                <NotFound />
-              </Route>
-            </Switch>
+            <LinesProvider>
+              <Switch>
+                <Route exact path="/">
+                  <BusPage />
+                </Route>
+                <NoUserRoute exact path="/login">
+                  <AuthenticationPage />
+                </NoUserRoute>
+                <PrivateRoute exact path="/user">
+                  <UserPage />
+                </PrivateRoute>
+                <Route path="*">
+                  <NotFound />
+                </Route>
+              </Switch>
+            </LinesProvider>
           </StopsProvider>
         </CustomThemeProvider>
       </AuthProvider>

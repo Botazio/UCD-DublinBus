@@ -2,7 +2,7 @@ import DirectionsCSS from "../Directions.module.css";
 import StopSearchBar from "../../stop-searchbar/StopSearchBar";
 import SearchButton from "../../../reusable-components/search-button/SearchButton";
 import Card from "../../../reusable-components/card/Card";
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import SelectDepartureTime from "./SelectDepartureTime";
 import { useStops } from "../../../providers/StopsContext";
 import CustomError from "../../../reusable-components/error/CustomError";
@@ -11,10 +11,11 @@ import { useState } from "react";
 import { useEffect } from "react";
 import CustomMarker from "../../../reusable-components/custom-marker/CustomMarker";
 import DisplayDirections from "./DisplayDirections";
+import { set } from "date-fns/esm";
 
 // This is a subcomponent from the direction search system.
 // Allows the user to enter the Origin stop and the Destination stop
-const DirectionsSearcher = ({ activeLine, setActiveLine }) => {
+const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
   // States for the different fields the user has to enter 
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
@@ -22,6 +23,12 @@ const DirectionsSearcher = ({ activeLine, setActiveLine }) => {
   const [selectedHour, setSelectedHour] = useState(new Date());
   // State that when true the search can be performed
   const [searchAvailable, setSearchAvailable] = useState(false);
+  // State to handle when the search is being performed
+  const [searchPending, setSearchPending] = useState(false);
+  // State to display the results 
+  const [searchResults, setSearchResults] = useState(null);
+  // State to handle the error
+  const [searchError, setSearchError] = useState(false);
 
   useEffect(() => {
     if (origin && destination) {
@@ -43,17 +50,32 @@ const DirectionsSearcher = ({ activeLine, setActiveLine }) => {
 
   return (
     <>
-      {/* Card to select origin and destination */}
+      {/* Card with the header information */}
       <Card variant="no_margin">
         <div className={DirectionsCSS.header_dir_searcher}>
-          <CloseRoundedIcon onClick={() => setActiveLine(null)} />
-          <h4>Line {activeLine}</h4>
+          <div>
+            <h4>Line {selectedLine.route__route_short_name}</h4>
+            <p>{selectedLine.trip_headsign}</p>
+          </div>
+          <div>
+            <RefreshRoundedIcon onClick={() => setSelectedLine(null)} />
+          </div>
+        </div>
+      </Card>
+
+      {/* Card to select origin and destination */}
+      <Card>
+        <div className={DirectionsCSS.searchbar_stops_header}>
+          <h4>Select stops</h4>
+          <div>
+            <RefreshRoundedIcon onClick={() => cleanSearch()} />
+          </div>
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Origin Stop..."} stops={stops} setSelectedStop={setOrigin} />
+          <StopSearchBar placeholder={"Origin Stop..."} stops={stops} selectedStop={origin} setSelectedStop={setOrigin} />
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Destination Stop..."} stops={stops} setSelectedStop={setDestination} />
+          <StopSearchBar placeholder={"Destination Stop..."} stops={stops} selectedStop={destination} setSelectedStop={setDestination} />
         </div>
       </Card>
 
@@ -70,11 +92,65 @@ const DirectionsSearcher = ({ activeLine, setActiveLine }) => {
       {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
 
       {/* Display the results from the search */}
-      {searchAvailable && <DisplayDirections />}
-      <SearchButton searchAvailable={searchAvailable} />
+      {searchResults && <DisplayDirections />}
 
+      {/* Display a message if an error occurs during the search */}
+      {searchError && <Card><CustomError height="60" message="Error performing the search" /></Card>}
+
+      {/* Display a waiting icon during the search*/}
+      {searchPending && <Card><Waiting variant="dark" size="small" /></Card>}
+
+      {/* Search Button */}
+      <SearchButton searchAvailable={searchAvailable} onClick={() => handleSearch()} />
     </>
   );
+
+  function cleanSearch() {
+    setOrigin(null);
+    setDestination(null);
+    setSearchAvailable(false);
+    setSearchPending(false);
+    setSearchResults(null);
+    setSearchError(false);
+  }
+
+  function handleSearch() {
+    if (!searchAvailable) return;
+
+    setSearchResults(null);
+    setSearchPending(true);
+
+    const body = {
+      "route_id": "60-39A-d12-1",
+      "direction_id": 0,
+      "departure_stop_id": "8250DB000767",
+      "arrival_stop_id": "8250DB000768",
+      "datetime": "08/03/2021, 20:35:14"
+    };
+
+    fetch("http://54.173.212.116/predict/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw Error();
+        }
+        return res.json();
+      })
+      .then((json) => {
+        setSearchPending(false);
+        setSearchResults(json);
+      })
+      .catch((err) => {
+        console.log(err);
+        setSearchPending(false);
+        setSearchError(true);
+      });
+  }
 };
 
 export default DirectionsSearcher;

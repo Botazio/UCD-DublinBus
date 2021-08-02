@@ -6,7 +6,7 @@ import CustomError from "../../../../reusable-components/error/CustomError";
 import Waiting from "../../../../reusable-components/waiting/Waiting";
 import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
-import StopsSearchBar from "./StopsSearchBar";
+import StopsSearchBar from "../../../../reusable-components/stops-searchbar/StopsSearchBar";
 import Action from "../../../../reusable-components/action/Action";
 import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";

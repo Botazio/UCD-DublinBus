@@ -1,7 +1,7 @@
 import NearMeCSS from "../NearMe.module.css";
 import geodist from "geodist";
 import Card from "../../../reusable-components/card/Card";
-import DisplayStops from "./DisplayStops";
+import DisplayStops from "../../display-stops/DisplayStops";
 import Pagination from '@material-ui/lab/Pagination';
 import { useStops } from "../../../providers/StopsContext";
 import Waiting from "../../../reusable-components/waiting/Waiting";
@@ -44,7 +44,7 @@ const NearMeStops = ({ position, distance, resultsDisplayed }) => {
    return (
       <Card variant="last">
          {/* Do not display any data if there are not results */}
-         {(nearStops !== "no stops") && <DisplayStops stops={nearStops} page={page} />}
+         {(nearStops !== "no stops") && <DisplayStops stops={nearStops} page={page} variant="near me" />}
 
          {/* Pagination for the results */}
          {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>

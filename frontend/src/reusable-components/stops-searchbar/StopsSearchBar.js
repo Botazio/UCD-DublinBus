@@ -7,10 +7,9 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 import { useEffect } from "react";
-import FavoritesCSS from "../../Favorites.module.css";
 
 // This component gives stop suggestions to the user while input is being entered
-const StopsSearchBar = ({ stops, setVisibleStops }) => {
+const StopsSearchBar = ({ stops, setVisibleStops, classes }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
@@ -32,9 +31,9 @@ const StopsSearchBar = ({ stops, setVisibleStops }) => {
   const handleChange = (e) => setTerm(e.target.value);
 
   return (
-    <Combobox>
+    <Combobox style={{ width: "100%" }}>
       <ComboboxInput
-        className={FavoritesCSS.searchbar}
+        className={classes}
         autoComplete="off"
         value={term}
         onChange={handleChange}

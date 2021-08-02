@@ -1,12 +1,3 @@
-.header_dir_searcher {
-  margin-left: 5%;
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-}
-.header_dir_searcher > svg {
-  cursor: pointer;
-}
 .searchbar_lines {
   width: 70%;
 }
@@ -15,18 +6,42 @@
   font-size: 1rem;
   border-radius: 20px;
 }
+.header_dir_searcher {
+  align-self: flex-start;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.header_dir_searcher > div > h4 {
+  margin-bottom: 5px;
+}
+.header_dir_searcher > div > p {
+  font-size: 0.9rem;
+}
+.header_dir_searcher > div > svg {
+  cursor: pointer;
+}
+.searchbar_stops_header {
+  margin-bottom: 10px;
+  align-self: flex-start;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.searchbar_stops_header > div > svg {
+  cursor: pointer;
+}
 .searchbar_stops {
-  width: 90%;
+  width: 100%;
+}
+.searchbar_stops:last-child {
   margin-top: 10px;
 }
 .searchbar_stops > div > input {
   line-height: 25px;
   font-size: 0.9rem;
   border-radius: 20px;
-}
-.searchbar_stops:first-child {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 .select_time_container {
   display: flex;

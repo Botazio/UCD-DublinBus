@@ -3,6 +3,7 @@ import { useAuth } from "../../providers/AuthContext";
 import CustomError from "../../reusable-components/error/CustomError";
 import StopsLinesToogle from "../../reusable-components/stops-lines-toogle/StopsLinesToogle";
 import { useStops } from "../../providers/StopsContext";
+import FavoriteStops from "./subcomponents/FavoriteStops";
 
 // This is the main component for the favorites section
 const Favorites = () => {
@@ -26,6 +27,9 @@ const Favorites = () => {
 
          {/* Display a message if the user don't have any favorite stops */}
          {!currentUser.favoritestops.length && <CustomError height="60" message="No favorite stops" />}
+
+         {/* Display the favorite stops */}
+         {currentUser.favoritestops.length && <FavoriteStops />}
       </>
    );
 };
