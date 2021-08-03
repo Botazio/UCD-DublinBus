@@ -19,7 +19,8 @@ from tensorflow.keras.layers.experimental.preprocessing import Normalization
 
 sns.set_theme()
 
-def train_all_stop_pair_models(model_name, model=None, grid_search=False):
+def train_all_stop_pair_models(model_name, model=None, grid_search=False, start_num=0,
+                                end_num=None):
     """
     Train a model on each adjacent stop pair
 
@@ -38,39 +39,50 @@ def train_all_stop_pair_models(model_name, model=None, grid_search=False):
         datefmt='%Y-%m-%d %H:%M:%S'
     )
 
-    trained_models = {}
     stop_pairs_metrics = []
 
+    stop_pair_files = glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*")
+    if not end_num:
+        end_num = len(stop_pair_files)
+
+    logging.info(f"Running models from {start_num} to {end_num}")
+
     # Train a model for each adjacent stop pair
-    for stop_pair_file in glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*"):
+    for stop_pair_file in stop_pair_files[start_num:end_num]:
 
         stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
 
         stop_pair = stop_pair_file.split('/')[-1].split('.')[0]
-        metrics = {
-            'stop_pair': stop_pair,
-            'num_rows': stop_pair_df.shape[0]
-        }
 
         logging.info(
-            f"{stop_pair_df.shape[0]} rows for {stop_pair}")
+            f"{stop_pair_df.shape[0]} rows for {stop_pair}"
+        )
 
         if stop_pair_df.shape[0] > 50:
 
             # Train model
-            average_cv_rmse, test_rmse, trained_model = train_model(
-                                                            stop_pair_df,
-                                                            model,
-                                                            grid_search=grid_search
-                                                        )
+            metrics, final_model = train_model(
+                                        stop_pair_df,
+                                        model,
+                                        grid_search=grid_search
+                                    )
+
+            metrics['stop_pair'] = stop_pair
+            metrics['num_rows'] = stop_pair_df.shape[0]
 
             # Add metrics for this stop pair
-            metrics['average_cv_rmse'] = average_cv_rmse
-            metrics['test_rmse'] = test_rmse
             stop_pairs_metrics.append(metrics)
 
-            # Add trained model to dict
-            trained_models[stop_pair] = trained_model
+            if model_name != "NeuralNetwork":
+                # Write out trained models as pickle files
+                with open(
+                    f"/home/team13/model_output/{model_name}/" +
+                        f"/trained_models/{stop_pair}.pickle",
+                        'wb') as pickle_file:
+                    pickle.dump(final_model, pickle_file)
+            else:
+                final_model.save(f"/home/team13/model_output/{model_name}/" +
+                        f"/trained_models/{stop_pair}")
 
     logging.info(
         "Model training complete. Writing out metrics and pickle files for each" +
@@ -84,17 +96,6 @@ def train_all_stop_pair_models(model_name, model=None, grid_search=False):
     pd.DataFrame(stop_pairs_metrics).to_csv(f'/home/team13/model_output/{model_name}/' +
         f"/{model_name}_metrics_{current_time}.csv", index=False)
 
-    if model_name != "NeuralNetwork":
-        # Write out trained models as pickle files
-        with open(
-            f"/home/team13/model_output/{model_name}/" +
-                f"/{model_name}_{current_time}.pickle",
-                'wb') as pickle_file:
-            pickle.dump(trained_models, pickle_file)
-    else:
-        for stop_pair, trained_model in trained_models.items():
-            trained_model.save(f"/home/team13/model_output/{model_name}/" +
-                f"/{stop_pair}_{model_name}")
 
 def train_model(stop_pair_df, model, grid_search):
     """
@@ -161,8 +162,17 @@ def train_model(stop_pair_df, model, grid_search):
                 y_train.to_numpy(),
                 epochs=grid_result.best_params_['epochs']
             )
-            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
-            logging.info(f"Unseen Test RMSE: {test_rmse}")
+
+            metrics = {
+                'average_cv_rmse': average_cv_rmse,
+                'test_rmse': math.sqrt(
+                                final_model.evaluate(
+                                    x_test.to_numpy(),
+                                    y_test.to_numpy()
+                                )
+                            )
+            }
+            logging.info(f"Unseen Test RMSE: {metrics['test_rmse']}")
 
         # Skip grid search and use best known parameters from previous grid search
         else:
@@ -179,13 +189,20 @@ def train_model(stop_pair_df, model, grid_search):
 
             # Get training RMSE (not cross-validated)
             results = final_model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=15)
-            average_cv_rmse = math.sqrt(results.history['loss'][-1])
-            logging.info(
-                f"Training RMSE: {average_cv_rmse}"
-            )
+            metrics = {
+                'average_cv_rmse': math.sqrt(results.history['loss'][-1]),
+                'test_rmse': math.sqrt(
+                                final_model.evaluate(
+                                    x_test.to_numpy(),
+                                    y_test.to_numpy()
+                                )
+                            )
+            }
 
-            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
-            logging.info(f"Unseen Test RMSE: {test_rmse}")
+            logging.info(
+                f"Training RMSE: {metrics['average_cv_rmse']}"
+            )
+            logging.info(f"Unseen Test RMSE: {metrics['test_rmse']}")
 
         # Finally fit on all data and save
         final_model.fit(
@@ -196,22 +213,28 @@ def train_model(stop_pair_df, model, grid_search):
 
     # otherwise we're using a simple sklearn model (e.g., linear regression)
     else:
-        # Perform cross-validation
-        average_cv_rmse = time_series_cross_validate(x_train, y_train, model)
-        logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
 
-        # Train on full training set now and calculate unseen test set metrics
-        test_rmse = mean_squared_error(
-            y_test,
-            model.fit(x_train, y_train).predict(x_test),
-            squared=False
+        metrics = {
+            # Perform cross-validation
+            'average_cv_rmse': time_series_cross_validate(x_train, y_train, model),
+            # Train on full training set now and calculate unseen test set metrics
+            'test_rmse': mean_squared_error(
+                            y_test,
+                            model.fit(x_train, y_train).predict(x_test),
+                            squared=False
+                        )
+        }
+
+        logging.info(
+            f"Training RMSE: {metrics['average_cv_rmse']}"
         )
-        logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
+        logging.info(f"Average 5-Fold Cross-Validation RMSE: {metrics['average_cv_rmse']}")
+        logging.info(f"Unseen Test RMSE: {metrics['test_rmse']}")
 
         # Train on full data (train and test) before finally saving
         final_model = model.fit(x_full, y_full)
 
-    return average_cv_rmse, test_rmse, final_model
+    return metrics, final_model
 
 def create_keras_model(dropout_rate, neurons_layer_1, neurons_layer_2, normalizer=None):
     """
