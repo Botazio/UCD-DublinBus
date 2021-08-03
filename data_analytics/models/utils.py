@@ -11,12 +11,15 @@ import seaborn as sns
 from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import learning_curve
-import tensorflow as tf
+from sklearn.model_selection import GridSearchCV
 import keras
+from keras.layers import Dense, Dropout
+from keras.wrappers.scikit_learn import KerasRegressor
+from tensorflow.keras.layers.experimental.preprocessing import Normalization
 
 sns.set_theme()
 
-def train_all_stop_pair_models(model, model_name, normalizer=None):
+def train_all_stop_pair_models(model_name, model=None, grid_search=False):
     """
     Train a model on each adjacent stop pair
 
@@ -55,7 +58,11 @@ def train_all_stop_pair_models(model, model_name, normalizer=None):
         if stop_pair_df.shape[0] > 50:
 
             # Train model
-            average_cv_rmse, test_rmse, trained_model = train_model(stop_pair_df, model, normalizer)
+            average_cv_rmse, test_rmse, trained_model = train_model(
+                                                            stop_pair_df,
+                                                            model,
+                                                            grid_search=grid_search
+                                                        )
 
             # Add metrics for this stop pair
             metrics['average_cv_rmse'] = average_cv_rmse
@@ -89,7 +96,7 @@ def train_all_stop_pair_models(model, model_name, normalizer=None):
             trained_model.save(f"/home/team13/model_output/{model_name}/" +
                 f"/{stop_pair}_{model_name}")
 
-def train_model(stop_pair_df, model, normalizer):
+def train_model(stop_pair_df, model, grid_search):
     """
     Train a model on one adjacent stop pair
 
@@ -100,6 +107,11 @@ def train_model(stop_pair_df, model, normalizer):
             stop pair
 
         model: sklearn model instance
+
+        grid_search: bool
+            If True peform grid search. This operation is very time
+            consuming because it involves searching through many
+            parameters
 
     Returns
     ---
@@ -115,9 +127,10 @@ def train_model(stop_pair_df, model, normalizer):
 
     y_full = stop_pair_df['travel_time']
 
-    features = ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
-                'lagged_rain', 'temp', 'bank_holiday']
-    x_full = stop_pair_df[features]
+    x_full = stop_pair_df[
+        ['cos_time', 'sin_time', 'cos_day', 'sin_day', 'rain',
+         'lagged_rain', 'temp', 'bank_holiday']
+    ]
 
     x_train, x_test, y_train, y_test = train_test_split(
         x_full,
@@ -127,19 +140,59 @@ def train_model(stop_pair_df, model, normalizer):
         shuffle=False
     )
 
-    # check whether we're using a keras neural network
-    keras_model_classes = (tf.keras.Model, keras.Model, tf.estimator.Estimator)
-    if isinstance(model, keras_model_classes):
+    # default to keras NN if no sklearn model is passed
+    if model is None:
 
+        normalizer = Normalization(axis=-1)
         normalizer.adapt(x_train)
 
-        print(model.summary())
-        trained_model = model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=10)
+        # Perform grid search (very slow)
+        if grid_search:
 
-        test_rmse = math.sqrt(model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
-        print(f"Test RMSE: {math.sqrt(test_rmse)}")
+            final_model, average_cv_rmse, grid_result = perform_nn_grid_search(
+                x_train,
+                y_train,
+                normalizer
+            )
 
-        average_cv_rmse = math.sqrt(trained_model.history['loss'][-1])
+            # Fit on full training set and get unseen test scores
+            final_model.fit(
+                x_train.to_numpy(),
+                y_train.to_numpy(),
+                epochs=grid_result.best_params_['epochs']
+            )
+            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+            logging.info(f"Unseen Test RMSE: {test_rmse}")
+
+        # Skip grid search and use best known parameters from previous grid search
+        else:
+
+            # Create a default model
+            final_model = create_keras_model(
+                # parameters are chosen from previous grid search
+                dropout_rate=0.2,
+                neurons_layer_1=10,
+                neurons_layer_2=15,
+                normalizer=normalizer
+            )
+            final_model.summary(print_fn=logging.info)
+
+            # Get training RMSE (not cross-validated)
+            results = final_model.fit(x_train.to_numpy(), y_train.to_numpy(), epochs=15)
+            average_cv_rmse = math.sqrt(results.history['loss'][-1])
+            logging.info(
+                f"Training RMSE: {average_cv_rmse}"
+            )
+
+            test_rmse = math.sqrt(final_model.evaluate(x_test.to_numpy(), y_test.to_numpy()))
+            logging.info(f"Unseen Test RMSE: {test_rmse}")
+
+        # Finally fit on all data and save
+        final_model.fit(
+            x_full.to_numpy(),
+            y_full.to_numpy(),
+            epochs=15 if not grid_search else grid_result.best_params_['epochs']
+        )
 
     # otherwise we're using a simple sklearn model (e.g., linear regression)
     else:
@@ -148,14 +201,114 @@ def train_model(stop_pair_df, model, normalizer):
         logging.info(f"Average 5-Fold Cross-Validation RMSE: {average_cv_rmse}")
 
         # Train on full training set now and calculate unseen test set metrics
-        predictions = model.fit(x_train, y_train).predict(x_test)
-        test_rmse = mean_squared_error(y_test, predictions, squared=False)
+        test_rmse = mean_squared_error(
+            y_test,
+            model.fit(x_train, y_train).predict(x_test),
+            squared=False
+        )
         logging.info(f"Unseen Test Set RMSE: {test_rmse}\n")
 
         # Train on full data (train and test) before finally saving
-        trained_model = model.fit(x_full, y_full)
+        final_model = model.fit(x_full, y_full)
 
-    return average_cv_rmse, test_rmse, trained_model
+    return average_cv_rmse, test_rmse, final_model
+
+def create_keras_model(dropout_rate, neurons_layer_1, neurons_layer_2, normalizer=None):
+    """
+    Function to create a simple two hidden layer neural network
+    model using keras
+
+    Args
+    ---
+        dropout_rate: float between 0 and 1
+            The dropout rate for neurons in the hidden layer
+
+        neurons_layer_1: int
+            The number of neurons in the first hidden layer
+
+        neurons_layer_2: int
+            The number of neurons in the second hidden lyear
+
+        normalizer: A normalization layer
+
+    Returns
+    ---
+    A compile keras model ready for fitting
+    """
+
+    if not normalizer:
+        normalizer = Normalization(axis=-1)
+
+    inputs = keras.Input(shape=(8,))
+    normalizer_layer = normalizer(inputs)
+    hidden_layer_1 = Dense(neurons_layer_1, activation='relu')(normalizer_layer)
+    dropout_layer_1 = Dropout(dropout_rate)(hidden_layer_1, training=True)
+    hidden_layer_2 = Dense(neurons_layer_2, activation='relu')(dropout_layer_1)
+    dropout_layer_2 = Dropout(dropout_rate)(hidden_layer_2, training=True)
+
+    outputs = Dense(8)(dropout_layer_2)
+    model = keras.Model(inputs, outputs)
+    model.compile(loss='mse', optimizer='adam')
+
+    return model
+
+def perform_nn_grid_search(x_train, y_train, normalizer):
+    """
+    Perform grid search over a range of parameters on a keras neural
+    network model
+
+    Args
+    ---
+        x_train: DataFrame
+            Features from the training set
+
+        y_train: DataFrame
+            Targets from the training set
+
+        normalizer: Normalization layer
+
+    """
+
+    nn_model = KerasRegressor(build_fn=create_keras_model, verbose=0)
+
+    # define the grid search parameters
+    epochs = [5, 10, 15]
+    dropout_rate = [0.2, 0.4, 0.6, 0.8]
+    neurons_layer_1 = [5, 10, 15]
+    neurons_layer_2 = [5, 10, 15]
+    param_grid = dict(
+        epochs=epochs,
+        dropout_rate=dropout_rate,
+        neurons_layer_1=neurons_layer_1,
+        neurons_layer_2=neurons_layer_2
+    )
+    grid = GridSearchCV(
+        estimator=nn_model,
+        param_grid=param_grid,
+        n_jobs=-1,
+        cv=3
+    )
+    grid_result = grid.fit(x_train.to_numpy(), y_train.to_numpy())
+
+    # summarize results
+    logging.info(
+        f"Best: {math.sqrt(abs(grid_result.best_score_))} using {grid_result.best_params_}"
+    )
+
+    # Average CV RMSE is the best of out the grid search
+    average_cv_rmse = grid_result.best_score_
+    logging.info(f"Average CV RMSE: {math.sqrt(abs(average_cv_rmse))}")
+
+    # Create model with best parameters
+    final_model = create_keras_model(
+        normalizer=normalizer,
+        dropout_rate=grid_result.best_params_['dropout_rate'],
+        neurons_layer_1=grid_result.best_params_['neurons_layer_1'],
+        neurons_layer_2=grid_result.best_params_['neurons_layer_2']
+    )
+    final_model.summary(print_fn=logging.info)
+
+    return final_model, average_cv_rmse, grid_result
 
 def time_series_cross_validate(x_train, y_train, model):
     """
