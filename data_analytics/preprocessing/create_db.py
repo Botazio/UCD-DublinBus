@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 
 # Create db if it doesn't exist or connect to it if it does exist
-with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connection:
+with sqlite3.connect("/Users/paulreidy/Desktop/db/DublinBusHistoric.db") as connection:
     c = connection.cursor()
 
     # vehicles
@@ -15,7 +15,7 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         LASTUPDATE DATETIME,
         PRIMARY KEY (DAYOFSERVICE, VEHICLEID))
     """)
-    vehicles_df = pd.read_csv('data/raw/rt_vehicles_DB_2018.txt', sep=";")
+    vehicles_df = pd.read_csv('/Users/paulreidy/Desktop/data/rt_vehicles_DB_2018.txt', sep=";")
     columns = [
         'DAYOFSERVICE', 'VEHICLEID', 'DISTANCE', 'MINUTES', 'LASTUPDATE'
     ]
@@ -40,7 +40,7 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         "ACTUALTIME_DEP" FLOAT,
         PRIMARY KEY ("DAYOFSERVICE", "TRIPID"))
     """)
-    for chunk in pd.read_csv('data/raw/rt_trips_DB_2018.txt', sep=";", chunksize=10000):
+    for chunk in pd.read_csv('/Users/paulreidy/Desktop/data/rt_trips_DB_2018.txt', sep=";", chunksize=10000):
         # Dropped columns from raw data
         # NOTE - populated but doesn't seem useful
 
@@ -58,7 +58,7 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         c.executemany("""
             INSERT INTO trips(DAYOFSERVICE, TRIPID, LINEID, ROUTEID, DIRECTION,
             PLANNEDTIME_ARR, PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, list(chunk[columns].values))
     c.execute("CREATE INDEX DAYOFSERVICE_TRIPS ON trips(DAYOFSERVICE)")
     connection.commit()
@@ -77,7 +77,7 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         "VEHICLEID" INTEGER,
         PRIMARY KEY ("DAYOFSERVICE", "TRIPID", "PROGRNUMBER"))
     """)
-    for chunk in pd.read_csv('data/raw/rt_leavetimes_DB_2018.txt', sep=";", chunksize=10000):
+    for chunk in pd.read_csv('/Users/paulreidy/Desktop/data/rt_leavetimes_DB_2018.txt', sep=";", chunksize=10000):
         # Columns that are dropped from the raw data are:
         #
         columns = [
@@ -94,39 +94,39 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         c.executemany("""
             INSERT INTO leavetimes(DAYOFSERVICE, TRIPID, PROGRNUMBER, STOPPOINTID, PLANNEDTIME_ARR,
             PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP, VEHICLEID)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, list(chunk[columns].values))
     c.execute("CREATE INDEX DAYOFSERVICE_LEAVETIMES ON leavetimes(DAYOFSERVICE)")
     connection.commit()
 
     # weather
-    weather_df = pd.read_csv('data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv', sep=",")
-    c.execute("""DROP TABLE IF EXISTS weather""")
-    c.execute("""CREATE TABLE weather(DATE DATETIME NOT NULL,
-        INDICATOR INTEGER,
-        RAIN FLOAT,
-        TEMP FLOAT,
-        BULB_TEMP FLOAT,
-        DEWPOINT_TEMP FLOAT,
-        VAPOUR_PRESSURE FLOAT,
-        RELATIVE_HUMIDITY INTEGER,
-        PRESSURE FLOAT,
-        PRIMARY KEY (DATE))""")
-    columns = [
-        "date",
-        "ind",
-        "rain",
-        "temp",
-        "wetb",
-        "dewpt",
-        "vappr",
-        "rhum",
-        "msl"
-    ]
-    c.executemany("""
-        INSERT INTO weather(DATE, INDICATOR, RAIN, TEMP, BULB_TEMP,
-        DEWPOINT_TEMP, VAPOUR_PRESSURE, RELATIVE_HUMIDITY, PRESSURE)
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, list(weather_df[columns].values))
-    c.execute("CREATE INDEX DATE_WEATHER ON weather(DATE)")
-    connection.commit()
+    #weather_df = pd.read_csv('data/raw/met_eireann_hourly_phoenixpark_jan2018jan2019.csv', sep=",")
+    #c.execute("""DROP TABLE IF EXISTS weather""")
+    #c.execute("""CREATE TABLE weather(DATE DATETIME NOT NULL,
+    #    INDICATOR INTEGER,
+    #    RAIN FLOAT,
+    #    TEMP FLOAT,
+    #    BULB_TEMP FLOAT,
+    #    DEWPOINT_TEMP FLOAT,
+    #    VAPOUR_PRESSURE FLOAT,
+    #    RELATIVE_HUMIDITY INTEGER,
+    #    PRESSURE FLOAT,
+    #    PRIMARY KEY (DATE))""")
+    #columns = [
+    #    "date",
+    #    "ind",
+    #    "rain",
+    #    "temp",
+    #    "wetb",
+    #    "dewpt",
+    #    "vappr",
+    #    "rhum",
+    #    "msl"
+    #]
+    #c.executemany("""
+    #    INSERT INTO weather(DATE, INDICATOR, RAIN, TEMP, BULB_TEMP,
+    #    DEWPOINT_TEMP, VAPOUR_PRESSURE, RELATIVE_HUMIDITY, PRESSURE)
+    #    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+    #""", list(weather_df[columns].values))
+    #c.execute("CREATE INDEX DATE_WEATHER ON weather(DATE)")
+    #connection.commit()
