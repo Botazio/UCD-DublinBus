@@ -17,4 +17,5 @@ urlpatterns = [
     path('markers/<int:primary_key>/', views.MarkerView.as_view()),
     path('theme/', views.ThemeView.as_view()),
     path('theme/<int:primary_key>/', views.ThemeView.as_view()),
+    path('lines/', views.lines, name='lines')
 ]
