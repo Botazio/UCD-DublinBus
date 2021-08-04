@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import logging
 from statistics import mean
 from os import path
 import environ
@@ -115,21 +116,35 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
     time_delta_seconds = time_delta.total_seconds() + delay
     return round(time_delta_seconds / 60)
 
-
-def date_to_service_ids(current_date):
+def date_to_service_ids(requested_date):
     """
-    A function which returns which service IDs are valid on the given date.
-    This is taken from the calendar.txt file from the static GTFS Dublin Bus data.
+    A function which returns which valid service IDs
+    for a particular date. This is taken from the
+    calendar.txt file from the static GTFS Dublin Bus data.
 
     Args
     ---
-        current_date: datetime
-            A datetime object for the current day
+        requested_date: datetime
+            A datetime object for the requested day
+
     """
 
     # Get the day of the week
-    day = current_date.strftime("%A").lower()
-    return list(Calendar.objects.filter(**{day: True}).values_list('service_id', flat=True))
+    day = requested_date.strftime("%A").lower()
+
+    service_ids = list(Calendar.objects
+                .filter(**{day: True})
+                .filter(
+                    start_date__lte=requested_date,
+                    end_date__gte=requested_date
+                )
+                .values_list('service_id', flat=True)
+    )
+
+    if len(service_ids) > 1:
+        logging.info("More than one valid service ID.")
+
+    return service_ids
 
 def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=100):
     """
@@ -160,7 +175,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
     model_path = f"./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}/"
 
     if path.exists(model_path):
-        print(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
+        logging.info(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
         trained_nn_model = keras.models.load_model(model_path)
 
         input_row = np.reshape(np.array(list(features.values())), (1, 8))
@@ -174,7 +189,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
         return predictions
 
     # no model exists for this stop pair so just use expected times
-    print(f"No model found for {departure_stop_num}_to_{arrival_stop_num}." +
+    logging.warning(f"No model found for {departure_stop_num}_to_{arrival_stop_num}. " +
                 "Using timetable instead.")
     timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
     prediction = np.mean(timetable_2021.loc[
