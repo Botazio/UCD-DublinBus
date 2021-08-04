@@ -11,7 +11,7 @@ export function useLines() {
 // This components provides a context to share the stops across the different components in the application
 export function LinesProvider({ children }) {
    // Fetch the data for the lines or for the stops
-   const { data, isPending, error } = useFetch("http://54.173.212.116/lines");
+   const { data, isPending, error } = useFetch("http://csi420-02-vm6.ucd.ie/lines/");
 
    const value = {
       data,

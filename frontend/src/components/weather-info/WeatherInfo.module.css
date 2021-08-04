@@ -15,15 +15,11 @@
   position: relative;
 }
 .weather_slide {
-  width: 90%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  border: 1px solid lightgray;
-  padding: 20px;
-  border-radius: 20px;
 }
 .weather_header {
   width: 100%;
@@ -98,15 +94,12 @@
   margin-left: 10%;
   font-weight: bold;
   align-self: flex-start;
+  margin-bottom: 5px;
 }
 .hourly_inner_wrapper {
-  padding: 20px;
-  background-color: white;
-  border: 1px solid lightgray;
   white-space: nowrap;
-  width: 90%;
+  width: 100%;
   border-radius: 20px;
-  margin-top: 5px;
 }
 .hourly_slide {
   display: flex;
@@ -141,13 +134,6 @@
   font-weight: bold;
   align-self: flex-start;
 }
-#weather_chart {
-  padding-bottom: 15px;
-  width: 90%;
-  border-radius: 20px;
-  background-color: white;
-  border: 1px solid lightgray;
-}
 
 /* Styles for the details */
 .details_wrapper {
@@ -172,7 +158,6 @@
   align-items: center;
   background-color: white;
   border: 1px solid lightgray;
-  padding: 20px 20px 30px 20px;
   border-radius: 20px;
 }
 .details_items {

@@ -1,13 +1,11 @@
 .search_button {
-  position: absolute;
   width: 100%;
-  bottom: 0;
+  margin-top: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 55px;
+  min-height: 55px !important;
   background-color: lightgray;
-  z-index: 100;
 }
 .active {
   animation: pulse 2s infinite;

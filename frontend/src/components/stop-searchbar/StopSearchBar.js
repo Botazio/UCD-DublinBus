@@ -47,7 +47,7 @@ const StopSearchBar = ({ placeholder, stops, selectedStop, setSelectedStop }) =>
             <ComboboxList>
               {results.slice(0, 5).map((result) => (
                 <ComboboxOption
-                  key={"suggestion" + result.stop_number}
+                  key={"suggestion" + result.stop_id}
                   value={result.stop_name}
                 />
               ))}

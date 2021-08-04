@@ -18,7 +18,7 @@ const Favorites = () => {
    // Display an error message if there is no user authenticated
    if (!currentUser) return <CustomError height="60" message="Registered users only" />;
 
-   currentUser.favoritestops = data.slice(0, 10);
+   currentUser.favoritestops = data.slice(0, 30);
 
    return (
       <>

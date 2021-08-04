@@ -13,6 +13,14 @@
 .no_margin {
    margin: 0 !important;
 }
+.graph {
+   margin: 0 !important;
+   padding: 0 0 15px 0 !important;
+}
+.details_weather {
+   margin: 0 !important;
+   padding: 15px 15px 25px 15px !important;
+}
 .last {
    margin-bottom: 15px;
 }

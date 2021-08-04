@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import CustomMarker from "../../../reusable-components/custom-marker/CustomMarker";
 import DisplayDirections from "./DisplayDirections";
-import { set } from "date-fns/esm";
+import moment from "moment";
 
 // This is a subcomponent from the direction search system.
 // Allows the user to enter the Origin stop and the Destination stop
@@ -30,6 +30,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
   // State to handle the error
   const [searchError, setSearchError] = useState(false);
 
+  // Only allow the search if the user has entered origin and destination
   useEffect(() => {
     if (origin && destination) {
       setSearchAvailable(true);
@@ -92,19 +93,20 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
 
       {/* Display the results from the search */}
-      {searchResults && <DisplayDirections />}
+      {searchResults && <DisplayDirections searchResults={searchResults} selectedDate={selectedDate} selectedHour={selectedHour} />}
 
       {/* Display a message if an error occurs during the search */}
-      {searchError && <Card><CustomError height="60" message="Error performing the search" /></Card>}
+      {searchError && <Card variant="last"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
 
       {/* Display a waiting icon during the search*/}
-      {searchPending && <Card><Waiting variant="dark" size="small" /></Card>}
+      {searchPending && <Card variant="last"><Waiting variant="dark" size="small" /></Card>}
 
       {/* Search Button */}
       <SearchButton searchAvailable={searchAvailable} onClick={() => handleSearch()} />
     </>
   );
 
+  // Function to clean the search
   function cleanSearch() {
     setOrigin(null);
     setDestination(null);
@@ -114,21 +116,27 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
     setSearchError(false);
   }
 
+  // Function to handle how the search is performed
   function handleSearch() {
     if (!searchAvailable) return;
 
     setSearchResults(null);
     setSearchPending(true);
+    setSearchError(false);
+
+    // Get the date in the proper format
+    const date = moment(selectedDate).format('L');
+    const hour = moment(selectedHour).format('hh:mm:ss');
 
     const body = {
-      "route_id": "60-39A-d12-1",
-      "direction_id": 0,
-      "departure_stop_id": "8250DB000767",
-      "arrival_stop_id": "8250DB000768",
-      "datetime": "08/03/2021, 20:35:14"
+      "route_id": "60-116-d12-1",
+      "direction_id": 1,
+      "departure_stop_id": "8230DB002955",
+      "arrival_stop_id": "8250DB002853",
+      "datetime": date + ", " + hour
     };
 
-    fetch("http://54.173.212.116/predict/", {
+    fetch("http://3.88.38.253/predict/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,11 +154,11 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
         setSearchResults(json);
       })
       .catch((err) => {
-        console.log(err);
         setSearchPending(false);
         setSearchError(true);
       });
   }
+
 };
 
 export default DirectionsSearcher;

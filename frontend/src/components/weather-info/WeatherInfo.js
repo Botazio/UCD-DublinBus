@@ -10,6 +10,7 @@ import { ReactComponent as Sunset } from "./fixtures/icon-sunset.svg";
 import { ReactComponent as Sunrise } from "./fixtures/icon-sunrise.svg";
 import { ReactComponent as Ultraviolet } from "./fixtures/icon-ultraviolet.svg";
 import { ReactComponent as WaterDrop } from "./fixtures/icon-water-drop.svg";
+import Card from "../../reusable-components/card/Card";
 
 // Styles for the graph
 const options = {
@@ -112,62 +113,64 @@ export default function WeatherInfo() {
 
     //create the containers to display the daily weather
     weatherSlides.push(
-      <div
-        key={"weather-slide-" + i}
-        className={WeatherInfoCSS.weather_slide + " " + WeatherInfoCSS.fade}
-      >
-        <div className={WeatherInfoCSS.weather_header}>
-          <p>{dayName[i]}</p>
-          <p>Dublin</p>
-          <p>{dates[i]}</p>
-        </div>
-        <div className={WeatherInfoCSS.weather_main_info}>
-          <div>
-            {i === 0 && <h2>{Math.round(weatherData.current.temp)}º</h2>}
-            {i !== 0 && <h2>{Math.round(weatherData.daily[i].temp.day)}º</h2>}
+      <Card variant="no_margin">
+        <div
+          key={"weather-slide-" + i}
+          className={WeatherInfoCSS.weather_slide + " " + WeatherInfoCSS.fade}
+        >
+          <div className={WeatherInfoCSS.weather_header}>
+            <p>{dayName[i]}</p>
+            <p>Dublin</p>
+            <p>{dates[i]}</p>
           </div>
-          <div className={WeatherInfoCSS.weather_items}>{weatherIcon}</div>
-        </div>
-        <div className={WeatherInfoCSS.weather_secondary_info}>
-          <div className={WeatherInfoCSS.weather_items}>
-            <p>
-              Max
-              <br />
-              {Math.round(weatherData.daily[i].temp.max)}º
-            </p>
+          <div className={WeatherInfoCSS.weather_main_info}>
+            <div>
+              {i === 0 && <h2>{Math.round(weatherData.current.temp)}º</h2>}
+              {i !== 0 && <h2>{Math.round(weatherData.daily[i].temp.day)}º</h2>}
+            </div>
+            <div className={WeatherInfoCSS.weather_items}>{weatherIcon}</div>
           </div>
-          <div className={WeatherInfoCSS.weather_items}>
-            <p>
-              Min
-              <br />
-              {Math.round(weatherData.daily[i].temp.min)}º
-            </p>
-          </div>
-          <div className={WeatherInfoCSS.weather_items}>
-            <p>
-              Rain
-              <br />
-              {Math.round(weatherData.daily[i].pop * 100)}%
-            </p>
-          </div>
-          <div className={WeatherInfoCSS.weather_items}>
-            {i === 0 && (
+          <div className={WeatherInfoCSS.weather_secondary_info}>
+            <div className={WeatherInfoCSS.weather_items}>
               <p>
-                Wind
+                Max
                 <br />
-                {Math.round(weatherData.current.wind_speed)} mph
+                {Math.round(weatherData.daily[i].temp.max)}º
               </p>
-            )}
-            {i !== 0 && (
+            </div>
+            <div className={WeatherInfoCSS.weather_items}>
               <p>
-                Wind
+                Min
                 <br />
-                {Math.round(weatherData.daily[i].wind_speed)} mph
+                {Math.round(weatherData.daily[i].temp.min)}º
               </p>
-            )}
+            </div>
+            <div className={WeatherInfoCSS.weather_items}>
+              <p>
+                Rain
+                <br />
+                {Math.round(weatherData.daily[i].pop * 100)}%
+              </p>
+            </div>
+            <div className={WeatherInfoCSS.weather_items}>
+              {i === 0 && (
+                <p>
+                  Wind
+                  <br />
+                  {Math.round(weatherData.current.wind_speed)} mph
+                </p>
+              )}
+              {i !== 0 && (
+                <p>
+                  Wind
+                  <br />
+                  {Math.round(weatherData.daily[i].wind_speed)} mph
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -223,7 +226,7 @@ export default function WeatherInfo() {
   const detailsSlide = (
     <div className={WeatherInfoCSS.details_wrapper}>
       <p>Details</p>
-      <div className={WeatherInfoCSS.details_slide}>
+      <Card variant="details_weather">
         <div className={WeatherInfoCSS.details_items}>
           <Ultraviolet height={"22"} fill="yellow" />
           <div>
@@ -252,7 +255,7 @@ export default function WeatherInfo() {
             <p>{weatherData.current.humidity}%</p>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 
@@ -281,25 +284,27 @@ export default function WeatherInfo() {
         {/* Display the hourly slides */}
         <div className={WeatherInfoCSS.hourly_outside_wrapper}>
           <p>Hourly</p>
-          <div className={WeatherInfoCSS.hourly_inner_wrapper}>
-            <ScrollMenu
-              data={hourlySlides}
-              arrowLeft={
-                <div className={WeatherInfoCSS.prev_weather}>&#10094;</div>
-              }
-              arrowRight={
-                <div className={WeatherInfoCSS.next_weather}>&#10095;</div>
-              }
-              alignCenter={false}
-              wheel={false}
-            />
-          </div>
+          <Card variant="no_margin">
+            <div className={WeatherInfoCSS.hourly_inner_wrapper}>
+              <ScrollMenu
+                data={hourlySlides}
+                arrowLeft={
+                  <div className={WeatherInfoCSS.prev_weather}>&#10094;</div>
+                }
+                arrowRight={
+                  <div className={WeatherInfoCSS.next_weather}>&#10095;</div>
+                }
+                alignCenter={false}
+                wheel={false}
+              />
+            </div>
+          </Card>
         </div>
 
         {/* Display the google graph */}
         <div className={WeatherInfoCSS.weather_chart_wrapper}>
           <p>Daily Forecast</p>
-          <div id={WeatherInfoCSS.weather_chart}>
+          <Card variant="graph">
             <Chart
               chartType="LineChart"
               rows={forecastWeather}
@@ -319,7 +324,7 @@ export default function WeatherInfo() {
                 },
               ]}
             />
-          </div>
+          </Card>
         </div>
 
         {/* Display the details slide */}

@@ -71,3 +71,63 @@
 .select_date_hour > div {
   width: 45%;
 }
+.header_results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+}
+.expand_results_icon {
+  position: absolute;
+  right: 50%;
+  top: -30px;
+  transform: translateX(50%);
+  z-index: 10;
+}
+.expanded_results {
+  width: 100%;
+}
+.departure,
+.arrival {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.departure {
+  padding-bottom: 5px;
+  margin-top: 10px;
+}
+.arrival {
+  padding-top: 5px;
+}
+.middle_stops {
+  padding: 5px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  cursor: pointer;
+  margin: 5px 0px;
+  width: 100%;
+}
+.middle_stops_header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.middle_stops_data {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0px;
+  font-size: 0.9rem;
+  position: relative;
+  height: 25px;
+}
