@@ -374,3 +374,28 @@ def get_weather_forecast(requested_datetime):
                 weather_forecast['lagged_rain'] = day['rain']
 
     return weather_forecast
+
+def filter_trip_stop_times(trip_stop_times, departure_stop_id, arrival_stop_id):
+    """
+    Takes all the stop times for a particular trip and filters them down to those
+    between the specified departure stop and arrival stop (inclusive).
+
+    Args
+    ---
+        trip_stop_times: list of dicts
+            A list of stop times for a trip where each stop time is a dict
+
+        departure_stop_id: str
+
+        arrival_stop_id: str
+    """
+
+    sorted_stop_times = sorted(trip_stop_times, key=lambda k: k['stoptime__stop_sequence'])
+    for i, trip in enumerate(sorted_stop_times):
+        if trip['stoptime__stop_id'] == departure_stop_id:
+            start = i
+
+        if trip['stoptime__stop_id'] == arrival_stop_id:
+            end = i
+
+    return zip(sorted_stop_times[start:end], sorted_stop_times[start+1:end+1])
