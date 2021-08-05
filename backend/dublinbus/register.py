@@ -38,15 +38,16 @@ def register_social_user(provider, email, name):
         serializer = dublinbus.serializers.UserSerializerWithToken(registered_user)
         return serializer.data
 
-    else:
-        # iii. email does not exist in app - create new social account user
-        print('register.py - Creating new social account user - ', provider, email)
-        serializer = dublinbus.serializers.UserSerializerWithToken(
-            data={'username': generate_username(name),
-                  'password': env('SOCIAL_SECRET'),
-                  'email': email,
-                  'auth_provider': provider}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return serializer.data
+    # iii. email does not exist in app - create new social account user
+    print('register.py - Creating new social account user - ', provider, email)
+    serializer = dublinbus.serializers.UserSerializerWithToken(
+        data={'username': generate_username(name),
+              'password': env('SOCIAL_SECRET'),
+              'email': email,
+              'auth_provider': provider}
+    )
+    if serializer.is_valid():
+        serializer.save()
+        return serializer.data
+    return None
+    

@@ -16,14 +16,14 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         pass
-        
-    def update(self, validated_data):
+
+    def update(self, instance, validated_data):
         pass
-        
+
     def validate_auth_token(self, auth_token):
         ''' Method to validate Google id_token.'''
         print('Google auth_token', self)
-        user_data = providers.Google.validate(auth_token)
+        user_data = providers.Provider.validate_google(auth_token)
         try:
             user_data['sub']
         except TypeError as invalid_token:
@@ -45,14 +45,14 @@ class FacebookSocialAuthSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         pass
-        
-    def update(self, validated_data):
+
+    def update(self, instance, validated_data):
         pass
-        
+
     def validate_auth_token(self, auth_token):
         ''' Method to validate Facebook accessToken.'''
         print('Facebook auth_token', self)
-        user_data = providers.Facebook.validate(auth_token)
+        user_data = providers.Provider.validate_facebook(auth_token)
 
         try:
             user_data['id']

@@ -2,11 +2,11 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 import facebook
 
-class Google:
-    """Google class to fetch the user info and return it"""
+class Provider:
+    """Class to fetch the user info from Google or Facebook and return it"""
 
     @staticmethod
-    def validate(auth_token):
+    def validate_google(auth_token):
         """
         validate method Queries the Google oAUTH2 api to fetch the user info
         """
@@ -18,14 +18,12 @@ class Google:
             if 'accounts.google.com' in idinfo['iss']:
                 return idinfo
 
-        except ValueError as invalid_token:
-            return invalid_token
-
-class Facebook:
-    """Facebook class to fetch the user info and return it"""
+        except ValueError as invalid_token: 
+            return invalid_token 
+        return None
 
     @staticmethod
-    def validate(auth_token):
+    def validate_facebook(auth_token):
         """
         validate method Queries the facebook GraphAPI to fetch the user info
         """
