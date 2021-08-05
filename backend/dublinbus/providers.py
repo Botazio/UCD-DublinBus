@@ -18,8 +18,8 @@ class Google:
             if 'accounts.google.com' in idinfo['iss']:
                 return idinfo
 
-        except:
-            return "Google - The token is either invalid or has expired."
+        except ValueError as invalid_token:
+            return invalid_token
 
 class Facebook:
     """Facebook class to fetch the user info and return it"""
@@ -33,5 +33,5 @@ class Facebook:
             graph = facebook.GraphAPI(access_token=auth_token)
             profile = graph.request('/me?fields=name,email')
             return profile
-        except:
-            return "The token is invalid or expired."
+        except facebook.GraphAPIError as invalid_token:
+            return invalid_token
