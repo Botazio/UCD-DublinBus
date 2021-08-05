@@ -78,12 +78,26 @@
   width: 100%;
   position: relative;
   height: 100%;
+}
+.header_results > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+}
+.header_results > svg {
+  position: absolute;
+  right: 0;
+  z-index: 10;
   cursor: pointer;
 }
 .expand_results_icon {
   position: absolute;
   right: 50%;
-  top: -30px;
+  top: -32px;
   transform: translateX(50%);
   z-index: 10;
 }
@@ -130,4 +144,24 @@
   font-size: 0.9rem;
   position: relative;
   height: 25px;
+}
+
+/* Styles for the quantile dots plot */
+.quantile_graph {
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+}
+.quantile_graph > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+}
+.quantile_graph > div > svg {
+  width: 100%;
+  margin-bottom: 15px;
 }

@@ -2,22 +2,43 @@ import Card from "../../../reusable-components/card/Card";
 import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
 import MinimizeRoundedIcon from '@material-ui/icons/MinimizeRounded';
 import DirectionsCSS from "../Directions.module.css";
-import { useTheme } from "@material-ui/core";
+import { Dialog, useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
+import QuantileDotsPlot from "./QuantileDotsPlot";
 
-const DisplayDirections = ({ searchResults, selectedDate, selectedHour }) => {
+// This component displays the directions after the server
+// sends back the results
+const DisplayDirections = ({ searchResults, selectedHour }) => {
+   // State to control when the user clicks on the results
    const [expanded, setExpanded] = useState(false);
+   // State to control the popup when the graph icon is clicked
+   const [open, setOpen] = useState(false);
 
    // Grab the theme from the provider
    const theme = useTheme().theme;
+
+   // Funtions to control how to open and close the popup
+   const handleClickOpen = () => {
+      setOpen(true);
+   };
+
+   const handleClose = () => {
+      setOpen(false);
+   };
 
    return (
       <Card variant="last" >
          {/* Display the prediction time */}
          {searchResults && getPredictedTime(searchResults.total_predictions)}
 
-         {searchResults && expanded && <ExpandedResults stopPairs={searchResults.stop_pairs} />}
+         {/* Display the expanded results */}
+         {searchResults && expanded && <ExpandedResults searchResults={searchResults} selectedHour={selectedHour} />}
+
+         {/* Display the popup for the quantile dots plot graph */}
+         {open && <Dialog open={open} onClose={handleClose}>
+            {searchResults && <QuantileDotsPlot totalPredictions={searchResults.total_predictions} />}
+         </Dialog>}
       </Card>
    );
 
@@ -34,13 +55,15 @@ const DisplayDirections = ({ searchResults, selectedDate, selectedHour }) => {
       }
 
       return (
-         <div className={DirectionsCSS.header_results} onClick={() => setExpanded(!expanded)}>
-            <h4 style={{ color: theme.primary }}>{resultTime}</h4>
-            <div
-               className={DirectionsCSS.expand_results_icon}>
-               <MinimizeRoundedIcon fontSize="large" />
+         <div className={DirectionsCSS.header_results}>
+            <div onClick={() => setExpanded(!expanded)}>
+               <h4 style={{ color: theme.primary }}>{resultTime}</h4>
+               <div
+                  className={DirectionsCSS.expand_results_icon}>
+                  <MinimizeRoundedIcon fontSize="large" />
+               </div>
             </div>
-            <BarChartRoundedIcon />
+            <BarChartRoundedIcon onClick={handleClickOpen} />
          </div>);
    }
 

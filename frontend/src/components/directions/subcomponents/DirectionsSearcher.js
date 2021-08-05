@@ -93,7 +93,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
 
       {/* Display the results from the search */}
-      {searchResults && <DisplayDirections searchResults={searchResults} selectedDate={selectedDate} selectedHour={selectedHour} />}
+      {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} />}
 
       {/* Display a message if an error occurs during the search */}
       {searchError && <Card variant="last"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
@@ -126,7 +126,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
 
     // Get the date in the proper format
     const date = moment(selectedDate).format('L');
-    const hour = moment(selectedHour).format('hh:mm:ss');
+    const hour = moment(selectedHour).format('HH:mm:ss');
 
     const body = {
       "route_id": "60-116-d12-1",
@@ -136,7 +136,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       "datetime": date + ", " + hour
     };
 
-    fetch("http://3.88.38.253/predict/", {
+    fetch("http://csi420-02-vm6.ucd.ie/predict/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

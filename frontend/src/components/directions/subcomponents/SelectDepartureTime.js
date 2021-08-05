@@ -6,9 +6,19 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { useState } from "react";
 import PrimaryDatePicker from "../../../reusable-components/custom-datepicker/PrimaryDatePicker";
 import PrimaryHourPicker from "../../../reusable-components/custom-hourpicker/PrimaryHourPicker";
+import { useEffect } from "react";
 
 const SelectDepartureTime = ({ selectedDate, setSelectedDate, selectedHour, setSelectedHour }) => {
    const [active, setActive] = useState("leave now");
+
+   // Set the time to the current hour every time leave now is set to active
+   useEffect(() => {
+      if (active === "leave now") {
+         setSelectedDate(new Date());
+         setSelectedHour(new Date());
+      }
+      // eslint-disable-next-line
+   }, [active]);
 
    return (
       <Card>
@@ -28,6 +38,7 @@ const SelectDepartureTime = ({ selectedDate, setSelectedDate, selectedHour, setS
             </PopoverOptions>
          </div>
 
+         {/* If "leave at" is active display the time and hour pickers */}
          {(active === "leave at") &&
             <div className={DirectionsCSS.select_date_hour}>
                <PrimaryDatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
@@ -37,9 +48,9 @@ const SelectDepartureTime = ({ selectedDate, setSelectedDate, selectedHour, setS
       </Card>
    );
 
+   // Function to change the state of active
    function handleClick(text) {
       setActive(text);
-
    }
 };
 
