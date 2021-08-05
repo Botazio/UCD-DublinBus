@@ -2,8 +2,55 @@ from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
+from . import providers
+from .register import register_social_user
+from rest_framework.exceptions import AuthenticationFailed
+import environ
 
+env = environ.Env()
+environ.Env.read_env()
 
+class FacebookSocialAuthSerializer(serializers.Serializer):
+    """Handles serialization of Facebook related data"""
+    auth_token = serializers.CharField()
+
+    def validate_auth_token(self, auth_token):
+        ''' Method to validate Facebook accessToken.'''
+        user_data = providers.Facebook.validate(auth_token) 
+
+        try:
+            user_data['id']
+        except:
+            raise serializers.ValidationError(
+                'The token is invalid or expired. Please login again.'
+            )
+
+        return register_social_user(provider='facebook',
+                                    email=user_data['email'],
+                                    name=user_data['name'])
+
+class GoogleSocialAuthSerializer(serializers.Serializer):
+    """Handles serialization of Google related data"""
+    auth_token = serializers.CharField()
+
+    def validate_auth_token(self, auth_token):
+        ''' Method to validate Google id_token.'''
+        user_data = providers.Google.validate(auth_token)
+        try:
+            user_data['sub']
+        except:
+            raise serializers.ValidationError(
+                'The token is invalid or expired. Please login again.'
+            )
+
+        # checking audience
+        if user_data['aud'] != env('GOOGLE_CLIENT_ID'): 
+            raise AuthenticationFailed('Invalid GOOGLE_CLIENT_ID')
+
+        return register_social_user(provider='google',
+                                    email=user_data['email'],
+                                    name=user_data['name'])
+                                                               
 class FavoriteStopSerializer(serializers.ModelSerializer):
     '''FavoriteStopSerializer'''
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -25,18 +72,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('date_joined',
-                  'is_staff',
-                  'is_superuser',
-                  'username',
-                  'password',
-                  'email',
-                  'favoritestops',
-                  'favoritejourneys',
-                  'pk',
-                  'image',
-                  'theme',
-                  'map',
+        fields = ('pk', 
+                  'username', 
+                  'email', 
+                  'auth_provider', 
+                  'date_joined', 
+                  'is_staff', 
+                  'is_superuser', 
+                  'image', 
+                  'map', 
+                  'favoritestops', 
+                  'favoritejourneys', 
+                  'theme', 
                   'markers')
         depth = 1
 
@@ -75,20 +122,21 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('date_joined',
-                  'is_staff',
-                  'is_superuser',
-                  'username',
+        fields = ('pk', 
+                  'username', 
+                  'email', 
+                  'auth_provider', 
+                  'date_joined', 
+                  'is_staff', 
+                  'is_superuser', 
+                  'image', 
+                  'map', 
+                  'favoritestops', 
+                  'favoritejourneys', 
+                  'theme', 
+                  'markers',
                   'password',
-                  'token',
-                  'email',
-                  'favoritestops',
-                  'favoritejourneys',
-                  'pk',
-                  'image',
-                  'theme',
-                  'map',
-                  'markers')
+                  'token')
         depth = 1
 
 class MarkerSerializer(serializers.ModelSerializer):

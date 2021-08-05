@@ -18,5 +18,7 @@ urlpatterns = [
     path('theme/', views.ThemeView.as_view()),
     path('theme/<int:primary_key>/', views.ThemeView.as_view()),
     path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='change_password'),
-    path('lines/', views.lines, name='lines')
+    path('lines/', views.lines, name='lines'),
+    path('google/', views.GoogleSocialAuthView.as_view()),
+    path('facebook/', views.FacebookSocialAuthView.as_view()),
 ]
