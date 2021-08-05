@@ -7,3 +7,7 @@ google_transit_dublinbus/
 *.csv
 *.txt
 model_output/
+.DS_Store
+.vscode
+data/
+db/
