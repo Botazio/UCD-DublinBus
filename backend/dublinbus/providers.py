@@ -18,8 +18,8 @@ class Provider:
             if 'accounts.google.com' in idinfo['iss']:
                 return idinfo
 
-        except ValueError as invalid_token: 
-            return invalid_token 
+        except ValueError as invalid_token:
+            return invalid_token
         return None
 
     @staticmethod
