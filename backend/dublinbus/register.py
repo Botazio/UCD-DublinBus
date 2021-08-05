@@ -50,4 +50,3 @@ def register_social_user(provider, email, name):
         serializer.save()
         return serializer.data
     return None
-
