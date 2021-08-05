@@ -1,25 +1,24 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
-from .models import FavoriteStop, Stop, FavoriteJourney, Marker, Theme
+from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 
 
 class FavoriteStopSerializer(serializers.ModelSerializer):
     '''FavoriteStopSerializer'''
-    stop = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = FavoriteStop
         fields = ('pk', 'created', 'owner', 'stop')
+        depth = 1
 
 class FavoriteJourneySerializer(serializers.ModelSerializer):
     '''FavoriteJourneySerializer'''
-    stop_origin = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
-    stop_destination = serializers.PrimaryKeyRelatedField(queryset=Stop.objects.all(), many=False)
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = FavoriteJourney
         fields = ('pk', 'created', 'owner', "stop_origin", "stop_destination")
+        depth = 1
 
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
