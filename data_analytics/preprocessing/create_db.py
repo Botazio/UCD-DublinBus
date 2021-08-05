@@ -38,9 +38,6 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         "PLANNEDTIME_DEP" INTEGER,
         "ACTUALTIME_ARR" FLOAT,
         "ACTUALTIME_DEP" FLOAT,
-        "SUPPRESSED" FLOAT,
-        "JUSTIFICATIONID" FLOAT,
-        "LASTUPDATE" DATETIME,
         PRIMARY KEY ("DAYOFSERVICE", "TRIPID"))
     """)
     for chunk in pd.read_csv('data/raw/rt_trips_DB_2018.txt', sep=";", chunksize=10000):
@@ -56,15 +53,11 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
             "PLANNEDTIME_ARR",
             "PLANNEDTIME_DEP",
             "ACTUALTIME_ARR",
-            "ACTUALTIME_DEP",
-            "SUPPRESSED",
-            "JUSTIFICATIONID",
-            "LASTUPDATE",
+            "ACTUALTIME_DEP"
         ]
         c.executemany("""
             INSERT INTO trips(DAYOFSERVICE, TRIPID, LINEID, ROUTEID, DIRECTION,
-            PLANNEDTIME_ARR, PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP, SUPPRESSED, JUSTIFICATIONID,
-            LASTUPDATE, NOTE)
+            PLANNEDTIME_ARR, PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, list(chunk[columns].values))
     c.execute("CREATE INDEX DAYOFSERVICE_TRIPS ON trips(DAYOFSERVICE)")
@@ -82,9 +75,6 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
         "ACTUALTIME_ARR" INTEGER,
         "ACTUALTIME_DEP" INTEGER,
         "VEHICLEID" INTEGER,
-        "SUPPRESSED" FLOAT,
-        "JUSTIFICATIONID" FLOAT,
-        "LASTUPDATE" DATETIME,
         PRIMARY KEY ("DAYOFSERVICE", "TRIPID", "PROGRNUMBER"))
     """)
     for chunk in pd.read_csv('data/raw/rt_leavetimes_DB_2018.txt', sep=";", chunksize=10000):
@@ -99,15 +89,11 @@ with sqlite3.connect("/home/team13/db/database/DublinBusHistoric.db") as connect
             "PLANNEDTIME_DEP",
             "ACTUALTIME_ARR",
             "ACTUALTIME_DEP",
-            "VEHICLEID",
-            "SUPPRESSED",
-            "JUSTIFICATIONID",
-            "LASTUPDATE"
+            "VEHICLEID"
         ]
         c.executemany("""
             INSERT INTO leavetimes(DAYOFSERVICE, TRIPID, PROGRNUMBER, STOPPOINTID, PLANNEDTIME_ARR,
-            PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP, VEHICLEID, SUPPRESSED, JUSTIFICATIONID,
-            LASTUPDATE)
+            PLANNEDTIME_DEP, ACTUALTIME_ARR, ACTUALTIME_DEP, VEHICLEID)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, list(chunk[columns].values))
     c.execute("CREATE INDEX DAYOFSERVICE_LEAVETIMES ON leavetimes(DAYOFSERVICE)")

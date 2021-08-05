@@ -18,4 +18,5 @@ urlpatterns = [
     path('theme/', views.ThemeView.as_view()),
     path('theme/<int:primary_key>/', views.ThemeView.as_view()),
     path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('lines/', views.lines, name='lines')
 ]

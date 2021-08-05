@@ -31,7 +31,7 @@ def create_adjacent_stop_pairs(trips):
         stop_pairs_trip.loc[:,
                             'arrival_stop'] = stop_pairs_trip.shift(-1).loc[:, 'departure_stop']
         stop_pairs_trip.loc[:,
-                            'time_arrival'] = stop_pairs_trip.shift(-1).loc[:, 'ACTUALTIME_ARR']
+                            'time_arrival'] = stop_pairs_trip.shift(-1).loc[:, 'ACTUALTIME_DEP']
         stop_pairs_trip['travel_time'] = stop_pairs_trip["time_arrival"] - \
             stop_pairs_trip["time_departure"]
 

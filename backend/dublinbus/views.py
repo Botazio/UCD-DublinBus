@@ -1,12 +1,13 @@
 import math
+import logging
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from django.shortcuts import render
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
 import numpy as np
 
-from dublinbus.models import Route, Stop, Trip, StopTime
+from dublinbus.models import Route, Stop, Trip, StopTime, Calendar
 import dublinbus.utils as utils
 
 from rest_framework import status, generics
@@ -23,6 +24,15 @@ from .serializers import UserSerializerWithToken, \
     ChangePasswordSerializer
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 from .permissions import IsOwner, IsUser
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def index(request):
     """Temporary homepage for the application"""
@@ -127,6 +137,30 @@ def route(request, route_id):
 
     return JsonResponse(response)
 
+def lines(request):
+    """
+    Get all of the lines in both directions for the bus network
+    """
+
+    # Get valid service IDs (current date is greater than start_date and
+    # less than end date)
+    service_ids = list(Calendar.objects
+                        .filter(
+                            start_date__lte=datetime.today(),
+                            end_date__gte=datetime.today()
+                        )
+                        .values_list('service_id', flat=True)
+                    )
+
+    result = Trip.objects.filter(
+                            calendar_id__in=service_ids
+                        ).values(
+                            "route_id", "direction_id", "trip_headsign",
+                            "route__route_short_name"
+                        ).distinct()
+
+    return JsonResponse(list(result), safe=False)
+
 class Predict(APIView):
     """
     Predict travel time in seconds between two stops on the same route/trip.
@@ -150,6 +184,9 @@ class Predict(APIView):
             route_id: str
                 The route ID of the journey
 
+            direction_id: int
+                The direction ID of the journey
+
             departure_stop_id: str
                 The stop ID of the departure stop in the journey
 
@@ -169,6 +206,7 @@ class Predict(APIView):
 
                 data = {
                     "route_id": "60-39A-b12-1",
+                    "direction_id": "1",
                     "departure_stop_id": "8250DB000767",
                     "arrival_stop_id": "8250DB000768",
                     "datetime": "07/28/2021, 20:35:14"
@@ -188,13 +226,24 @@ class Predict(APIView):
             "%m/%d/%Y, %H:%M:%S"
         ).replace(tzinfo=tz.gettz('Europe/London'))
 
+        current_date = datetime.now().replace(tzinfo=tz.gettz('Europe/London'))
+        if parsed_datetime <= current_date or \
+            parsed_datetime >= current_date + timedelta(days=7):
+            return HttpResponseBadRequest("Requested date must be within the next 7 days")
+
         weather_forecast = utils.get_weather_forecast(parsed_datetime)
+
+        # Could not find any matches in hourly or daily forecasts
+        if len(weather_forecast) == 0:
+            return HttpResponseBadRequest(
+                    f"Could not get weather forecast for {parsed_datetime}"
+                )
 
         midnight = datetime(
                             year=parsed_datetime.year,
                             month=parsed_datetime.month,
                             day=parsed_datetime.day
-                    ).replace(tzinfo=tz.gettz('Europe/London'))
+                   ).replace(tzinfo=tz.gettz('Europe/London'))
         seconds_since_midnight = (parsed_datetime - midnight).total_seconds()
 
         features = {
@@ -208,42 +257,69 @@ class Predict(APIView):
             'bank_holiday': utils.check_bank_holiday(parsed_datetime)
         }
 
-        trip_id = Trip.objects.filter(
-            route=request.data['route_id']
-        ).values_list('trip_id', flat=True)[1]
+        # Get a list of trip IDs and associated stop times that are valid
+        # for this particular day on this route in this direction. We are
+        # assuming that the sequence of stops is the same for all these trips so
+        # just use the first
+        trip_ids = Trip.objects.filter(
+            route=request.data['route_id'],
+            direction_id=request.data['direction_id'],
+            # Get the service IDs that are valid for the date
+            calendar_id__in=utils.date_to_service_ids(parsed_datetime)
+        ).values(
+                'trip_id', 'stoptime', 'stoptime__stop_id',
+                'stoptime__stop_sequence', 'stoptime__stop__stop_num',
+                'stoptime__arrival_time', 'stoptime__departure_time'
+        )
 
-        departure_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['departure_stop_id'])[0].stop_sequence
-        arrival_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['arrival_stop_id'])[0].stop_sequence
+        # There are likely many Trip IDs that meet this (different times of the day)
+        # For now we just use the first valid Trip ID
+        logging.info(
+            f"Found {len(trip_ids)} trips. Taking first: {trip_ids[0]['trip_id']}."
+        )
+        chosen_trip = list(
+            filter(lambda trip: trip['trip_id'] == trip_ids[0]['trip_id'], trip_ids)
+        )
+
+        # Filter the trip stop times down to start and end point we're interested in
+        chosen_trip_stop_times = utils.filter_trip_stop_times(
+            chosen_trip,
+            request.data['departure_stop_id'],
+            request.data['arrival_stop_id']
+        )
 
         # Array of predictions for the journey
-        total_times = np.zeros(int(request.data.get('num_predictions', 100)))
+        results = {
+            'total_predictions': np.zeros(int(request.data.get('num_predictions', 100))),
+            'stop_pairs': []
+        }
 
-        for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
-            departure_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence).stop_id
-            arrival_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence + 1).stop_id
+        for stop_a, stop_b in chosen_trip_stop_times:
 
             stop_pair_time_predictions = utils.predict_adjacent_stop(
-                Stop.objects.get(stop_id=departure_stop).stop_num,
-                Stop.objects.get(stop_id=arrival_stop).stop_num,
+                stop_a['stoptime__stop__stop_num'],
+                stop_b['stoptime__stop__stop_num'],
                 features,
                 num_predictions=int(request.data.get('num_predictions', 100))
             )
 
+            # Store the results for this stop pair
+            results['stop_pairs'].append({
+                'departure_stop': stop_a['stoptime__stop__stop_num'],
+                'arrival_stop': stop_b['stoptime__stop__stop_num'],
+                'predictions': stop_pair_time_predictions
+            })
+
             # Add predictions for current adjacent stop pair to
             # total journey prediction
-            total_times += stop_pair_time_predictions
-
+            results['total_predictions'] += stop_pair_time_predictions
 
         utils.plot_probabilistic_predictions(
             f"{request.data['departure_stop_id']}_to_{request.data['arrival_stop_id']}",
-            total_times.tolist()
+            results['total_predictions']
         )
 
-        return Response({"prediction": total_times.tolist()}, status=status.HTTP_200_OK)
+        return Response(results, status=status.HTTP_200_OK)
 
 
 class FavoriteStopView(APIView):
