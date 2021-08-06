@@ -4,8 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from .managers import CustomUserManager
 
-AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google', 'email': 'email'}
-
 class Stop(models.Model):
     """
     A class to represent a Dublin Bus stop
@@ -204,7 +202,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     map = models.CharField(max_length=120, default='defaultThemeLight')
     auth_provider = models.CharField(
         max_length=255, blank=False,
-        null=False, default=AUTH_PROVIDERS.get('email'))
+        null=False, default='email')
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'password']
