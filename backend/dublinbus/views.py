@@ -160,23 +160,23 @@ def lines(request):
                         ).distinct()
 
     # append the first trip_id per route & direction
-    for i in range(len(result)):
-        result[i]['trip_id'] = \
-            Trip.objects.filter(route_id=result[i]['route_id'],
-                            direction_id=result[i]['direction_id'],
-                            trip_headsign=result[i]['trip_headsign'],
-                            route__route_short_name=result[i]['route__route_short_name']
+    for i, record in enumerate(result):
+        record['trip_id'] = \
+            Trip.objects.filter(route_id=record['route_id'],
+                            direction_id=record['direction_id'],
+                            trip_headsign=record['trip_headsign'],
+                            route__route_short_name=record['route__route_short_name']
                             ).values_list("trip_id", flat=True)[0]
 
     # append stops list per route & direction
-    for i in range(len(result)):
-        result[i]['stops'] = list(
-            StopTime.objects.filter(trip_id=result[i]['trip_id']
+    for i, record in enumerate(result):
+        record['stops'] = list(
+            StopTime.objects.filter(trip_id=record['trip_id']
                                     ).values("stop__stop_id", "stop__stop_name",
                                              "stop__stop_num",
                                              "stop_sequence", "stop__stop_lat",
                                              "stop__stop_lon", "shape_dist_traveled"))
-                                             
+
     return JsonResponse(list(result), safe=False)
 
 class Predict(APIView):
