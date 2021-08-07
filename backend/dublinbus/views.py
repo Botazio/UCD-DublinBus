@@ -161,7 +161,7 @@ def lines(request):
 
     # append the first trip_id per route & direction
     for i, record in enumerate(result):
-        record['trip_id'] = \
+        result[i]['trip_id'] = \
             Trip.objects.filter(route_id=record['route_id'],
                             direction_id=record['direction_id'],
                             trip_headsign=record['trip_headsign'],
@@ -170,7 +170,7 @@ def lines(request):
 
     # append stops list per route & direction
     for i, record in enumerate(result):
-        record['stops'] = list(
+        result[i]['stops'] = list(
             StopTime.objects.filter(trip_id=record['trip_id']
                                     ).values("stop__stop_id", "stop__stop_name",
                                              "stop__stop_num",
