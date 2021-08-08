@@ -156,9 +156,12 @@ elif sys.argv[1] == "features":
         # dummy variable for weekend
         stop_pair_df['is_weekend'] = stop_pair_df['day'].isin([5, 6])
 
-        # one-hot encoding of days
+        # one-hot encoding of days and hours
         day_of_week_columns = pd.get_dummies(stop_pair_df['day'], drop_first=True, prefix="day")
         stop_pair_df[list(day_of_week_columns)] = day_of_week_columns
+
+        hour_of_day_columns = pd.get_dummies(stop_pair_df['hour'], drop_first=True, prefix='hour')
+        stop_pair_df[list(hour_of_day_columns)] = hour_of_day_columns
 
         stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
 
