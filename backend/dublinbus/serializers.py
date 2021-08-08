@@ -1,8 +1,69 @@
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
+import environ
 from .models import FavoriteStop, FavoriteJourney, Marker, Theme
+from . import providers
+from .register import register_social_user
 
+env = environ.Env()
+environ.Env.read_env()
+
+class GoogleSocialAuthSerializer(serializers.Serializer):
+    """Handles serialization of Google related data"""
+    auth_token = serializers.CharField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    def validate_auth_token(self, auth_token):
+        ''' Method to validate Google id_token.'''
+        print('Google auth_token', self)
+        user_data = providers.Provider.validate_google(auth_token)
+        try:
+            user_data['sub']
+        except TypeError as invalid_token:
+            raise serializers.ValidationError(
+                'The token is invalid or expired. Please login again.'
+            ) from invalid_token
+
+        # checking audience
+        if user_data['aud'] != env('GOOGLE_CLIENT_ID'):
+            raise AuthenticationFailed('Invalid GOOGLE_CLIENT_ID')
+
+        return register_social_user(provider='google',
+                                    email=user_data['email'],
+                                    name=user_data['name'])
+
+class FacebookSocialAuthSerializer(serializers.Serializer):
+    """Handles serialization of Facebook related data"""
+    auth_token = serializers.CharField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    def validate_auth_token(self, auth_token):
+        ''' Method to validate Facebook accessToken.'''
+        print('Facebook auth_token', self)
+        user_data = providers.Provider.validate_facebook(auth_token)
+
+        try:
+            user_data['id']
+        except TypeError as invalid_token:
+            raise serializers.ValidationError(
+                'The token is invalid or expired. Please login again.'
+            ) from invalid_token
+
+        return register_social_user(provider='facebook',
+                                    email=user_data['email'],
+                                    name=user_data['name'])
 
 class FavoriteStopSerializer(serializers.ModelSerializer):
     '''FavoriteStopSerializer'''
@@ -25,18 +86,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('date_joined',
+        fields = ('pk',
+                  'username',
+                  'email',
+                  'auth_provider',
+                  'date_joined',
                   'is_staff',
                   'is_superuser',
-                  'username',
-                  'password',
-                  'email',
+                  'image',
+                  'map',
                   'favoritestops',
                   'favoritejourneys',
-                  'pk',
-                  'image',
                   'theme',
-                  'map',
                   'markers')
         depth = 1
 
@@ -75,20 +136,21 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('date_joined',
+        fields = ('pk',
+                  'username',
+                  'email',
+                  'auth_provider',
+                  'date_joined',
                   'is_staff',
                   'is_superuser',
-                  'username',
-                  'password',
-                  'token',
-                  'email',
+                  'image',
+                  'map',
                   'favoritestops',
                   'favoritejourneys',
-                  'pk',
-                  'image',
                   'theme',
-                  'map',
-                  'markers')
+                  'markers'
+                  'password',
+                  'token')
         depth = 1
 
 class MarkerSerializer(serializers.ModelSerializer):

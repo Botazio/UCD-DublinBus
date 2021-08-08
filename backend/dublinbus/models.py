@@ -200,6 +200,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     image = models.ImageField(upload_to='dublinbus_images', default='default.png')
     map = models.CharField(max_length=120, default='defaultThemeLight')
+    auth_provider = models.CharField(
+        max_length=255, blank=False,
+        null=False, default='email')
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'password']
