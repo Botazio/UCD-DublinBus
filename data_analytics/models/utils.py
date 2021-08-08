@@ -20,7 +20,7 @@ from tensorflow.keras.layers.experimental.preprocessing import Normalization
 sns.set_theme()
 
 def train_all_stop_pair_models(model_name, model=None, grid_search=False, start_num=0,
-                                end_num=None):
+                                end_num=None, stop_pair=None):
     """
     Train a model on each adjacent stop pair
 
@@ -39,20 +39,15 @@ def train_all_stop_pair_models(model_name, model=None, grid_search=False, start_
         datefmt='%Y-%m-%d %H:%M:%S'
     )
 
+    logging.info(current_time)
+
     stop_pairs_metrics = []
 
-    stop_pair_files = glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*")
-    if not end_num:
-        end_num = len(stop_pair_files)
+    if stop_pair:
 
-    logging.info(f"Running models from {start_num} to {end_num}")
-
-    # Train a model for each adjacent stop pair
-    for stop_pair_file in stop_pair_files[start_num:end_num]:
-
-        stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
-
-        stop_pair = stop_pair_file.split('/')[-1].split('.')[0]
+        stop_pair_df = pd.read_parquet(
+            f"/home/team13/data/adjacent_stop_pairs_with_features/{stop_pair}.parquet"
+        ).sort_values(['date', 'time_arrival'])
 
         logging.info(
             f"{stop_pair_df.shape[0]} rows for {stop_pair}"
@@ -80,9 +75,51 @@ def train_all_stop_pair_models(model_name, model=None, grid_search=False, start_
                         f"/trained_models/{stop_pair}.pickle",
                         'wb') as pickle_file:
                     pickle.dump(final_model, pickle_file)
-            else:
-                final_model.save(f"/home/team13/model_output/{model_name}/" +
-                        f"/trained_models/{stop_pair}")
+
+    else:
+
+        stop_pair_files = glob.glob("/home/team13/data/adjacent_stop_pairs_with_features/*")
+        if not end_num:
+            end_num = len(stop_pair_files)
+
+        logging.info(f"Running models from {start_num} to {end_num}")
+
+        # Train a model for each adjacent stop pair
+        for stop_pair_file in stop_pair_files[start_num:end_num]:
+
+            stop_pair_df = pd.read_parquet(stop_pair_file).sort_values(['date', 'time_arrival'])
+
+            stop_pair = stop_pair_file.split('/')[-1].split('.')[0]
+
+            logging.info(
+                f"{stop_pair_df.shape[0]} rows for {stop_pair}"
+            )
+
+            if stop_pair_df.shape[0] > 50:
+
+                # Train model
+                metrics, final_model = train_model(
+                                            stop_pair_df,
+                                            model,
+                                            grid_search=grid_search
+                                        )
+
+                metrics['stop_pair'] = stop_pair
+                metrics['num_rows'] = stop_pair_df.shape[0]
+
+                # Add metrics for this stop pair
+                stop_pairs_metrics.append(metrics)
+
+                if model_name != "NeuralNetwork":
+                    # Write out trained models as pickle files
+                    with open(
+                        f"/home/team13/model_output/{model_name}/" +
+                            f"/trained_models/{stop_pair}.pickle",
+                            'wb') as pickle_file:
+                        pickle.dump(final_model, pickle_file)
+                else:
+                    final_model.save(f"/home/team13/model_output/{model_name}/" +
+                            f"/trained_models/{stop_pair}")
 
     logging.info(
         "Model training complete. Writing out metrics and pickle files for each" +
@@ -90,11 +127,13 @@ def train_all_stop_pair_models(model_name, model=None, grid_search=False, start_
     )
 
     # Save plot of RMSE against number of rows for each stop pair
-    plot_stop_pairs_metrics(pd.DataFrame(stop_pairs_metrics), model_name, current_time)
+    plot_stop_pairs_metrics(
+        pd.DataFrame(stop_pairs_metrics), model_name, current_time, start_num, end_num
+    )
 
     # Write out metrics for each stop pair to CSV
     pd.DataFrame(stop_pairs_metrics).to_csv(f'/home/team13/model_output/{model_name}/' +
-        f"/{model_name}_metrics_{current_time}.csv", index=False)
+        f"/{model_name}_metrics_{current_time}_start={start_num}_end={end_num}.csv", index=False)
 
 
 def train_model(stop_pair_df, model, grid_search):
@@ -136,7 +175,7 @@ def train_model(stop_pair_df, model, grid_search):
     x_train, x_test, y_train, y_test = train_test_split(
         x_full,
         y_full,
-        test_size=0.20,
+        test_size=0.10,
         # Don't shuffle because time-series data that's already been sorted
         shuffle=False
     )
@@ -363,7 +402,7 @@ def time_series_cross_validate(x_train, y_train, model):
     # Return the average RMSE
     return sum(cv_metrics) / len(cv_metrics)
 
-def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
+def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time, start_num, end_num):
     """
     Plot the RMSE from cross-validation and from the test set as a scatter
     plot against the number of rows for each stop pair.
@@ -410,7 +449,7 @@ def plot_stop_pairs_metrics(stop_pairs_metrics, model_name, current_time):
     axes[1].set_ylabel("RMSE")
 
     plt.savefig(f"/home/team13/model_output/{model_name}/" +
-        f"{model_name}_metrics_{current_time}.png")
+        f"{model_name}_metrics_{current_time}_start={start_num}_end={end_num}.png")
 
 def generate_learning_fit_time_curves(model, stop_pair):
     """
@@ -446,7 +485,7 @@ def generate_learning_fit_time_curves(model, stop_pair):
                 'lagged_rain', 'temp', 'bank_holiday']
     x_full = stop_pair_df[features]
 
-    train_sizes, train_scores, cv_scores, fit_times, _ = learning_curve(
+    train_sizes, train_scores, cv_scores, _ = learning_curve(
         model,
         x_full,
         y_full,
@@ -454,15 +493,14 @@ def generate_learning_fit_time_curves(model, stop_pair):
         # It seems that only negative RMSE is available
         # Higher score is better in this case (less negative)
         scoring='neg_root_mean_squared_error',
-        return_times=True,
         train_sizes=np.linspace(0.01, 1.0, 30),
         shuffle=False
     )
 
-    _, axes = plt.subplots(1, 3, figsize=(20, 5))
+    _, axes = plt.subplots(1, 1, figsize=(20, 5))
 
     plot_learning_curve(train_scores, cv_scores, train_sizes, axes)
-    plot_fit_time_curves(fit_times, cv_scores, train_sizes, axes)
+    # plot_fit_time_curves(fit_times, cv_scores, train_sizes, axes)
 
     model_name = type(model).__name__
     plt.savefig(f"/home/team13/model_output/{model_name}/learning_curves/" +
@@ -494,25 +532,24 @@ def plot_learning_curve(train_scores, cv_scores, train_sizes, axes):
     cv_scores_mean = np.mean(cv_scores, axis=1)
     cv_scores_std = np.std(cv_scores, axis=1)
 
-    logging.info(f"Training Scores\n{train_scores}")
-    logging.info(f"Training Scores Mean\n{train_scores_mean}")
-    logging.info(f"CV Scores\n{cv_scores}")
-    logging.info(f"CV Scores Mean\n{cv_scores_mean}")
+    print(f"Train Sizes {train_sizes}")
+    print(f"Training Scores Mean\n{train_scores_mean}")
+    print(f"CV Scores Mean\n{cv_scores_mean}")
 
-    axes[0].grid()
-    axes[0].fill_between(train_sizes, train_scores_mean - train_scores_std,
+    axes.grid()
+    axes.fill_between(train_sizes, train_scores_mean - train_scores_std,
                          train_scores_mean + train_scores_std, alpha=0.1,
                          color="r")
-    axes[0].fill_between(train_sizes, cv_scores_mean - cv_scores_std,
+    axes.fill_between(train_sizes, cv_scores_mean - cv_scores_std,
                          cv_scores_mean + cv_scores_std, alpha=0.1,
                          color="g")
-    axes[0].plot(train_sizes, train_scores_mean, 'o-', color="r",
+    axes.plot(train_sizes, train_scores_mean, 'o-', color="r",
                  label="Training score")
-    axes[0].plot(train_sizes, cv_scores_mean, 'o-', color="g",
+    axes.plot(train_sizes, cv_scores_mean, 'o-', color="g",
                  label="Cross-validation score")
-    axes[0].legend(loc="best")
-    axes[0].set_xlabel("Training Examples")
-    axes[0].set_ylabel("Negative RMSE")
+    axes.legend(loc="best")
+    axes.set_xlabel("Training Examples")
+    axes.set_ylabel("Negative RMSE")
 
 def plot_fit_time_curves(fit_times, cv_scores, train_sizes, axes):
     """
