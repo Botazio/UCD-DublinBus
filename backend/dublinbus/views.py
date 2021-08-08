@@ -193,15 +193,15 @@ def lines(request):
         # append stops list per route & direction
         result[i]['stops'] = list(
             StopTime.objects.filter(trip_id=record['trip_id']
-                                    ).values("arrival_time", 
-                                             "departure_time", 
-                                             "stop_sequence", 
-                                             "stop_headsign", 
+                                    ).values("arrival_time",
+                                             "departure_time",
+                                             "stop_sequence",
+                                             "stop_headsign",
                                              "shape_dist_traveled",
-                                             "stop_id", 
-                                             "stop__stop_name", 
-                                             "stop__stop_num", 
-                                             "stop__stop_lat", 
+                                             "stop_id",
+                                             "stop__stop_name",
+                                             "stop__stop_num",
+                                             "stop__stop_lat",
                                              "stop__stop_lon"))
 
     return JsonResponse(list(result), safe=False)
