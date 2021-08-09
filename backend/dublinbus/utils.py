@@ -1,3 +1,4 @@
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 import logging
 from statistics import mean
@@ -12,7 +13,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
-from pathlib import Path
 
 # Initialise environment variables
 env = environ.Env()
