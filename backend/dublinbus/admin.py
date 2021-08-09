@@ -7,7 +7,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_active', 'is_superuser')
+    list_display = ('email', 'username', 'is_staff', 'is_active', 'is_superuser', 'auth_provider', 'id', 'image', 'map')
     list_filter = ('email', 'is_staff', 'is_active', 'is_superuser')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -28,8 +28,10 @@ admin.site.register(Route)
 admin.site.register(Calendar)
 admin.site.register(Trip)
 admin.site.register(Line)
-admin.site.register(FavouriteStop)
-admin.site.register(FavouriteJourney)
+admin.site.register(FavoriteStop)
+admin.site.register(FavoriteJourney)
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Marker)
+admin.site.register(Theme)
 
 

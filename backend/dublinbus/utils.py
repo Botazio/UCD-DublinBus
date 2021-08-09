@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import logging
 from statistics import mean
 from os import path
 import environ
@@ -115,23 +116,37 @@ def get_due_in_time(current_time, scheduled_arrival_time, delay):
     time_delta_seconds = time_delta.total_seconds() + delay
     return round(time_delta_seconds / 60)
 
-
-def date_to_service_ids(current_date):
+def date_to_service_ids(requested_date):
     """
-    A function which returns which service IDs are valid on the given date.
-    This is taken from the calendar.txt file from the static GTFS Dublin Bus data.
+    A function which returns which valid service IDs
+    for a particular date. This is taken from the
+    calendar.txt file from the static GTFS Dublin Bus data.
 
     Args
     ---
-        current_date: datetime
-            A datetime object for the current day
+        requested_date: datetime
+            A datetime object for the requested day
+
     """
 
     # Get the day of the week
-    day = current_date.strftime("%A").lower()
-    return list(Calendar.objects.filter(**{day: True}).values_list('service_id', flat=True))
+    day = requested_date.strftime("%A").lower()
 
-def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=100):
+    service_ids = list(Calendar.objects
+                .filter(**{day: True})
+                .filter(
+                    start_date__lte=requested_date,
+                    end_date__gte=requested_date
+                )
+                .values_list('service_id', flat=True)
+    )
+
+    if len(service_ids) > 1:
+        logging.info("More than one valid service ID.")
+
+    return service_ids
+
+def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=10):
     """
     Predict the time to travel between two adjacent stops on the same route trip.
     This method uses stop numbers and not stop IDs since stop IDs are not available
@@ -148,7 +163,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
         features: dict
             Dict of features
 
-        num_predictions: int
+        num_predictions: int, default 10
             The number of predictions to return
 
     Returns
@@ -160,7 +175,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
     model_path = f"./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}/"
 
     if path.exists(model_path):
-        print(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
+        logging.info(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
         trained_nn_model = keras.models.load_model(model_path)
 
         input_row = np.reshape(np.array(list(features.values())), (1, 8))
@@ -170,12 +185,11 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
             trained_nn_model,
             num_predictions=num_predictions
         )
-        plot_probabilistic_predictions(f'{departure_stop_num}_to_{arrival_stop_num}', predictions)
 
         return predictions
 
     # no model exists for this stop pair so just use expected times
-    print(f"No model found for {departure_stop_num}_to_{arrival_stop_num}." +
+    logging.warning(f"No model found for {departure_stop_num}_to_{arrival_stop_num}. " +
                 "Using timetable instead.")
     timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
     prediction = np.mean(timetable_2021.loc[
@@ -185,7 +199,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
 
     return np.repeat(prediction, num_predictions)
 
-def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
+def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=10):
     """
     Take a row of input data and a trained keras model for a particular stop pair
     and make many predictions. This can be used to generate a probability distribution
@@ -199,7 +213,7 @@ def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100
         trained_nn_model: keras model
             A trained neural network model from keras
 
-        num_predictions: int, default 100
+        num_predictions: int, default 10
             The number of predictions to make
 
     Returns
@@ -249,6 +263,7 @@ def plot_probabilistic_predictions(stop_pair, predictions):
 
     plt.savefig("./model_output/NeuralNetwork/" +
         f"NeuralNetwork_predictions{stop_pair}.png")
+    plt.close()
 
 def check_bank_holiday(input_date):
     """
@@ -311,6 +326,8 @@ def get_weather_forecast(requested_datetime):
         "https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155" +
             f"&exclude=current,minutely,alerts&units=metric&appid={env('OPENWEATHER_API_KEY')}"
     ).json()
+
+    # Try 48 hour forecast hourly data first
     for hour in weather_response['hourly']:
         open_weather_dt = datetime.fromtimestamp(hour['dt'])
 
@@ -335,4 +352,50 @@ def get_weather_forecast(requested_datetime):
             else:
                 weather_forecast['rain'] = hour['rain']['1h']
 
+            return weather_forecast
+
+    # Fall back to 7 day daily forecasts because no matches for 48 hourly forecast
+    for day in weather_response['daily']:
+
+        open_weather_dt = datetime.fromtimestamp(day['dt'])
+
+        if open_weather_dt.date() == requested_datetime.date():
+
+            weather_forecast['temp'] = day['temp']
+
+            # rain is not included as a value if there is no rain
+            if "rain" not in day:
+                weather_forecast['rain'] = 0
+                weather_forecast['lagged_rain'] = 0
+            else:
+                weather_forecast['rain'] = day['rain']
+                # Can't get proper lagged value for rain since
+                # it's not hourly
+                weather_forecast['lagged_rain'] = day['rain']
+
     return weather_forecast
+
+def filter_trip_stop_times(trip_stop_times, departure_stop_id, arrival_stop_id):
+    """
+    Takes all the stop times for a particular trip and filters them down to those
+    between the specified departure stop and arrival stop (inclusive).
+
+    Args
+    ---
+        trip_stop_times: list of dicts
+            A list of stop times for a trip where each stop time is a dict
+
+        departure_stop_id: str
+
+        arrival_stop_id: str
+    """
+
+    sorted_stop_times = sorted(trip_stop_times, key=lambda k: k['stoptime__stop_sequence'])
+    for i, trip in enumerate(sorted_stop_times):
+        if trip['stoptime__stop_id'] == departure_stop_id:
+            start = i
+
+        if trip['stoptime__stop_id'] == arrival_stop_id:
+            end = i
+
+    return zip(sorted_stop_times[start:end], sorted_stop_times[start+1:end+1])

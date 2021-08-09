@@ -1,23 +1,42 @@
 import math
+import logging
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
+from django.db.models import F
 from django.shortcuts import render
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
 import numpy as np
 
-from dublinbus.models import Route, Stop, Trip, StopTime
+from dublinbus.models import Route, Stop, Trip, StopTime, Calendar
 import dublinbus.utils as utils
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import GenericAPIView
 from .serializers import UserSerializerWithToken, \
-    FavouriteStopSerializer, \
-    FavouriteJourneySerializer
-from .models import FavouriteStop, FavouriteJourney
+    FavoriteStopSerializer, \
+    FavoriteJourneySerializer, \
+    MarkerSerializer, \
+    ThemeSerializer, \
+    UserSerializer, \
+    ChangePasswordSerializer, \
+    GoogleSocialAuthSerializer, \
+    FacebookSocialAuthSerializer
+from .models import FavoriteStop, FavoriteJourney, Marker, Theme
 from .permissions import IsOwner, IsUser
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def index(request):
     """Temporary homepage for the application"""
@@ -122,6 +141,77 @@ def route(request, route_id):
 
     return JsonResponse(response)
 
+def lines(request):
+    """
+    Get all of the lines in both directions for the bus network
+    """
+
+    # Get valid service IDs (current date is greater than start_date and
+    # less than end date)
+    day = datetime.today().strftime("%A").lower()
+    service_ids = list(Calendar.objects
+                       .filter(**{day: True})
+                        .filter(
+                            start_date__lte=datetime.today(),
+                            end_date__gte=datetime.today()
+                        )
+                        .values_list('service_id', flat=True)
+                    )
+
+    result = Trip.objects.filter(
+                            calendar_id__in=service_ids
+                        ).values(
+                            "route_id", "direction_id", "trip_headsign",
+                            "route__route_short_name"
+                        ).distinct()
+
+    for i, record in enumerate(result):
+        # make list of all possible trip_ids for this route & direction
+        trid_ids = \
+            Trip.objects.filter(route_id=record['route_id'],
+                            direction_id=record['direction_id'],
+                            trip_headsign=record['trip_headsign'],
+                            route__route_short_name=record['route__route_short_name']
+                            ).values_list("trip_id", flat=True)
+
+        # append the upcoming or most recently past trip_id for this route & direction
+        trip_id = \
+            StopTime.objects.order_by("departure_time")\
+                            .filter(trip_id__in=trid_ids,
+                                    shape_dist_traveled="0.00",
+                                    departure_time__gte=datetime.now())\
+                            .values_list("trip_id",flat=True)
+
+        # if there are no more services for this trip today
+        if not trip_id:
+            # then append the most recent past trip
+            result[i]['trip_id'] = \
+                StopTime.objects.order_by("-departure_time")\
+                                .filter(trip_id__in=trid_ids,
+                                        shape_dist_traveled="0.00")\
+                                .values_list("trip_id", flat=True)[0]
+        else:
+            # otherwise append the most recent future trip
+            result[i]['trip_id'] = trip_id[0]
+
+        # append stops list per route & direction
+        result[i]['stops'] = list(
+            StopTime.objects.filter(trip_id=record['trip_id']
+                                    ).values("arrival_time",
+                                             "departure_time",
+                                             "stop_sequence",
+                                             "stop_headsign",
+                                             "shape_dist_traveled",
+                                             "stop_id",
+                                             stop_name=F("stop__stop_name"),
+                                             stop_num=F("stop__stop_num"),
+                                             stop_lat=F("stop__stop_lat"),
+                                             stop_lon=F("stop__stop_lon")
+                                             )
+                                    )
+
+    return JsonResponse(list(result), safe=False)
+
 class Predict(APIView):
     """
     Predict travel time in seconds between two stops on the same route/trip.
@@ -145,6 +235,9 @@ class Predict(APIView):
             route_id: str
                 The route ID of the journey
 
+            direction_id: int
+                The direction ID of the journey
+
             departure_stop_id: str
                 The stop ID of the departure stop in the journey
 
@@ -164,6 +257,7 @@ class Predict(APIView):
 
                 data = {
                     "route_id": "60-39A-b12-1",
+                    "direction_id": "1",
                     "departure_stop_id": "8250DB000767",
                     "arrival_stop_id": "8250DB000768",
                     "datetime": "07/28/2021, 20:35:14"
@@ -183,13 +277,24 @@ class Predict(APIView):
             "%m/%d/%Y, %H:%M:%S"
         ).replace(tzinfo=tz.gettz('Europe/London'))
 
+        current_date = datetime.now().replace(tzinfo=tz.gettz('Europe/London'))
+        if parsed_datetime <= current_date or \
+            parsed_datetime >= current_date + timedelta(days=7):
+            return HttpResponseBadRequest("Requested date must be within the next 7 days")
+
         weather_forecast = utils.get_weather_forecast(parsed_datetime)
+
+        # Could not find any matches in hourly or daily forecasts
+        if len(weather_forecast) == 0:
+            return HttpResponseBadRequest(
+                    f"Could not get weather forecast for {parsed_datetime}"
+                )
 
         midnight = datetime(
                             year=parsed_datetime.year,
                             month=parsed_datetime.month,
                             day=parsed_datetime.day
-                    ).replace(tzinfo=tz.gettz('Europe/London'))
+                   ).replace(tzinfo=tz.gettz('Europe/London'))
         seconds_since_midnight = (parsed_datetime - midnight).total_seconds()
 
         features = {
@@ -203,112 +308,166 @@ class Predict(APIView):
             'bank_holiday': utils.check_bank_holiday(parsed_datetime)
         }
 
-        trip_id = Trip.objects.filter(
-            route=request.data['route_id']
-        ).values_list('trip_id', flat=True)[1]
+        # Get a list of trip IDs and associated stop times that are valid
+        # for this particular day on this route in this direction. We are
+        # assuming that the sequence of stops is the same for all these trips so
+        # just use the first
+        trip_ids = Trip.objects.filter(
+            route=request.data['route_id'],
+            direction_id=request.data['direction_id'],
+            # Get the service IDs that are valid for the date
+            calendar_id__in=utils.date_to_service_ids(parsed_datetime)
+        ).values(
+                'trip_id', 'stoptime', 'stoptime__stop_id',
+                'stoptime__stop_sequence', 'stoptime__stop__stop_num',
+                'stoptime__arrival_time', 'stoptime__departure_time'
+        )
 
-        departure_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['departure_stop_id'])[0].stop_sequence
-        arrival_stop_sequence = StopTime.objects.filter(
-            trip_id=trip_id, stop_id=request.data['arrival_stop_id'])[0].stop_sequence
+        # There are likely many Trip IDs that meet this (different times of the day)
+        # For now we just use the first valid Trip ID
+        logging.info(
+            f"Found {len(trip_ids)} trips. Taking first: {trip_ids[0]['trip_id']}."
+        )
+        chosen_trip = list(
+            filter(lambda trip: trip['trip_id'] == trip_ids[0]['trip_id'], trip_ids)
+        )
+
+        # Filter the trip stop times down to start and end point we're interested in
+        chosen_trip_stop_times = utils.filter_trip_stop_times(
+            chosen_trip,
+            request.data['departure_stop_id'],
+            request.data['arrival_stop_id']
+        )
 
         # Array of predictions for the journey
-        total_times = np.zeros(int(request.data.get('num_predictions', 100)))
+        results = {
+            'total_predictions': np.zeros(int(request.data.get('num_predictions', 100))),
+            'stop_pairs': []
+        }
 
-        for stop_sequence in range(departure_stop_sequence, arrival_stop_sequence):
-            departure_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence).stop_id
-            arrival_stop = StopTime.objects.get(
-                trip_id=trip_id, stop_sequence=stop_sequence + 1).stop_id
+        for stop_a, stop_b in chosen_trip_stop_times:
 
             stop_pair_time_predictions = utils.predict_adjacent_stop(
-                Stop.objects.get(stop_id=departure_stop).stop_num,
-                Stop.objects.get(stop_id=arrival_stop).stop_num,
+                stop_a['stoptime__stop__stop_num'],
+                stop_b['stoptime__stop__stop_num'],
                 features,
                 num_predictions=int(request.data.get('num_predictions', 100))
             )
 
+            # Store the results for this stop pair
+            results['stop_pairs'].append({
+                'departure_stop': stop_a['stoptime__stop__stop_num'],
+                'arrival_stop': stop_b['stoptime__stop__stop_num'],
+                'predictions': stop_pair_time_predictions
+            })
+
             # Add predictions for current adjacent stop pair to
             # total journey prediction
-            total_times += stop_pair_time_predictions
+            results['total_predictions'] += stop_pair_time_predictions
 
-        return Response({"prediction": total_times.tolist()}, status=status.HTTP_200_OK)
+        utils.plot_probabilistic_predictions(
+            f"{request.data['departure_stop_id']}_to_{request.data['arrival_stop_id']}",
+            results['total_predictions']
+        )
+
+        return Response(results, status=status.HTTP_200_OK)
 
 
-class FavouriteStopView(APIView):
+class FavoriteStopView(APIView):
     """
-    Get, Post or Delete a FavouriteStop instance(s) for the currently authenticated user.
+    Get, Post or Delete a FavoriteStop instance(s) for the currently authenticated user.
     """
 
     permission_classes = [IsOwner]
 
     def get(self, request):
-        """Return a list of all the FavouriteStops for the currently authenticated user."""
-        favourite_stops = FavouriteStop.objects.filter(owner=self.request.user)
-        serializer = FavouriteStopSerializer(favourite_stops, many=True)
+        """Return a list of all the FavoriteStops for the currently authenticated user."""
+        favorite_stops = FavoriteStop.objects.filter(owner=self.request.user)
+        serializer = FavoriteStopSerializer(favorite_stops, many=True)
         return Response(serializer.data)
 
+    @staticmethod
+    def get_stop_object(primary_key):
+        """Return the Stop object for the currently authenticated user."""
+        try:
+            return Stop.objects.get(pk=primary_key)
+        except Stop.DoesNotExist as stop_not_exist:
+            raise Http404(f"Cannot find Stop: {primary_key}") from stop_not_exist
+
     def post(self, request):
-        """Create a new FavouriteStop for the currently authenticated user."""
-        serializer = FavouriteStopSerializer(data=request.data)
+        """Create a new FavoriteStop for the currently authenticated user."""
+        stop_details = self.get_stop_object(request.data['stop'])
+        serializer = FavoriteStopSerializer(data=request.data)
         if serializer.is_valid():
-            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
-            serializer.save(owner=self.request.user)
+            # Associating the user that created the FavoriteStop, with the FavoriteStop instance
+            serializer.save(owner=self.request.user, stop=stop_details)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def get_object(primary_key):
-        """Return the FavouriteStop object for the currently authenticated user."""
+        """Return the FavoriteStop object for the currently authenticated user."""
         try:
-            return FavouriteStop.objects.get(pk=primary_key)
-        except FavouriteStop.DoesNotExist as favourite_stop_not_exist:
-            raise Http404(f"Cannot find FavouriteStop: {primary_key}") from favourite_stop_not_exist
+            return FavoriteStop.objects.get(pk=primary_key)
+        except FavoriteStop.DoesNotExist as favorite_stop_not_exist:
+            raise Http404(f"Cannot find FavoriteStop: {primary_key}") from favorite_stop_not_exist
 
     def delete(self, request, primary_key):
-        """Delete a FavouriteStop for the currently authenticated user."""
-        favourite_stop = self.get_object(primary_key)
-        self.check_object_permissions(self.request, favourite_stop)
-        favourite_stop.delete()
+        """Delete a FavoriteStop for the currently authenticated user."""
+        favorite_stop = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favorite_stop)
+        favorite_stop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class FavouriteJourneyView(APIView):
+class FavoriteJourneyView(APIView):
     """
-    Get, Post or Delete a FavouriteJourney instance(s) for the currently authenticated user.
+    Get, Post or Delete a FavoriteJourney instance(s) for the currently authenticated user.
     """
 
     permission_classes = [IsOwner]
 
     def get(self, request):
-        """Return a list of all the FavouriteJourneys for the currently authenticated user."""
-        favourite_journeys = FavouriteJourney.objects.filter(owner=self.request.user)
-        serializer = FavouriteJourneySerializer(favourite_journeys, many=True)
+        """Return a list of all the FavoriteJourneys for the currently authenticated user."""
+        favorite_journeys = FavoriteJourney.objects.filter(owner=self.request.user)
+        serializer = FavoriteJourneySerializer(favorite_journeys, many=True)
         return Response(serializer.data)
 
+    @staticmethod
+    def get_stop_object(primary_key):
+        """Return the Stop object for the currently authenticated user."""
+        try:
+            return Stop.objects.get(pk=primary_key)
+        except Stop.DoesNotExist as stop_not_exist:
+            raise Http404(f"Cannot find Stop: {primary_key}") from stop_not_exist
+
     def post(self, request):
-        """Create a new FavouriteJourney for the currently authenticated user."""
-        serializer = FavouriteJourneySerializer(data=request.data)
+        """Create a new FavoriteJourney for the currently authenticated user."""
+        stop_origin = self.get_stop_object(request.data['stop_origin'])
+        stop_destination = self.get_stop_object(request.data['stop_destination'])
+        serializer = FavoriteJourneySerializer(data=request.data)
         if serializer.is_valid():
-            # Associating the user that created the FavouriteStop, with the FavouriteStop instance
-            serializer.save(owner=self.request.user)
+            # Associating the user that created the FavoriteStop, with the FavoriteStop instance
+            serializer.save(owner=self.request.user,
+                            stop_origin=stop_origin,
+                            stop_destination=stop_destination)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def get_object(primary_key):
-        """Return the FavouriteJourneys object for the currently authenticated user."""
+        """Return the FavoriteJourneys object for the currently authenticated user."""
         try:
-            return FavouriteJourney.objects.get(pk=primary_key)
-        except FavouriteJourney.DoesNotExist as favourite_journey_not_exist:
+            return FavoriteJourney.objects.get(pk=primary_key)
+        except FavoriteJourney.DoesNotExist as favorite_journey_not_exist:
             raise Http404(
-                f"Cannot find FavouriteJourney: {primary_key}"
-                ) from favourite_journey_not_exist
+                f"Cannot find FavoriteJourney: {primary_key}"
+                ) from favorite_journey_not_exist
 
     def delete(self, request, primary_key):
-        """Delete a FavouriteJourney for the currently authenticated user."""
-        favourite_journey = self.get_object(primary_key)
-        self.check_object_permissions(self.request, favourite_journey)
-        favourite_journey.delete()
+        """Delete a FavoriteJourney for the currently authenticated user."""
+        favorite_journey = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favorite_journey)
+        favorite_journey.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class UserView(APIView):
@@ -317,10 +476,11 @@ class UserView(APIView):
     """
 
     permission_classes = [IsUser]   # [ IsUser | IsAdminUser ]
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get(self, request):
         """Return the User details for the currently authenticated user."""
-        serializer = UserSerializerWithToken(request.user)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
     def post(self, request):
@@ -343,5 +503,120 @@ class UserView(APIView):
         """Delete a User for the currently authenticated user."""
         user = self.get_object(primary_key)
         self.check_object_permissions(self.request, user)
+        # if the user had uploaded image (i.e. not using default icon)
+        if user.image.name != 'default.png':
+            # then delete file from /dublinbus_image
+            user.image.delete()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, primary_key):
+        """ Update User fields for the currently authenticated user. """
+        user = self.get_object(primary_key)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            # if put request contains image data and user is not using default image
+            # i.e. replacing custom icon with another custom icon
+            if ('image' in request.data.keys()) & (user.image.name != 'default.png'):
+                print('Replacing custom icon with another custom icon.')
+                # then delete first custom icon
+                user.image.delete()
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MarkerView(APIView):
+    """
+    Get or Put a Marker instance.
+    """
+    permission_classes = [IsOwner]
+
+    def get(self, request, *args, **kwargs):
+        """Return the Markers for the currently authenticated user."""
+        markers = Marker.objects.filter(owner=self.request.user.id)
+        serializer = MarkerSerializer(markers, many=True)
+        return Response(serializer.data)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the Marker object for the currently authenticated user."""
+        try:
+            return Marker.objects.get(pk=primary_key)
+        except Marker.DoesNotExist as marker_not_exist:
+            raise Http404(f"Cannot find Marker: {primary_key}") from marker_not_exist
+
+    def put(self, request, primary_key):
+        """ Update Marker fields for the currently authenticated user. """
+        marker = self.get_object(primary_key)
+        serializer = MarkerSerializer(marker, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ThemeView(APIView):
+    """
+    Get or Put a Theme instance.
+    """
+    permission_classes = [IsOwner]
+
+    def get(self, request, *args, **kwargs):
+        """Return the Theme for the currently authenticated user."""
+        themes = Theme.objects.filter(owner=self.request.user.id)
+        serializer = ThemeSerializer(themes, many=True)
+        return Response(serializer.data)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the Theme object for the currently authenticated user."""
+        try:
+            return Theme.objects.get(pk=primary_key)
+        except Theme.DoesNotExist as theme_not_exist:
+            raise Http404(f"Cannot find Theme: {primary_key}") from theme_not_exist
+
+    def put(self, request, primary_key):
+        """ Update Theme fields for the currently authenticated user. """
+        theme = self.get_object(primary_key)
+        serializer = ThemeSerializer(theme, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    Change password for Custom Users.
+    """
+    queryset = get_user_model().objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+
+
+class GoogleSocialAuthView(GenericAPIView):
+    """Google OAuth route."""
+    permission_classes = [AllowAny]
+    serializer_class = GoogleSocialAuthSerializer
+    def post(self, request):
+        """
+        POST with "auth_token"
+        Send an "id_token" from google to get user information
+        """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = (serializer.validated_data['auth_token'])
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class FacebookSocialAuthView(GenericAPIView):
+    """Facebook OAuth route."""
+    permission_classes = [AllowAny]
+    serializer_class = FacebookSocialAuthSerializer
+    def post(self, request):
+        """
+        POST with "auth_token"
+        Send an "accessToken" from facebook to get user information
+        """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = (serializer.validated_data['auth_token'])
+        return Response(data, status=status.HTTP_200_OK)

@@ -21,6 +21,7 @@ const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
     setPage(value);
   };
 
+
   // Error handling when fetching for the data
   if (error) return <p>Unable to get the bus times</p>;
 

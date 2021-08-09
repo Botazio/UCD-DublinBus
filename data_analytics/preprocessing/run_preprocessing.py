@@ -81,6 +81,7 @@ if sys.argv[1] == "create_adjacent_stop_pairs":
                     path + f'{file_name}.parquet', index=False)
 
 elif sys.argv[1] == "features":
+
     for stop_pair in glob.glob("/home/team13/data/adjacent_stop_pairs/*"):
 
         dfs = []
@@ -100,6 +101,31 @@ elif sys.argv[1] == "features":
                             "time is < 0")
 
             stop_pair_df = stop_pair_df.drop(invalid_rows)
+
+        # Outlier detection for TRAVEL_TIME
+        q25 = np.percentile(stop_pair_df['travel_time'], 25)
+        q75 = np.percentile(stop_pair_df['travel_time'], 75)
+        iqr = q75 - q25
+
+        cut_off = iqr * 3
+        lower, upper = q25 - cut_off, q75 + cut_off
+        outliers = stop_pair_df[
+                    (stop_pair_df['travel_time'] < lower) |
+                        (stop_pair_df['travel_time'] > upper)
+                   ]
+        outliers_pct = (outliers.shape[0] / stop_pair_df.shape[0])*100
+        if outliers.shape[0] > 0:
+            logging.info(
+                f"Identified {outliers.shape[0]} outliers {outliers_pct:.2f}%"
+            )
+        # Don't drop outliers if they constitute more than 10% of data
+        if outliers_pct < 10:
+            logging.info("Dropping outliers because percentage of outliers is below 10%")
+            stop_pair_df = stop_pair_df[
+                            (stop_pair_df['travel_time'] >= lower) &
+                                (stop_pair_df['travel_time'] <= upper)
+                           ]
+            logging.info(f"{stop_pair_df.shape[0]} remaining rows for {stop_pair}")
 
         stop_pair_df['DAYOFSERVICE'] = pd.to_datetime(
             stop_pair_df['DAYOFSERVICE'], format="%d-%b-%y %H:%M:%S")
@@ -130,9 +156,12 @@ elif sys.argv[1] == "features":
         # dummy variable for weekend
         stop_pair_df['is_weekend'] = stop_pair_df['day'].isin([5, 6])
 
-        # one-hot encoding of days
+        # one-hot encoding of days and hours
         day_of_week_columns = pd.get_dummies(stop_pair_df['day'], drop_first=True, prefix="day")
         stop_pair_df[list(day_of_week_columns)] = day_of_week_columns
+
+        hour_of_day_columns = pd.get_dummies(stop_pair_df['hour'], drop_first=True, prefix='hour')
+        stop_pair_df[list(hour_of_day_columns)] = hour_of_day_columns
 
         stop_pair_df = stop_pair_df.drop('DAYOFSERVICE', axis=1)
 
