@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DirectionsCSS from "./Directions.module.css";
-import LineSearchBar from "../line-searchbar/LineSearchBar";
+import PrimarySearchBarLines from "../../reusable-components/searchbar-lines/PrimarySearchBarLines";
 import DirectionsSearcher from "./subcomponents/DirectionsSearcher";
 import { useLines } from "../../providers/LinesContext";
 import Waiting from "../../reusable-components/waiting/Waiting";
@@ -23,12 +23,13 @@ const Directions = () => {
   if (isPending) return <Waiting variant="dark" />;
 
   if (!lines) return "";
+  console.log(selectedLine);
 
   return (
     <>
       {/* Search bar for the lines */}
       {!selectedLine && <div className={DirectionsCSS.searchbar_lines}>
-        <LineSearchBar placeholder="Search Line..." lines={lines} setSelectedLine={setSelectedLine} />
+        <PrimarySearchBarLines placeholder="Search line..." lines={lines} setSelectedLine={setSelectedLine} />
       </div>}
       {selectedLine && <DirectionsSearcher selectedLine={selectedLine} setSelectedLine={setSelectedLine} />}
     </>

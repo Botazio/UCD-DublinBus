@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import LineSearchBarCSS from "./LineSearchBar.module.css";
+import SearchBarLinesCSS from "./SearchBarLines.module.css";
 import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
@@ -11,8 +11,10 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
-
-const LineSearchBar = ({ placeholder, lines, setSelectedLine }) => {
+// This reusable component provides the user with a combobox while
+// he enters text. The combobox contains suggestions for the user 
+// that matches the input the user is entering
+const PrimarySearchBarLines = ({ placeholder, lines, setSelectedLine }) => {
    // States
    const [term, setTerm] = React.useState("");
    const results = usePlaceMatch(term);
@@ -33,7 +35,7 @@ const LineSearchBar = ({ placeholder, lines, setSelectedLine }) => {
          }}
       >
          <ComboboxInput
-            className={LineSearchBarCSS.search_input}
+            className={SearchBarLinesCSS.search_input}
             placeholder={placeholder}
             autoComplete="off"
             value={term}
@@ -76,4 +78,4 @@ const LineSearchBar = ({ placeholder, lines, setSelectedLine }) => {
    }
 };
 
-export default LineSearchBar;
+export default PrimarySearchBarLines;

@@ -5,11 +5,10 @@ import DirectionsCSS from "../Directions.module.css";
 import { Dialog, useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
-import QuantileDotsPlot from "./QuantileDotsPlot";
 
 // This component displays the directions after the server
 // sends back the results
-const DisplayDirections = ({ searchResults, selectedHour }) => {
+const DisplayDirections = ({ searchResults, selectedHour, origin, destination }) => {
    // State to control when the user clicks on the results
    const [expanded, setExpanded] = useState(false);
    // State to control the popup when the graph icon is clicked
@@ -27,6 +26,8 @@ const DisplayDirections = ({ searchResults, selectedHour }) => {
       setOpen(false);
    };
 
+   const dotplotFile = `https://csi420-02-vm6.ucd.ie/images/dotplot_${origin.stop_id}_to_${destination.stop_id}.png`;
+
    return (
       <Card variant="last" >
          {/* Display the prediction time */}
@@ -37,7 +38,9 @@ const DisplayDirections = ({ searchResults, selectedHour }) => {
 
          {/* Display the popup for the quantile dots plot graph */}
          {open && <Dialog open={open} onClose={handleClose}>
-            {searchResults && <QuantileDotsPlot totalPredictions={searchResults.total_predictions} />}
+            <div className={DirectionsCSS.quantile_graph}>
+               <img src={dotplotFile} alt="Quatile Dot Plot Unavailable" />
+            </div>
          </Dialog>}
       </Card>
    );

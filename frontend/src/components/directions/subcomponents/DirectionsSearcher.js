@@ -3,8 +3,8 @@ import StopSearchBar from "../../stop-searchbar/StopSearchBar";
 import SearchButton from "../../../reusable-components/search-button/SearchButton";
 import Card from "../../../reusable-components/card/Card";
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import SelectDepartureTime from "./SelectDepartureTime";
-import { useStops } from "../../../providers/StopsContext";
 import CustomError from "../../../reusable-components/error/CustomError";
 import Waiting from "../../../reusable-components/waiting/Waiting";
 import { useState } from "react";
@@ -21,6 +21,9 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
   const [destination, setDestination] = useState();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHour, setSelectedHour] = useState(new Date());
+  // State for the stops passed to the search bars
+  const [validOriginStops, setValidOriginStops] = useState(selectedLine.stops);
+  const [validDestinationStops, setValidDestinationStops] = useState(selectedLine.stops);
   // State that when true the search can be performed
   const [searchAvailable, setSearchAvailable] = useState(false);
   // State to handle when the search is being performed
@@ -40,14 +43,30 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
     }
   }, [origin, destination]);
 
-  // Get the data from the provider
-  const { data: stops, isPending, error } = useStops();
+  // Only allow the user to search for stops that accomplish the line sequence order
+  useEffect(() => {
+    if (destination) {
+      setValidOriginStops(selectedLine.stops.filter((stop) => {
+        if (stop.stop_sequence < destination.stop_sequence) {
+          return stop;
+        }
+        return false;
+      }));
+    }
+    // eslint-disable-next-line
+  }, [destination]);
 
-  // Error handling when fetching for the data
-  if (error) return <CustomError height="60" message="Unable to fetch the data" />;
-
-  // Wait for the data
-  if (isPending) return <Waiting variant="dark" />;
+  useEffect(() => {
+    if (origin) {
+      setValidDestinationStops(selectedLine.stops.filter((stop) => {
+        if (stop.stop_sequence > origin.stop_sequence) {
+          return stop;
+        }
+        return false;
+      }));
+    }
+    // eslint-disable-next-line
+  }, [origin]);
 
   return (
     <>
@@ -59,7 +78,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
             <p>{selectedLine.trip_headsign}</p>
           </div>
           <div>
-            <RefreshRoundedIcon onClick={() => setSelectedLine(null)} />
+            <SwapHorizIcon onClick={() => setSelectedLine(null)} />
           </div>
         </div>
       </Card>
@@ -73,10 +92,10 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
           </div>
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Origin Stop..."} stops={stops} selectedStop={origin} setSelectedStop={setOrigin} />
+          <StopSearchBar placeholder={"Origin stop..."} stops={validOriginStops} selectedStop={origin} setSelectedStop={setOrigin} />
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Destination Stop..."} stops={stops} selectedStop={destination} setSelectedStop={setDestination} />
+          <StopSearchBar placeholder={"Destination stop..."} stops={validDestinationStops} selectedStop={destination} setSelectedStop={setDestination} />
         </div>
       </Card>
 
@@ -93,7 +112,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
 
       {/* Display the results from the search */}
-      {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} />}
+      {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}
 
       {/* Display a message if an error occurs during the search */}
       {searchError && <Card variant="last"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
@@ -129,14 +148,15 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
     const hour = moment(selectedHour).format('HH:mm:ss');
 
     const body = {
-      "route_id": "60-116-d12-1",
-      "direction_id": 1,
-      "departure_stop_id": "8230DB002955",
-      "arrival_stop_id": "8250DB002853",
-      "datetime": date + ", " + hour
+      "route_id": selectedLine.route_id,
+      "direction_id": selectedLine.direction_id,
+      "departure_stop_id": origin.stop_id,
+      "arrival_stop_id": destination.stop_id,
+      "datetime": date + ", " + hour,
+      "num_predictions": 10
     };
 
-    fetch("http://csi420-02-vm6.ucd.ie/predict/", {
+    fetch("https://csi420-02-vm6.ucd.ie/predict/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

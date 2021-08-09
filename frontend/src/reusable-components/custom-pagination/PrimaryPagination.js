@@ -5,8 +5,8 @@ import { makeStyles, useTheme } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
    root: {
       "& .Mui-selected": {
-         backgroundColor: theme.theme.primary,
-         color: theme.theme.background_primary,
+         backgroundColor: theme.theme.primary + " !important",
+         color: theme.theme.background_primary + " !important",
       },
       "& .MuiPagination-ul": {
          flexWrap: "nowrap"

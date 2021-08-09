@@ -44,7 +44,7 @@ const Stops = () => {
         {/* Display the searchbar */}
         <div className={StopsCSS.searchbar}>
           <StopSearchBar
-            placeholder={"Search Stop..."}
+            placeholder={"Search stop..."}
             stops={stops}
             setSelectedStop={setSelectedStop}
           />

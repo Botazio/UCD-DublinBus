@@ -20,6 +20,10 @@
 .arrival_slides > div:first-child {
   margin-right: 15px;
 }
+.arrival_slides > div:last-child {
+  white-space: nowrap;
+  width: fit-content;
+}
 .arrival_slides > div:first-child > p:last-child {
   font-size: 0.9rem;
 }

@@ -46,7 +46,7 @@ const ExpandedResults = ({ searchResults, selectedHour }) => {
    function handleMiddleStops(stops) {
       return stops.slice(1).map((stop) => {
          return (
-            <div className={DirectionsCSS.middle_stops_data} key={stop.stop_id}>
+            <div className={DirectionsCSS.middle_stops_data} key={stop.departure_stop}>
                <FiberManualRecordRoundedIcon fontSize="inherit" />
                <p>Stop {stop.departure_stop}</p>
             </div>

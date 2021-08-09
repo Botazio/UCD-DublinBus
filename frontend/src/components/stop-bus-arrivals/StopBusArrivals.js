@@ -11,7 +11,7 @@ const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
   const [page, setPage] = useState(1);
 
   // Fetch the selected stop
-  const { data: fetchedStop, isPending, error } = useFetch("http://csi420-02-vm6.ucd.ie/stop/" + selectedStop.stop_id);
+  const { data: fetchedStop, isPending, error } = useFetch("https://csi420-02-vm6.ucd.ie/stop/" + selectedStop.stop_id);
 
   // Grab the current theme from the provider 
   const theme = useTheme().theme;
