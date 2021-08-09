@@ -6,6 +6,9 @@
   text-overflow: ellipsis;
   border: 1px solid lightgray;
 }
+.search_input:focus {
+  box-shadow: 0 0 0 1pt #00B9FF;
+}
 .search_input:first-letter {
   text-transform: capitalize;
 }

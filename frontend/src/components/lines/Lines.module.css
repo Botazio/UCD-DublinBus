@@ -1,0 +1,27 @@
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.searchbar {
+  width: 70%;
+}
+.searchbar > div > input {
+  line-height: 30px;
+  font-size: 1rem;
+  border-radius: 20px;
+}
+.line_title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.line_title > div:first-child {
+  margin-right: 15px;
+}
+.line_title > svg {
+  cursor: pointer;
+}

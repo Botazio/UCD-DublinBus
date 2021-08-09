@@ -1,4 +1,4 @@
-import StopSearchBar from "../stop-searchbar/StopSearchBar";
+import PrimarySearchBarStops from "../../reusable-components/searchbar-stops/PrimarySearchBarStops";
 import StopsCSS from "./Stops.module.css";
 import Waiting from "../../reusable-components/waiting/Waiting";
 import CustomError from "../../reusable-components/error/CustomError";
@@ -14,7 +14,7 @@ import { useStops } from "../../providers/StopsContext";
 
 // This component is the main component for the stops system.
 const Stops = () => {
-  // State to select a stop. It is handled by the StopSearchBar component
+  // State to select a stop. It is handled by the PrimarySearchBarStops component
   const [selectedStop, setSelectedStop] = useState(null);
   // State for the button that controls if the markers should be displayed
   const [displayMarkers, setDisplayMarkers] = useState(true);
@@ -43,7 +43,7 @@ const Stops = () => {
       <div className={StopsCSS.header}>
         {/* Display the searchbar */}
         <div className={StopsCSS.searchbar}>
-          <StopSearchBar
+          <PrimarySearchBarStops
             placeholder={"Search stop..."}
             stops={stops}
             setSelectedStop={setSelectedStop}

@@ -1,5 +1,5 @@
 import DirectionsCSS from "../Directions.module.css";
-import StopSearchBar from "../../stop-searchbar/StopSearchBar";
+import PrimarySearchBarStops from "../../../reusable-components/searchbar-stops/PrimarySearchBarStops";
 import SearchButton from "../../../reusable-components/search-button/SearchButton";
 import Card from "../../../reusable-components/card/Card";
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
@@ -92,10 +92,10 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
           </div>
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Origin stop..."} stops={validOriginStops} selectedStop={origin} setSelectedStop={setOrigin} />
+          <PrimarySearchBarStops placeholder={"Origin stop..."} stops={validOriginStops} selectedStop={origin} setSelectedStop={setOrigin} />
         </div>
         <div className={DirectionsCSS.searchbar_stops}>
-          <StopSearchBar placeholder={"Destination stop..."} stops={validDestinationStops} selectedStop={destination} setSelectedStop={setDestination} />
+          <PrimarySearchBarStops placeholder={"Destination stop..."} stops={validDestinationStops} selectedStop={destination} setSelectedStop={setDestination} />
         </div>
       </Card>
 

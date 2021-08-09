@@ -4,7 +4,7 @@ import { useAuth } from "../../../../providers/AuthContext";
 import CustomError from "../../../../reusable-components/error/CustomError";
 import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
-import StopsSearchBar from "../../../../reusable-components/stops-searchbar/StopsSearchBar";
+import SecondarySearchBarStops from "../../../../reusable-components/searchbar-stops/SecondarySearchBarStops";
 import Action from "../../../../reusable-components/action/Action";
 import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
@@ -44,7 +44,7 @@ const MyStops = () => {
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {favoriteStops && <StopsSearchBar stops={favoriteStops} setVisibleStops={setVisibleStops} />}
+            {favoriteStops && <SecondarySearchBarStops stops={favoriteStops} setVisibleStops={setVisibleStops} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (

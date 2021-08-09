@@ -1,4 +1,4 @@
-import StopSearchBarCSS from "./StopSearchBar.module.css";
+import SearchBarStopsCSS from "./SearchBarStops.module.css";
 import React, { useMemo } from "react";
 import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
@@ -12,8 +12,10 @@ import {
 import "@reach/combobox/styles.css";
 import { useEffect } from "react";
 
-// This component gives stop suggestions to the user while input is being entered
-const StopSearchBar = ({ placeholder, stops, selectedStop, setSelectedStop }) => {
+// This reusable component provides the user with a combobox while
+// he enters text. The combobox contains suggestions for the user 
+// that matches the input the user is entering
+const PrimarySearchBarStops = ({ placeholder, stops, selectedStop, setSelectedStop }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
@@ -35,7 +37,7 @@ const StopSearchBar = ({ placeholder, stops, selectedStop, setSelectedStop }) =>
       }}
     >
       <ComboboxInput
-        className={StopSearchBarCSS.search_input}
+        className={SearchBarStopsCSS.search_input}
         placeholder={placeholder}
         autoComplete="off"
         value={term}
@@ -78,4 +80,4 @@ const StopSearchBar = ({ placeholder, stops, selectedStop, setSelectedStop }) =>
   }
 };
 
-export default StopSearchBar;
+export default PrimarySearchBarStops;
