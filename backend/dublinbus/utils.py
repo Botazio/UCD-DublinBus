@@ -146,7 +146,7 @@ def date_to_service_ids(requested_date):
 
     return service_ids
 
-def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=100):
+def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=10):
     """
     Predict the time to travel between two adjacent stops on the same route trip.
     This method uses stop numbers and not stop IDs since stop IDs are not available
@@ -163,7 +163,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
         features: dict
             Dict of features
 
-        num_predictions: int
+        num_predictions: int, default 10
             The number of predictions to return
 
     Returns
@@ -199,7 +199,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
 
     return np.repeat(prediction, num_predictions)
 
-def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100):
+def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=10):
     """
     Take a row of input data and a trained keras model for a particular stop pair
     and make many predictions. This can be used to generate a probability distribution
@@ -213,7 +213,7 @@ def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=100
         trained_nn_model: keras model
             A trained neural network model from keras
 
-        num_predictions: int, default 100
+        num_predictions: int, default 10
             The number of predictions to make
 
     Returns
