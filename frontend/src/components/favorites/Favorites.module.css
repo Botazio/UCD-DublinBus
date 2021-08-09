@@ -16,7 +16,7 @@
 }
 .searchbar {
    border: 1px solid lightgray;
-   padding: 7px 10px;
+   padding: 9px 10px;
    width: 100%;
    border-radius: 20px;
    text-decoration: none;
@@ -25,7 +25,7 @@
    margin-bottom: 5px;
 }
 .searchbar:focus {
-   box-shadow: 0 0 0 1pt black;
+   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .no_stops_message > h4 {
    font-weight: 500;

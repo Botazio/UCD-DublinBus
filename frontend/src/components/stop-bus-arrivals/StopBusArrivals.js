@@ -36,7 +36,7 @@ const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
       </div>}
 
       {/* If there is arrivals */}
-      {fetchedStop.arrivals.length && fetchedStop.arrivals.sort(compare) &&
+      {(fetchedStop.arrivals.length > 0) && fetchedStop.arrivals.sort(compare) &&
         fetchedStop.arrivals.slice((page - 1) * 10, ((page - 1) * 10) + 10).map((arrival) => {
           return (
             <div key={arrival.trip_id} className={StopBusArrivalsCSS.arrival_slides}>
@@ -52,7 +52,7 @@ const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
         })}
 
       {/* Pagination to control the number of results displayed */}
-      {fetchedStop.arrivals.length &&
+      {(fetchedStop.arrivals.length > 0) &&
         <div className={StopBusArrivalsCSS.pagination}>
           <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(fetchedStop.arrivals.length / 10)} color="primary" size="small" />
         </div>}

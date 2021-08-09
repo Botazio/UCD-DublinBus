@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../../../providers/AuthContext";
 import CustomError from "../../../reusable-components/error/CustomError";
 import FavoritesCSS from "../Favorites.module.css";
-import StopsSearchBar from "../../../reusable-components/stops-searchbar/StopsSearchBar";
+import SecondarySearchBarStops from "../../../reusable-components/searchbar-stops/SecondarySearchBarStops";
 import PrimaryPagination from "../../../reusable-components/custom-pagination/PrimaryPagination";
 import DisplayStops from "../../display-stops/DisplayStops";
 import Card from "../../../reusable-components/card/Card";
@@ -40,7 +40,7 @@ const FavoriteStops = () => {
          <div className={FavoritesCSS.info_wrapper}>
             {/* Loop through the visible stops and display them */}
             {visibleStops && <Card>
-               <StopsSearchBar stops={favoriteStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
+               <SecondarySearchBarStops stops={favoriteStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
                <DisplayStops stops={visibleStops} page={page} variant="favorites" />
             </Card>}
 

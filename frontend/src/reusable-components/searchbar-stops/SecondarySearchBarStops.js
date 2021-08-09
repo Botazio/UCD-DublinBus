@@ -9,7 +9,9 @@ import "@reach/combobox/styles.css";
 import { useEffect } from "react";
 
 // This component gives stop suggestions to the user while input is being entered
-const StopsSearchBar = ({ stops, setVisibleStops, classes }) => {
+// The suggestions are not given inside a combobox. It just sets the visible stops to these suggestions.
+// The higher order component is the one in charge of handling this info
+const SecondarySearchBarStops = ({ stops, setVisibleStops, classes }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
@@ -53,4 +55,4 @@ const StopsSearchBar = ({ stops, setVisibleStops, classes }) => {
   }
 };
 
-export default StopsSearchBar;
+export default SecondarySearchBarStops;
