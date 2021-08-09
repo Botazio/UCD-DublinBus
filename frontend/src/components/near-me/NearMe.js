@@ -50,10 +50,10 @@ const NearMe = () => {
       navigator.geolocation.getCurrentPosition(
          (pos) => {
             setPosition({
-               lat: 53.349804,
-               lng: -6.26031,
+               lat: pos.coords.latitude,
+               lng: pos.coords.longitude,
             });
-            mapRef.panTo({ lat: 53.349804, lng: -6.26031 });
+            mapRef.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude });
          },
          (err) => alert(err.message)
       );
