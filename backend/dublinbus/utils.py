@@ -1,3 +1,4 @@
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 import logging
 from statistics import mean
@@ -246,7 +247,7 @@ def plot_probabilistic_predictions(stop_pair, predictions):
     A probability density curve and a quantile dotplot
     """
 
-    _, axes = plt.subplots(1, 2, figsize=(20, 5))
+    _, axes = plt.subplots(2, 1, figsize=(8, 8))
 
     # Kernel density estimate (KDE)
     # Used as alternative to histogram to visualise distribution
@@ -260,9 +261,10 @@ def plot_probabilistic_predictions(stop_pair, predictions):
     for spine in ("left", "right", "top"):
         axes[1].spines[spine].set_visible(False)
     axes[1].yaxis.set_visible(False)
+    axes[1].axvline(mean(predictions), color='red')
 
-    plt.savefig("./model_output/NeuralNetwork/" +
-        f"NeuralNetwork_predictions{stop_pair}.png")
+    home = str(Path.home())
+    plt.savefig(home + f"/data/images/dotplot_{stop_pair}.png")
     plt.close()
 
 def check_bank_holiday(input_date):
