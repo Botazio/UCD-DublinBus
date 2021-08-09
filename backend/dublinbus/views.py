@@ -510,7 +510,7 @@ class UserView(APIView):
     def put(self, request, primary_key):
         """ Update User fields for the currently authenticated user. """
         user = self.get_object(primary_key)
-        serializer = UserSerializerWithToken(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             # if put request contains image data and user is not using default image
             # i.e. replacing custom icon with another custom icon
