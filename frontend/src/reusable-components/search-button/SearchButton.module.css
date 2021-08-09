@@ -1,19 +1,18 @@
 .search_button {
-  position: absolute;
   width: 100%;
-  bottom: 0;
+  margin-top: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 55px;
+  min-height: 55px !important;
   background-color: lightgray;
-  z-index: 100;
 }
 .active {
   animation: pulse 2s infinite;
   cursor: pointer;
-  box-shadow: 0 0 0 0 rgba(135, 206, 235, 0.5);
-  background-color: lightblue;
+  box-shadow: 0 0 0 0 #0094EC40;
+  background-color: #00B9FF;
+  color: white;
 }
 
 @keyframes pulse {

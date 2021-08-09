@@ -9,8 +9,9 @@ const defaultTheme = createTheme({
       divider: "#D3D3D3",
       background_primary: "#FFFFFF",
       background_secondary: "#fafafa",
-      icons: "#000000",
-      fontColor: "#000000"
+      icon_color: "#000000",
+      font_color: "#000000",
+      font_size: "1rem"
    },
    map: "defaultThemeLight"
 });

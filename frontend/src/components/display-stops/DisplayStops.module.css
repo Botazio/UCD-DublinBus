@@ -1,0 +1,54 @@
+.stop_container {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   background-color: white;
+   margin-top: 10px;
+   border-radius: 10px;
+   cursor: pointer;
+}
+.stop_header {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+}
+.stop_title {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 5px;
+}
+.stop_lines_div {
+   display: flex;
+   align-items: center;
+   flex-flow: wrap;
+}
+.stop_lines_div > div {
+   padding: 4px;
+   margin-right: 6px;
+   margin-bottom: 8px;
+   font-size: 0.8rem;
+   font-weight: 400;
+   border: 1px solid gray;
+   border-radius: 5px;
+}
+.bus_times {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   border-top: 1px solid lightgray;
+   padding-top: 5px;
+}
+.popover {
+   padding: 10px 15px;
+}
+.pagination {
+   margin-top: 10px;
+   padding: 5px;
+   background-color: white;
+   border-radius: 15px;
+}

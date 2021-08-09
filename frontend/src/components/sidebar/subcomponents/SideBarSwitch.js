@@ -1,5 +1,5 @@
-import { ReactComponent as IconList } from "../fixtures/icon-list.svg";
 import SideBarCSS from "../Sidebar.module.css";
+import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 
 // This component renders an icon list that opens and closes the sidebar
 const SideBarSwitch = ({ sideBar, setSideBar }) => {
@@ -8,7 +8,7 @@ const SideBarSwitch = ({ sideBar, setSideBar }) => {
       (sideBar ? SideBarCSS.list_icon_active : SideBarCSS.list_icon_inactive)}
       onClick={() => setSideBar(!sideBar)}
     >
-      <IconList height={"25"} />
+      <MenuRoundedIcon fontSize="large" />
     </div>
   );
 };

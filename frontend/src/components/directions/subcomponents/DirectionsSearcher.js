@@ -1,27 +1,184 @@
-import DirectionsSearchCSS from "../Directions.module.css";
+import DirectionsCSS from "../Directions.module.css";
 import StopSearchBar from "../../stop-searchbar/StopSearchBar";
 import SearchButton from "../../../reusable-components/search-button/SearchButton";
+import Card from "../../../reusable-components/card/Card";
+import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import SelectDepartureTime from "./SelectDepartureTime";
+import CustomError from "../../../reusable-components/error/CustomError";
+import Waiting from "../../../reusable-components/waiting/Waiting";
+import { useState } from "react";
+import { useEffect } from "react";
+import CustomMarker from "../../../reusable-components/custom-marker/CustomMarker";
+import DisplayDirections from "./DisplayDirections";
+import moment from "moment";
 
 // This is a subcomponent from the direction search system.
 // Allows the user to enter the Origin stop and the Destination stop
-const DirectionsSearcher = () => {
+const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
+  // States for the different fields the user has to enter 
+  const [origin, setOrigin] = useState();
+  const [destination, setDestination] = useState();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedHour, setSelectedHour] = useState(new Date());
+  // State for the stops passed to the search bars
+  const [validOriginStops, setValidOriginStops] = useState(selectedLine.stops);
+  const [validDestinationStops, setValidDestinationStops] = useState(selectedLine.stops);
+  // State that when true the search can be performed
+  const [searchAvailable, setSearchAvailable] = useState(false);
+  // State to handle when the search is being performed
+  const [searchPending, setSearchPending] = useState(false);
+  // State to display the results 
+  const [searchResults, setSearchResults] = useState(null);
+  // State to handle the error
+  const [searchError, setSearchError] = useState(false);
+
+  // Only allow the search if the user has entered origin and destination
+  useEffect(() => {
+    if (origin && destination) {
+      setSearchAvailable(true);
+    }
+    else {
+      setSearchAvailable(false);
+    }
+  }, [origin, destination]);
+
+  // Only allow the user to search for stops that accomplish the line sequence order
+  useEffect(() => {
+    if (destination) {
+      setValidOriginStops(selectedLine.stops.filter((stop) => {
+        if (stop.stop_sequence < destination.stop_sequence) {
+          return stop;
+        }
+        return false;
+      }));
+    }
+    // eslint-disable-next-line
+  }, [destination]);
+
+  useEffect(() => {
+    if (origin) {
+      setValidDestinationStops(selectedLine.stops.filter((stop) => {
+        if (stop.stop_sequence > origin.stop_sequence) {
+          return stop;
+        }
+        return false;
+      }));
+    }
+    // eslint-disable-next-line
+  }, [origin]);
+
   return (
     <>
-      <div className={DirectionsSearchCSS.container_dir_searcher}>
-        <div className={DirectionsSearchCSS.subcontainer_dir_searcher}>
-          <StopSearchBar placeholder={"Origin Stop..."} />
+      {/* Card with the header information */}
+      <Card variant="no_margin">
+        <div className={DirectionsCSS.header_dir_searcher}>
+          <div>
+            <h4>Line {selectedLine.route__route_short_name}</h4>
+            <p>{selectedLine.trip_headsign}</p>
+          </div>
+          <div>
+            <SwapHorizIcon onClick={() => setSelectedLine(null)} />
+          </div>
         </div>
-        <div className={DirectionsSearchCSS.subcontainer_dir_searcher}>
-          <StopSearchBar placeholder={"Destination Stop..."} />
+      </Card>
+
+      {/* Card to select origin and destination */}
+      <Card>
+        <div className={DirectionsCSS.searchbar_stops_header}>
+          <h4>Select stops</h4>
+          <div>
+            <RefreshRoundedIcon onClick={() => cleanSearch()} />
+          </div>
         </div>
-      </div>
-      <div className={DirectionsSearchCSS.hour_container_dir_searcher}>
-        <p>Leave at</p>
-        <input type="time"></input>
-      </div>
-      <SearchButton />
+        <div className={DirectionsCSS.searchbar_stops}>
+          <StopSearchBar placeholder={"Origin stop..."} stops={validOriginStops} selectedStop={origin} setSelectedStop={setOrigin} />
+        </div>
+        <div className={DirectionsCSS.searchbar_stops}>
+          <StopSearchBar placeholder={"Destination stop..."} stops={validDestinationStops} selectedStop={destination} setSelectedStop={setDestination} />
+        </div>
+      </Card>
+
+      {/* Component to select the departure time */}
+      <SelectDepartureTime
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        selectedHour={selectedHour}
+        setSelectedHour={setSelectedHour}
+      />
+
+      {/* Display markers on the map if origin or destination are selected */}
+      {origin && <CustomMarker id="origin" position={{ lat: origin.stop_lat, lng: origin.stop_lon }} />}
+      {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
+
+      {/* Display the results from the search */}
+      {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}
+
+      {/* Display a message if an error occurs during the search */}
+      {searchError && <Card variant="last"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
+
+      {/* Display a waiting icon during the search*/}
+      {searchPending && <Card variant="last"><Waiting variant="dark" size="small" /></Card>}
+
+      {/* Search Button */}
+      <SearchButton searchAvailable={searchAvailable} onClick={() => handleSearch()} />
     </>
   );
+
+  // Function to clean the search
+  function cleanSearch() {
+    setOrigin(null);
+    setDestination(null);
+    setSearchAvailable(false);
+    setSearchPending(false);
+    setSearchResults(null);
+    setSearchError(false);
+  }
+
+  // Function to handle how the search is performed
+  function handleSearch() {
+    if (!searchAvailable) return;
+
+    setSearchResults(null);
+    setSearchPending(true);
+    setSearchError(false);
+
+    // Get the date in the proper format
+    const date = moment(selectedDate).format('L');
+    const hour = moment(selectedHour).format('HH:mm:ss');
+
+    const body = {
+      "route_id": selectedLine.route_id,
+      "direction_id": selectedLine.direction_id,
+      "departure_stop_id": origin.stop_id,
+      "arrival_stop_id": destination.stop_id,
+      "datetime": date + ", " + hour,
+      "num_predictions": 10
+    };
+
+    fetch("https://csi420-02-vm6.ucd.ie/predict/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw Error();
+        }
+        return res.json();
+      })
+      .then((json) => {
+        setSearchPending(false);
+        setSearchResults(json);
+      })
+      .catch((err) => {
+        setSearchPending(false);
+        setSearchError(true);
+      });
+  }
+
 };
 
 export default DirectionsSearcher;

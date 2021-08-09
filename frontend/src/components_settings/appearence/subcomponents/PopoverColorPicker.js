@@ -27,7 +27,7 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
          setColor(boxTheme.theme.divider);
       }
       if (type === "icons & font color") {
-         setColor(boxTheme.theme.icons);
+         setColor(boxTheme.theme.icon_color);
       }
       // eslint-disable-next-line
    }, []);
@@ -48,8 +48,8 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
          setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, divider: color } });
       }
       if (type === "icons & font color") {
-         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, icons: color } });
-         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, fontColor: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, icon_color: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, font_color: color } });
       }
       // eslint-disable-next-line
    }, [color]);

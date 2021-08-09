@@ -1,0 +1,72 @@
+.info_wrapper {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+}
+.pagination {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 15px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+.searchbar {
+   border: 1px solid lightgray;
+   padding: 7px 10px;
+   width: 100%;
+   border-radius: 20px;
+   text-decoration: none;
+   outline: none;
+   font-size: 1rem;
+   margin-bottom: 5px;
+}
+.searchbar:focus {
+   box-shadow: 0 0 0 1pt black;
+}
+.no_stops_message > h4 {
+   font-weight: 500;
+   font-size: 1rem;
+   margin-left: 5px;
+}
+.stop_wrapper {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 7px 5px;
+   border-top: 1px solid lightgray;
+   cursor: pointer;
+}
+.icon {
+   margin: 0px 10px;
+   width: 16px;
+   height: 16px;
+}
+.stop_title > h4 {
+   font-weight: 500;
+   font-size: 1rem;
+}
+.stop_lines {
+   display: flex;
+   align-items: center;
+   max-width: 300px;
+   flex-wrap: wrap;
+}
+.stop_lines > div {
+   padding: 3px;
+   border: 1px solid lightgray;
+   border-radius: 5px;
+   margin-right: 6px;
+   margin-top: 5px;
+   font-size: 0.8rem;
+}
+.action_button {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 10px;
+}

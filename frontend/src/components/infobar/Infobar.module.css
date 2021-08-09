@@ -18,10 +18,11 @@
 }
 .close_button {
   position: absolute;
-  right: 15px;
+  right: 12.5px;
   top: 17.5px;
   height: 30px;
   width: 30px;
+  font-size: 15px;
   cursor: pointer;
   border-radius: 50%;
   display: flex;
@@ -31,6 +32,9 @@
 }
 .close_button:hover {
   background-color: #e8e7e2;
+}
+.close_button > svg {
+  font-size: 30px;
 }
 .map_switcher {
   position: absolute;

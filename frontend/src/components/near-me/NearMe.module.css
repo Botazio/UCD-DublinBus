@@ -5,28 +5,6 @@
    align-items: center;
    position: relative;
 }
-.toogle_buttons_wrapper {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   width: 70%;
-   background-color: white;
-   border: 1px solid lightgray;
-   border-radius: 5px;
-   padding: 5px;
-}
-.toogle_buttons_button {
-   width: 50%;
-   background-color: white;
-   padding: 5px 5px;
-   border-radius: 5px;
-   font-size: 1rem;
-   cursor: pointer;
-}
-.toogle_buttons_active {
-   background-color: #DBF2FF;
-   border: 1px solid #00B5F4;
-}
 .options {
    margin-top: 3px;
    right: 17.5px;
@@ -36,61 +14,25 @@
 .options > svg {
    cursor: pointer;
 }
-.stop_container {
-   width: 100%;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   background-color: white;
-   margin-top: 10px;
-   border-radius: 10px;
-   cursor: pointer;
-}
-.stop_header {
-   width: 100%;
-   display: flex;
-   flex-direction: column;
-   justify-content: space-between;
-}
-.stop_title {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   margin-bottom: 5px;
-}
-.stop_title > h4:last-child {
-   margin: 0px 5px;
-   font-weight: 500;
-   color: grey;
-}
-.stop_lines_div {
-   display: flex;
-   align-items: center;
-   flex-flow: wrap;
-}
-.stop_lines_div > div {
-   padding: 4px;
-   margin: 5px;
-   font-size: 0.8rem;
-   font-weight: 400;
-   border: 1px solid gray;
-   border-radius: 5px;
-}
-.bus_times {
-   width: 100%;
+.searchbar_container {
+   width: 70%;
    display: flex;
    align-items: center;
    justify-content: center;
-   flex-direction: column;
-   border-top: 1px solid lightgray;
-   padding-top: 5px;
 }
-.popover {
-   padding: 10px 15px;
+.searchbar {
+   border: 1px solid lightgray;
+   line-height: 30px;
+   padding: 5px 10px;
+   width: 100%;
+   border-radius: 20px;
+   text-decoration: none;
+   outline: none;
+   font-size: 1rem;
+}
+.searchbar:focus {
+   box-shadow: 0 0 0 1pt black;
 }
 .pagination {
-   margin-top: 10px;
-   padding: 5px;
-   background-color: white;
-   border-radius: 15px;
+   margin-bottom: 15px;
 }

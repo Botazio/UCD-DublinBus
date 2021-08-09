@@ -1,19 +1,26 @@
 import NearMeCSS from "../NearMe.module.css";
 import geodist from "geodist";
 import Card from "../../../reusable-components/card/Card";
-import DisplayStops from "./DisplayStops";
-import Pagination from '@material-ui/lab/Pagination';
+import DisplayStops from "../../display-stops/DisplayStops";
 import { useStops } from "../../../providers/StopsContext";
 import Waiting from "../../../reusable-components/waiting/Waiting";
 import CustomError from "../../../reusable-components/error/CustomError";
 import { useEffect, useState } from "react";
+import NearMeOptions from "./NearMeOptions";
+import NearMeSearchBar from "./NearMeSearchBar";
+import PrimaryPagination from "../../../reusable-components/custom-pagination/PrimaryPagination";
 
 
-const NearMeStops = ({ position, distance, resultsDisplayed }) => {
+const NearMeStops = ({ position }) => {
    // State to handle the near stops
    const [nearStops, setNearStops] = useState([]);
    // State for the pagination in the results
    const [page, setPage] = useState(1);
+   // State that the user decides on the settings popover
+   const [distance, setDistance] = useState(1);
+   const [resultsDisplayed, setResultsDisplayed] = useState(20);
+   // Stops to be displayed on the page. They are filtered by the search bar 
+   const [visibleStops, setVisibleStops] = useState([]);
 
    // Get the data from the stops provider
    const { data, isPending, error } = useStops();
@@ -31,27 +38,35 @@ const NearMeStops = ({ position, distance, resultsDisplayed }) => {
    };
 
    // Error handling when fetching for the data
-   if (error)
-      return <CustomError height="60" message="Unable to fetch the data" />;
+   if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
    if (isPending) return <Waiting variant="dark" />;
 
    // If there are no stops around display an error
    if (nearStops === "no stops") {
-      return (<CustomError message="No stops around" height={70} />);
+      return (<CustomError message="No stops around" height={60} />);
    }
 
    return (
-      <Card variant="last">
-         {/* Do not display any data if there are not results */}
-         {(nearStops !== "no stops") && <DisplayStops stops={nearStops} page={page} />}
+      <>
+         {/* Searchbar and options */}
+         <div className={NearMeCSS.header}>
+            {(nearStops !== "no stops") && <NearMeOptions distance={distance} setDistance={setDistance} resultsDisplayed={resultsDisplayed} setResultsDisplayed={setResultsDisplayed} />}
+            {(nearStops !== "no stops") && <NearMeSearchBar stops={nearStops} setVisibleStops={setVisibleStops} />}
+         </div>
+
+         <Card variant="last">
+            {/* Do not display any data if there are not results */}
+            {(nearStops !== "no stops") && <DisplayStops stops={visibleStops} page={page} variant="near me" />}
+         </Card>
 
          {/* Pagination for the results */}
          {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>
-            <Pagination onChange={handlePage} page={page} count={Math.ceil(nearStops.length / 10)} color="primary" size="small" />
+            <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
          </div>}
-      </Card>
+
+      </>
    );
 
    // Function that searches for near stops 
