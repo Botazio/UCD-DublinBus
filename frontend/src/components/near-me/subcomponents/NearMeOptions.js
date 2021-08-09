@@ -34,6 +34,7 @@ const NearMeOptions = ({ distance, setDistance, resultsDisplayed, setResultsDisp
                aria-labelledby="discrete-slider-custom"
                valueLabelDisplay="auto"
                max={100}
+               min={1}
             />
          </PopoverOptions>
       </div>

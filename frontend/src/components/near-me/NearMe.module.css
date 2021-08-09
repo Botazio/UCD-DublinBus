@@ -31,7 +31,7 @@
    font-size: 1rem;
 }
 .searchbar:focus {
-   box-shadow: 0 0 0 1pt black;
+   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .pagination {
    margin-bottom: 15px;

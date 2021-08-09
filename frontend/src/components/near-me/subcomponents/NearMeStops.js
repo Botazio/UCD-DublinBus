@@ -102,6 +102,7 @@ const NearMeStops = ({ position }) => {
 
       // Set the state with the results
       setNearStops(nearStopsArray);
+      setVisibleStops(nearStopsArray);
    }
 
    // Function that compares the values to perform the sort
