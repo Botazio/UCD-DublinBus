@@ -2,6 +2,7 @@ import math
 import logging
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
+from django.db.models import F
 from django.shortcuts import render
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
@@ -202,10 +203,12 @@ def lines(request):
                                              "stop_headsign",
                                              "shape_dist_traveled",
                                              "stop_id",
-                                             "stop__stop_name",
-                                             "stop__stop_num",
-                                             "stop__stop_lat",
-                                             "stop__stop_lon"))
+                                             stop_name=F("stop__stop_name"),
+                                             stop_num=F("stop__stop_num"),
+                                             stop_lat=F("stop__stop_lat"),
+                                             stop_lon=F("stop__stop_lon")
+                                             )
+                                    )
 
     return JsonResponse(list(result), safe=False)
 
