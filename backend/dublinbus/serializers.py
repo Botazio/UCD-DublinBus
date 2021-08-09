@@ -148,7 +148,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                   'favoritestops',
                   'favoritejourneys',
                   'theme',
-                  'markers'
+                  'markers',
                   'password',
                   'token')
         depth = 1
