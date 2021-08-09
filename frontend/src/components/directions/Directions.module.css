@@ -151,10 +151,16 @@
 
 /* Styles for the quantile dots plot */
 .quantile_graph {
-  width: auto;
+  width: 100%;
   padding: 15px;
 }
 .quantile_graph > img {
-  width: 900px;
+  width: 500px;
   height: auto;
+}
+@media screen and (max-width: 600px) {
+  .quantile_graph > img {
+    width: 100%;
+    height: auto;
+  }
 }
