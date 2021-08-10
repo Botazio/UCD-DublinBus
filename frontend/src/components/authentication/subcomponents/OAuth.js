@@ -37,7 +37,6 @@ const OAuth = () => {
 
          <FacebookLogin
             appId="1012173042926853"
-            autoLoad={true}
             fields="name,email,picture"
             /* onClick={componentClicked} */
             callback={responseFacebook}
