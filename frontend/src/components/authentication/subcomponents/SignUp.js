@@ -2,8 +2,6 @@ import AuthenticationCSS from "../Authentication.module.css";
 import { ReactComponent as Person } from "../fixtures/icon-person.svg";
 import { ReactComponent as Lock } from "../fixtures/icon-lock.svg";
 import { ReactComponent as Email } from "../fixtures/icon-email.svg";
-import { ReactComponent as Google } from "../fixtures/icon-google.svg";
-import { ReactComponent as Facebook } from "../fixtures/icon-facebook.svg";
 import { useAuth } from "../../../providers/AuthContext";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
