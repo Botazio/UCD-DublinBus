@@ -23,7 +23,6 @@ const Directions = () => {
   if (isPending) return <Waiting variant="dark" />;
 
   if (!lines) return "";
-  console.log(selectedLine);
 
   return (
     <>
