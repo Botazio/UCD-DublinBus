@@ -1,6 +1,6 @@
 import NearMeCSS from "../NearMe.module.css";
 import PopoverOptions from "../../../reusable-components/popover-options/PopoverOptions";
-import Slider from "@material-ui/core/Slider";
+import PrimarySlider from "../../../reusable-components/custom-slider/PrimarySlider";
 
 const NearMeOptions = ({ distance, setDistance, resultsDisplayed, setResultsDisplayed }) => {
 
@@ -19,7 +19,7 @@ const NearMeOptions = ({ distance, setDistance, resultsDisplayed, setResultsDisp
       <div className={NearMeCSS.options}>
          <PopoverOptions>
             <p>Maximum range (km)</p>
-            <Slider
+            <PrimarySlider
                value={distance}
                onChange={handleRange}
                aria-labelledby="discrete-slider-custom"
@@ -28,7 +28,7 @@ const NearMeOptions = ({ distance, setDistance, resultsDisplayed, setResultsDisp
                max={10}
             />
             <p>Number stops displayed</p>
-            <Slider
+            <PrimarySlider
                value={resultsDisplayed}
                onChange={handleResultsDisplayed}
                aria-labelledby="discrete-slider-custom"

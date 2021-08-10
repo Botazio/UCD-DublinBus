@@ -9,6 +9,7 @@ import NoUserRoute from "./helpers/NoUserRoute";
 import { StopsProvider } from "./providers/StopsContext";
 import CustomThemeProvider from "./providers/CustomThemeProvider";
 import { LinesProvider } from "./providers/LinesContext";
+import { GeolocationProvider } from "./providers/GeolocationContext";
 
 function App() {
   return (
@@ -17,20 +18,22 @@ function App() {
         <CustomThemeProvider>
           <StopsProvider>
             <LinesProvider>
-              <Switch>
-                <Route exact path="/">
-                  <BusPage />
-                </Route>
-                <NoUserRoute exact path="/login">
-                  <AuthenticationPage />
-                </NoUserRoute>
-                <PrivateRoute exact path="/user">
-                  <UserPage />
-                </PrivateRoute>
-                <Route path="*">
-                  <NotFound />
-                </Route>
-              </Switch>
+              <GeolocationProvider>
+                <Switch>
+                  <Route exact path="/">
+                    <BusPage />
+                  </Route>
+                  <NoUserRoute exact path="/login">
+                    <AuthenticationPage />
+                  </NoUserRoute>
+                  <PrivateRoute exact path="/user">
+                    <UserPage />
+                  </PrivateRoute>
+                  <Route path="*">
+                    <NotFound />
+                  </Route>
+                </Switch>
+              </GeolocationProvider>
             </LinesProvider>
           </StopsProvider>
         </CustomThemeProvider>

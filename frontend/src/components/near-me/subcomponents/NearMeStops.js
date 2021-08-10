@@ -45,7 +45,7 @@ const NearMeStops = ({ position }) => {
 
    // If there are no stops around display an error
    if (nearStops === "no stops") {
-      return (<CustomError message="No stops around" height={60} />);
+      return <CustomError message="No stops around" height={60} />;
    }
 
    return (
