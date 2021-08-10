@@ -7,6 +7,7 @@ import { ReactComponent as Facebook } from "../fixtures/icon-facebook.svg";
 import { useAuth } from "../../../providers/AuthContext";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
+import OAuth from "./OAuth";
 
 // This component provides a signup form to login into the application
 const SignUp = () => {
@@ -32,18 +33,9 @@ const SignUp = () => {
   }, []);
 
   return (
-    /* Google and Facebook buttons */
     <div className={AuthenticationCSS.signup_tab}>
-      <div className={AuthenticationCSS.buttons_wrapper}>
-        <button className={AuthenticationCSS.google_button}>
-          <Google height={"16px"} fill={"white"} />
-          <span>Google</span>
-        </button>
-        <button className={AuthenticationCSS.facebook_button}>
-          <Facebook height={"16px"} fill={"white"} />
-          <span>Facebook</span>
-        </button>
-      </div>
+      {/* Google and Facebook buttons */}
+      <OAuth />
 
       {/* If there is an error display it */}
       {error && <div className={AuthenticationCSS.error_wrapper}>{error}</div>}
