@@ -2,6 +2,7 @@ import NavBar from "../components/navbar/NavBar";
 import SideBar from "../components/sidebar/SideBar";
 import MapContainer from "../components/map-container/MapContainer";
 import MapCustomButtons from "../components/map-custom-buttons/MapCustomButtons";
+import MarkerUserPosition from "../components/marker-user-position/UserGeolocation";
 
 const BusPage = () => {
   return (
@@ -11,6 +12,7 @@ const BusPage = () => {
       <MapContainer>
         <SideBar />
         <MapCustomButtons />
+        <MarkerUserPosition />
       </MapContainer>
     </>
   );
