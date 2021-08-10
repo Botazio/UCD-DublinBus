@@ -44,7 +44,7 @@ const MyStops = () => {
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {favoriteStops && <SecondarySearchBarStops stops={favoriteStops} setVisibleStops={setVisibleStops} />}
+            {(favoriteStops.length !== 0) && <SecondarySearchBarStops stops={favoriteStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (

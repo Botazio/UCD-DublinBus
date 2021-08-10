@@ -27,7 +27,7 @@ const AllStops = () => {
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
-   const favoriteStops = currentUser.favouritestops;
+   const favoriteStops = currentUser.favoritestops;
 
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {
@@ -51,14 +51,14 @@ const AllStops = () => {
    if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
-   if (isPending) return <div><Waiting variant="dark" size="small" /></div>;
+   if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
 
 
    return (
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} />}
+            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (

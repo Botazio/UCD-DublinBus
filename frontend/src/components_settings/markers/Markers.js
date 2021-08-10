@@ -51,28 +51,31 @@ const Markers = () => {
          {/* Header for the section */}
          <SettingsHeader title={markersTitle} body={markersBody} />
 
-         {/* Search bar */}
-         {markers && <MarkerSearchBar markers={markers} setVisibleMarkers={setVisibleMarkers} />}
+         <div className={MarkersCSS.container}>
+            {/* Search bar */}
+            {markers && <MarkerSearchBar markers={markers} setVisibleMarkers={setVisibleMarkers} />}
 
-         {/* Map throught the markers and render a toogle marker button */}
-         {Object.keys(visibleMarkers).slice((page - 1) * 10, ((page - 1) * 10) + 10).map((key) => <SwitchMarker key={key} title={key} isActive={markers[key]} handleChange={handleChange} />)}
+            {/* Map throught the markers and render a toogle marker button */}
+            {Object.keys(visibleMarkers).slice((page - 1) * 10, ((page - 1) * 10) + 10).map((key) => <SwitchMarker key={key} title={key} isActive={markers[key]} handleChange={handleChange} />)}
 
-         {/* Pagination for the results */}
-         {visibleMarkers && <div className={MarkersCSS.pagination}>
-            <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} size="small" />
-         </div>}
-
-         {/* If current user markers are not the same as the local state for markers 
-         render a button to save the changes displaying an action */}
-         {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
-            <div className={MarkersCSS.action_button}>
-               <PrimaryButton
-                  fullWidth={true} onClick={() => setAction(true)}>change markers
-               </PrimaryButton>
+            {/* Pagination for the results */}
+            {visibleMarkers && <div className={MarkersCSS.pagination}>
+               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} size="small" />
             </div>}
 
-         {/* Display an action if it is active */}
-         {action && <Action message={"Change markers"} type="markers" color="primary" buttonMessage="Change markers" setAction={setAction} />}
+            {/* If current user markers are not the same as the local state for markers 
+         render a button to save the changes displaying an action */}
+            {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
+               <div className={MarkersCSS.action_button}>
+                  <PrimaryButton
+                     fullWidth={true} onClick={() => setAction(true)}>change markers
+                  </PrimaryButton>
+               </div>}
+
+            {/* Display an action if it is active */}
+            {action && <Action message={"Change markers"} type="markers" color="primary" buttonMessage="Change markers" setAction={setAction} />}
+
+         </div>
       </>
    );
 };

@@ -47,8 +47,8 @@
 }
 .searchbar {
    border: 1px solid lightgray;
-   padding: 7px 10px;
-   width: 250px;
+   padding: 9px 10px;
+   width: 100%;
    border-radius: 20px;
    text-decoration: none;
    outline: none;
@@ -56,7 +56,7 @@
    margin-bottom: 15px;
 }
 .searchbar:focus {
-   box-shadow: 0 0 0 1pt black;
+   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .no_stops_message > h4 {
    font-weight: 500;
@@ -73,8 +73,6 @@
 }
 .icon {
    margin: 0px 10px;
-   width: 16px;
-   height: 16px;
 }
 .stop_title > h4 {
    font-weight: 500;

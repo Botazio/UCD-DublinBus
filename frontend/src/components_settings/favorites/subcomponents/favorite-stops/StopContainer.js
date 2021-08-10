@@ -1,6 +1,6 @@
 import FavoritesCSS from "../../Favorites.module.css";
-import { ReactComponent as IconPlus } from "../../../../fixtures/icons/icon-plus.svg";
-import { ReactComponent as IconClose } from "../../../../fixtures/icons/icon-close-settings.svg";
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { useState } from "react";
 import { useTheme } from "@material-ui/core";
 import { useEffect } from "react";
@@ -62,8 +62,8 @@ const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
          </div>
 
          {/* Show a different icon depending on the type */}
-         {type === "add" && <div className={FavoritesCSS.icon}><IconPlus width={16} height={16} /></div>}
-         {type === "delete" && <div className={FavoritesCSS.icon}><IconClose width={16} height={16} /></div>}
+         {type === "add" && <div className={FavoritesCSS.icon}><AddRoundedIcon /></div>}
+         {type === "delete" && <div className={FavoritesCSS.icon}><CloseRoundedIcon /></div>}
       </div>
    );
 };

@@ -13,6 +13,7 @@ const Favorites = () => {
       <>
          {/* Favorite stops header */}
          <SettingsHeader title={stopsTitle} body={stopsBody} />
+
          {/* Main component for the favorite stops */}
          <FavoriteStops />
 
