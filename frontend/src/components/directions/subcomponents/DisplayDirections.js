@@ -26,7 +26,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
       setOpen(false);
    };
 
-   const dotplotFile = `https://csi420-02-vm6.ucd.ie/images/dotplot_${origin.stop_id}_to_${destination.stop_id}.png`;
+   const dotplotFile = `https://dublin-bus.net/images/dotplot_${origin.stop_id}_to_${destination.stop_id}.png`;
 
    return (
       <Card variant="last" >

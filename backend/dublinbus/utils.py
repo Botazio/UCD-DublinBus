@@ -1,4 +1,5 @@
 from pathlib import Path
+from multiprocessing import Pool
 from datetime import datetime, timedelta, timezone
 import logging
 from statistics import mean
@@ -147,7 +148,57 @@ def date_to_service_ids(requested_date):
 
     return service_ids
 
-def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions=10):
+def multiprocessing_adjacent_stop_prediction(trip_stop_times, features, num_predictions,
+                                                num_processes=8):
+    """
+    Use Python's multiprocessing to make adjacent stop pair predictions
+
+    """
+
+    # initialize the Pool
+    with Pool(processes=num_processes) as pool:
+
+        # add features before staring multiprocessing
+        trip_stop_times_with_features = []
+        for trip_stop in trip_stop_times:
+            trip_stop_times_with_features.append(
+                trip_stop + (features, num_predictions,)
+            )
+
+        # map is blocking so we don't need to close or join
+        multiprocessing_results = pool.map(
+            handle_adjacent_stop_prediction,
+            trip_stop_times_with_features,
+        )
+
+    return multiprocessing_results
+
+def handle_adjacent_stop_prediction(stop_tuple):
+    """
+    Function that is used by map in multiprocessing
+    that only takes one argument at a time
+
+    """
+
+    stop_a, stop_b, features, num_predictions = stop_tuple
+
+    stop_pair_time_predictions = predict_adjacent_stop(
+                stop_a['stoptime__stop__stop_num'],
+                stop_b['stoptime__stop__stop_num'],
+                features,
+                num_predictions=num_predictions
+            )
+
+    # Store the results for this stop pair
+    stop_pair_details = {
+        'departure_stop': stop_a['stoptime__stop__stop_num'],
+        'arrival_stop': stop_b['stoptime__stop__stop_num'],
+        'predictions': stop_pair_time_predictions
+    }
+
+    return stop_pair_details
+
+def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_predictions):
     """
     Predict the time to travel between two adjacent stops on the same route trip.
     This method uses stop numbers and not stop IDs since stop IDs are not available
@@ -177,7 +228,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
 
     if path.exists(model_path):
         logging.info(f"Found a model for {departure_stop_num}_to_{arrival_stop_num}")
-        trained_nn_model = keras.models.load_model(model_path)
+        trained_nn_model = keras.models.load_model(model_path, compile=True)
 
         input_row = np.reshape(np.array(list(features.values())), (1, 8))
 
@@ -191,16 +242,21 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
 
     # no model exists for this stop pair so just use expected times
     logging.warning(f"No model found for {departure_stop_num}_to_{arrival_stop_num}. " +
-                "Using timetable instead.")
+                "Trying timetable instead.")
     timetable_2021 = pd.read_csv("./model_output/timetable/stop_pairs_2021.csv")
-    prediction = np.mean(timetable_2021.loc[
+    prediction = timetable_2021.loc[
                     timetable_2021['stop_pair'] == f"{departure_stop_num}_to_{arrival_stop_num}",
                     "expected_travel_time"
-                ].values)
+                ].values
 
-    return np.repeat(prediction, num_predictions)
+    if len(prediction) == 0:
+        logging.warning(f"No data found for found for {departure_stop_num}_to_{arrival_stop_num} " +
+            "in the timetable. Returning no prediction for this stop pair")
+        return np.repeat(0, num_predictions)
 
-def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions=10):
+    return np.repeat(np.mean(prediction), num_predictions)
+
+def make_probabilistic_predictions(inputs, trained_nn_model, num_predictions):
     """
     Take a row of input data and a trained keras model for a particular stop pair
     and make many predictions. This can be used to generate a probability distribution
