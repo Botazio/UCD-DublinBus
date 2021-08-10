@@ -10,6 +10,7 @@ import SecondarySearchBarStops from "../../../../reusable-components/searchbar-s
 import Action from "../../../../reusable-components/action/Action";
 import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
+import { actionPost } from "../../../../helpers/utils";
 
 // This component renders the managing system to add new favorite stops 
 const AllStops = () => {
@@ -27,14 +28,14 @@ const AllStops = () => {
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
-   const favoriteStops = currentUser.favouritestops;
+   const favoriteStops = currentUser.favoritestops;
 
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {
-      if (stops) {
+      if (stops && favoriteStops) {
          // Do not show the stops that are already part of the 
          // user favorite stops
-         const filteredStops = stops.filter(x => favoriteStops.indexOf(x) === -1);
+         const filteredStops = stops.filter(({ stop_id: id1 }) => !favoriteStops.some(({ stop: id2 }) => id2 === id1));
          setVisibleStops(filteredStops);
       }
    }, [stops, favoriteStops]);
@@ -44,21 +45,21 @@ const AllStops = () => {
       setPage(value);
    };
 
-   // grab the isAuthenticated from the provider
-   const { isAuthenticated } = useAuth();
+   // Error handling when fetching for the data
+   if (!favoriteStops) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Error handling when fetching for the data
    if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
-   if (isPending) return <div><Waiting variant="dark" size="small" /></div>;
+   if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
 
 
    return (
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} />}
+            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (
@@ -84,26 +85,37 @@ const AllStops = () => {
    );
 
    // This function is passed to the action to add selected stops to favorites
-   function handleSubmit() {
-      let body = {};
-      activeStops.map((stop) => (body.stop = stop.stop_id));
+   async function handleSubmit(isAuthenticated, setError, setIsPending, setOkMessage) {
+      // Wait for the fetch calls to finish 
+      const arrayResponses = await Promise.all(
+         activeStops.map((stop) => {
+            let body = { "stop": stop.stop_id };
 
-      if (localStorage.getItem("token")) {
-         fetch("http://csi420-02-vm6.ucd.ie/favouritestop/ ", {
-            method: "POST",
-            headers: {
-               Authorization: `JWT ${localStorage.getItem("token")}`,
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-         })
-            .then((res) => res.json())
-            .then((json) => {
-               console.log(json);
-               isAuthenticated();
-            });
+            let response = actionPost(
+               "https://csi420-02-vm6.ucd.ie/favoritestop/",
+               body,
+               isAuthenticated,
+               setError,
+               setIsPending,
+               setOkMessage
+            );
+
+            return response;
+         }
+         ));
+
+      // Set the active stops to an empty array even if the response is not ok
+      setActiveStops([]);
+
+      // Close the action component after one second
+      if (arrayResponses.length === activeStops.length) {
+         setTimeout(() => {
+            setAction(false);
+         }, 1000);
       }
-   }
+
+   };
+
 };
 
 export default AllStops;

@@ -1,39 +1,33 @@
 import FavoritesCSS from "../../Favorites.module.css";
-import { ReactComponent as IconPlus } from "../../../../fixtures/icons/icon-plus.svg";
-import { ReactComponent as IconClose } from "../../../../fixtures/icons/icon-close-settings.svg";
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { useState } from "react";
 import { useTheme } from "@material-ui/core";
-import { useEffect } from "react";
 
 // Small reusable component that displays a container for each stop
 // The container changes the background with colors from the provider
 // when it is clicked 
 const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
-   const [active, setActive] = useState(false);
+   const [active, setActive] = useState(isActive());
 
    // Grab the theme from the provider
    const themeContext = useTheme();
 
-   // This useEffect is called when active changes.
-   // Adding and deleting elements from the array depending on the active state
-   useEffect(() => {
-      // Toogle that stop from the activeStops array
+   // Toogles the active state. Adds and deletes the stop for the activeStops array
+   function handleClick() {
       if (active) {
-         setActiveStops([...activeStops, stop]);
-      }
-      if (!active) {
          const newArray = [...activeStops];
          newArray.pop(stop);
          setActiveStops(newArray);
+         setActive(false);
       }
-      // eslint-disable-next-line
-   }, [active]);
-
-   function handleClick() {
-      // Toogle the active state for that stop
-      setActive(!active);
+      if (!active) {
+         setActiveStops([...activeStops, stop]);
+         setActive(true);
+      }
    }
 
+   // Handles the style of the stop container depending on the active state
    function handleStyle() {
       if (!active) {
          return themeContext.theme.background_primary;
@@ -62,10 +56,18 @@ const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
          </div>
 
          {/* Show a different icon depending on the type */}
-         {type === "add" && <div className={FavoritesCSS.icon}><IconPlus width={16} height={16} /></div>}
-         {type === "delete" && <div className={FavoritesCSS.icon}><IconClose width={16} height={16} /></div>}
+         {type === "add" && <div className={FavoritesCSS.icon}><AddRoundedIcon /></div>}
+         {type === "delete" && <div className={FavoritesCSS.icon}><CloseRoundedIcon /></div>}
       </div>
    );
+
+   // Function that checks if the stop is active the first time the component renders
+   function isActive() {
+      if (activeStops.includes(stop)) {
+         return true;
+      };
+      return false;
+   }
 };
 
 export default StopContainer;

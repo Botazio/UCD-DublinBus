@@ -46,6 +46,10 @@
 .action_submit > span {
    color: white;
 }
+.message {
+   width: 100%;
+   margin-top: 15px;
+}
 
 @media screen and (max-width: 600px) {
    .action_wrapper {

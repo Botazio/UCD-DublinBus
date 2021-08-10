@@ -20,8 +20,6 @@ const Lines = () => {
    // Wait for the data
    if (isPending) return <Waiting variant="dark" />;
 
-   console.log(selectedLine);
-
    return (
       <>
          <div className={LinesCSS.header}>

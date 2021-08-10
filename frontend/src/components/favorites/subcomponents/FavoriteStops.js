@@ -7,13 +7,20 @@ import SecondarySearchBarStops from "../../../reusable-components/searchbar-stop
 import PrimaryPagination from "../../../reusable-components/custom-pagination/PrimaryPagination";
 import DisplayStops from "../../display-stops/DisplayStops";
 import Card from "../../../reusable-components/card/Card";
+import { useStops } from "../../../providers/StopsContext";
+import Waiting from "../../../reusable-components/waiting/Waiting";
 
 // This component renders the managing system to delete the already saved favorite stops 
 const FavoriteStops = () => {
    // Markers to be displayed on the page. They are filtered by the search bar 
    const [visibleStops, setVisibleStops] = useState();
+   // User stops
+   const [filteredStops, setFilteredStops] = useState();
    // State for the pagination in the results
    const [page, setPage] = useState(1);
+
+   // Get the data from the provider
+   const { data: stops, isPending, error } = useStops();
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
@@ -21,10 +28,14 @@ const FavoriteStops = () => {
 
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {
-      if (favoriteStops) {
-         setVisibleStops(favoriteStops);
+      if (stops && favoriteStops) {
+         // Do not show the stops that are already part of the 
+         // user favorite stops
+         const arrayStops = stops.filter(({ stop_id: id1 }) => favoriteStops.some(({ stop: id2 }) => id2 === id1));
+         setFilteredStops(arrayStops);
+         setVisibleStops(arrayStops);
       }
-   }, [favoriteStops]);
+   }, [stops, favoriteStops]);
 
    // function that sets the results page with the new value
    const handlePage = (event, value) => {
@@ -34,13 +45,19 @@ const FavoriteStops = () => {
    // Error handling when fetching for the data
    if (!favoriteStops) return <CustomError height="60" message="Unable to fetch the data" />;
 
+   // Error handling when fetching for the data
+   if (error) return <CustomError height="60" message="Unable to fetch the data" />;
+
+   // Wait for the data
+   if (isPending) return <Waiting variant="dark" />;
+
 
    return (
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Loop through the visible stops and display them */}
             {visibleStops && <Card>
-               <SecondarySearchBarStops stops={favoriteStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
+               <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
                <DisplayStops stops={visibleStops} page={page} variant="favorites" />
             </Card>}
 

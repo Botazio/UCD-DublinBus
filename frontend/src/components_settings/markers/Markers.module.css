@@ -1,3 +1,9 @@
+.container {
+   border: 1px solid lightgray;
+   border-radius: 5px;
+   margin-bottom: 15px;
+   padding: 15px;
+}
 .switch_container {
    display: flex;
    align-items: center;
@@ -16,12 +22,15 @@
 }
 .searchbar {
    border: 1px solid lightgray;
-   padding: 7px 10px;
-   width: 250px;
+   padding: 9px 10px;
+   width: 100%;
    border-radius: 20px;
    text-decoration: none;
    outline: none;
    font-size: 1rem;
+}
+.searchbar:focus {
+   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .action_button {
    width: 100%;
