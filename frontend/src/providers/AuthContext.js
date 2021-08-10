@@ -29,7 +29,6 @@ export function AuthProvider({ children }) {
       body: JSON.stringify(body),
     })
       .then((res) => {
-        console.log(res);
         if (!res.ok) {
           throw Error();
         }
@@ -116,11 +115,51 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   }
 
+  // function to login with google and facebook
+  function signinOAuth(company, token) {
+    const body = { "auth_token": token };
+
+    // set the error to null
+    setErrorMessage(null);
+
+    fetch(`https://csi420-02-vm6.ucd.ie/${company}/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        console.log(res);
+        if (!res.ok) {
+          throw Error();
+        }
+        return res.json();
+      })
+      .then((json) => {
+        // set the token in the local storage so it does not depend on react state
+        localStorage.setItem("token", json.token);
+
+        // set the current user to the response
+        setCurrentUser(json);
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("fetch abort");
+        } else {
+          console.log(err);
+          setErrorMessage("Failed to sign in using " + company);
+        }
+      });
+  }
+
   const value = {
     currentUser,
     setCurrentUser,
     signup,
     signin,
+    signinOAuth,
     isAuthenticated,
     logout,
     errorMessage,
