@@ -7,8 +7,8 @@ from os import path
 import environ
 import requests
 from django.conf import settings
-from dublinbus.models import Calendar
-from quantile_dotplot import ntile_dotplot
+from dublinbus.models import Calendar, Stop
+from quantile_dotplot import ntile_dotplot, compute_ntiles
 import keras
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -303,21 +303,48 @@ def plot_probabilistic_predictions(stop_pair, predictions):
     A probability density curve and a quantile dotplot
     """
 
-    _, axes = plt.subplots(2, 1, figsize=(8, 8))
+    _, axes = plt.subplots(1, 1, figsize=(8, 8))
 
     # Kernel density estimate (KDE)
     # Used as alternative to histogram to visualise distribution
-    sns.kdeplot(predictions, shade=True, ax=axes[0])
-    # Plot mean as a red line
-    axes[0].axvline(mean(predictions), color='red')
+    sns.kdeplot(predictions, shade=True, ax=axes)
 
-    ntile_dotplot(predictions, dots=20, edgecolor="k", linewidth=2, ax=axes[1])
+    ntile_dotplot(
+        np.round(predictions / 60, 2),
+        dots=20,
+        edgecolor="k",
+        linewidth=2,
+        ax=axes,
+        color="blue"
+    )
 
-    axes[1].set_xlabel("Journey Time (seconds)")
+    centers, _  = compute_ntiles(
+        np.round(predictions / 60, 2),
+        dots=20,
+        hist_bins='auto'
+    )
+
+    departure_stop_num = Stop.objects.get(stop_id=stop_pair.split("_")[0]).stop_num
+    arrival_stop_num = Stop.objects.get(stop_id=stop_pair.split("_")[-1]).stop_num
+
+    axes.set_xlabel("Journey Time (minutes)", fontsize=16)
+    axes.set_title(
+        f"Quantile Dotplot: Stop {departure_stop_num} to Stop {arrival_stop_num}",
+        fontsize=16
+    )
+
     for spine in ("left", "right", "top"):
-        axes[1].spines[spine].set_visible(False)
-    axes[1].yaxis.set_visible(False)
-    axes[1].axvline(mean(predictions), color='red')
+        axes.spines[spine].set_visible(False)
+    axes.yaxis.set_visible(False)
+    axes.set_xticklabels(['{:.2f}'.format(center) for center in centers])
+    axes.tick_params(axis='x', which='both', labelsize=16)
+
+    # Plot mean as a red line
+    axes.axvline(
+        mean(predictions / 60),
+        ymax=0.8,
+        color='red'
+    )
 
     home = str(Path.home())
     plt.savefig(home + f"/data/images/dotplot_{stop_pair}.png")
