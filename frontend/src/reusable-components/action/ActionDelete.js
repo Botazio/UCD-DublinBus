@@ -17,7 +17,7 @@ const ActionDelete = (props) => {
          <ResponseAction {...props} />
 
          {/* Submit button */}
-         <SubmitButtonAction handleSubmit={handleSubmit} isPending={props.isPending} color="secondary">
+         <SubmitButtonAction onClick={() => handleSubmit()} isPending={props.isPending} color="secondary">
             Delete account
          </SubmitButtonAction>
       </>

@@ -14,7 +14,7 @@ const ActionAddStops = (props) => {
          <ResponseAction {...props} />
 
          {/* Submit button */}
-         <SubmitButtonAction handleSubmit={handleSubmit} isPending={props.isPending} color="primary">
+         <SubmitButtonAction onClick={() => handleSubmit()} isPending={props.isPending} color="primary">
             Add stops
          </SubmitButtonAction>
       </>

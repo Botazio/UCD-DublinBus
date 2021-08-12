@@ -4,55 +4,23 @@
 .pointer {
   cursor: pointer;
 }
-.popover {
-  position: absolute;
-  z-index: 1;
-  top: 70px;
-  right: 0;
-  display: none;
-  overflow: visible;
-  width: 225px;
-  margin-right: 20px;
-  border: 1px solid #e3e9ed;
-  border-radius: 3px;
-  background: #fff;
-  box-shadow: 0 0 60px rgb(14 42 71 / 25%);
-  animation: popover 0.2s ease-in-out;
-}
-.popover:before {
-  position: absolute;
-  z-index: -1;
-  content: "";
-  right: calc(5vh - 2.5px);
-  top: -8px;
-  border-style: solid;
-  box-shadow: 0 0 60px rgb(14 42 71 / 25%);
-  border-width: 0 10px 10px 10px;
-  border-color: transparent transparent white transparent;
-}
-.popover_active {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 .popover_header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 90%;
-  padding: 5px;
+  padding: 10px;
   margin: 5px;
 }
 .popover_items {
   margin-left: 15px;
 }
+.popover_items > a  {
+  text-decoration: none;
+}
 .popover_items > a > button {
-  padding: 5px 10px;
-  margin: 2px 0px;
-  border-radius: 3px;
-  border: 1px solid #00B5F4;
-  background-color: #DBF2FF;
-  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 .popover_items > h4 {
   margin: 2px 0px;
@@ -65,8 +33,5 @@
 .popover_logout_wrapper > div {
   cursor: pointer;
   display: flex;
-  font-size: 15px;
-}
-.popover_logout_wrapper > div > p {
-  margin-left: 10px;
+  align-items: center;
 }

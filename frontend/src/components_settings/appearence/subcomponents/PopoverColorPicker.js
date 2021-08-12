@@ -1,4 +1,4 @@
-import { Popover } from '@material-ui/core';
+import { Popover, useTheme } from '@material-ui/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
@@ -11,32 +11,35 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
    // State to handle the popover
    const [anchorEl, setAnchorEl] = useState(null);
 
+   // Grab the theme from the provider
+   const theme = useTheme().theme;
+
    // First time the component renders it sets the color of the circle
    // to the current theme depending on the type.
    useEffect(() => {
       if (type === "primary") {
-         setColor(boxTheme.theme.primary);
+         setColor(theme.primary);
       }
       if (type === "background primary") {
-         setColor(boxTheme.theme.background_primary);
+         setColor(theme.background_primary);
       }
       if (type === "background secondary") {
-         setColor(boxTheme.theme.background_secondary);
+         setColor(theme.background_secondary);
       }
       if (type === "divider") {
-         setColor(boxTheme.theme.divider);
+         setColor(theme.divider);
       }
       if (type === "icons & font color") {
-         setColor(boxTheme.theme.icon_color);
+         setColor(theme.icon_color);
       }
       // eslint-disable-next-line
-   }, []);
+   }, [theme]);
 
    // Every time color changes it sets the box theme to that color depending on the type.
    // All the other parts of the theme stays the same 
    useEffect(() => {
       if (type === "primary") {
-         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, primary: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, primary: color }, palette: { ...boxTheme.palette, primary: { ...boxTheme.palette.primary, main: color } } });
       }
       if (type === "background primary") {
          setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, background_primary: color } });
@@ -48,8 +51,7 @@ const PopoverColorPicker = ({ type, boxTheme, setBoxTheme }) => {
          setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, divider: color } });
       }
       if (type === "icons & font color") {
-         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, icon_color: color } });
-         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, font_color: color } });
+         setBoxTheme({ ...boxTheme, theme: { ...boxTheme.theme, icon_color: color, font_color: color } });
       }
       // eslint-disable-next-line
    }, [color]);

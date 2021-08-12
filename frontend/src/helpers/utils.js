@@ -36,3 +36,33 @@ export async function actionFetch(url, type, body, setError, setIsPending, setOk
 
    return response;
 }
+
+// Funtion used in the settings page to add a photo
+// such as add favorite stops, markers, etc
+export async function actionFetchMedia(url, type, body, setError, setIsPending, setOkMessage) {
+   setIsPending(true);
+   setError(false);
+   setOkMessage(false);
+
+   const response = await fetch(url, {
+      method: type,
+      headers: {
+         Authorization: `JWT ${localStorage.getItem("token")}`,
+      },
+      body: body
+   });
+
+   if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      setIsPending(false);
+      setError(message);
+   }
+
+   if (response.ok) {
+      setIsPending(false);
+      setOkMessage(true);
+   }
+
+   return response;
+}
+

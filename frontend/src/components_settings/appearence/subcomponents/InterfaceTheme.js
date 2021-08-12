@@ -19,6 +19,8 @@ const InterfaceTheme = ({ title, info, type }) => {
    // the first time the component renders
    const currentTheme = useTheme();
    useEffect(() => {
+      // Take off the owner from the theme as it is not needed
+      delete currentTheme.theme.owner;
       setBoxTheme(currentTheme);
    }, [currentTheme]);
 
@@ -44,7 +46,7 @@ const InterfaceTheme = ({ title, info, type }) => {
 
                {/* Compares the current theme to the box theme if they are not equal render 
                a primary button. This button triggers the action when clicked */}
-               {JSON.stringify(currentTheme.palette) !== JSON.stringify(boxTheme.palette) &&
+               {JSON.stringify(currentTheme.theme) !== JSON.stringify(boxTheme.theme) &&
                   <Button
                      fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
                   </Button>}

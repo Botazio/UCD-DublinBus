@@ -14,7 +14,7 @@ const ActionMarkers = (props) => {
          <ResponseAction {...props} />
 
          {/* Submit button */}
-         <SubmitButtonAction handleSubmit={handleSubmit} isPending={props.isPending} color="primary">
+         <SubmitButtonAction onClick={() => handleSubmit()} isPending={props.isPending} color="primary">
             Change markers
          </SubmitButtonAction>
       </>

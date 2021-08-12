@@ -14,7 +14,7 @@ const ActionTheme = (props) => {
          <ResponseAction {...props} />
 
          {/* Submit button */}
-         <SubmitButtonAction handleSubmit={handleSubmit} isPending={props.isPending} color="primary">
+         <SubmitButtonAction onClick={() => handleSubmit()} isPending={props.isPending} color="primary">
             Change theme
          </SubmitButtonAction>
       </>
