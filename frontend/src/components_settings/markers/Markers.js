@@ -6,9 +6,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import SwitchMarker from "./subcomponents/SwitchMarker";
 import MarkerSearchBar from "./subcomponents/MarkerSearchBar";
-import Action from "../../reusable-components/action/Action";
-import PrimaryButton from "../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../reusable-components/custom-pagination/PrimaryPagination";
+import { Button } from "@material-ui/core";
+import ActionWrapper from "../../reusable-components/action/ActionWrapper";
+import ActionMarkers from "../../reusable-components/action/ActionMarkers";
 
 // Messages to display in the header
 const markersTitle = "Markers preferences";
@@ -22,16 +23,18 @@ const Markers = () => {
    const [visibleMarkers, setVisibleMarkers] = useState(defaultMarkers);
    // State to control when to display and hide the action message
    const [action, setAction] = useState(false);
+   // State for the pagination in the results
+   const [page, setPage] = useState(1);
 
    // Get the current user from the provider
    const { currentUser } = useAuth();
-   // State for the pagination in the results
-   const [page, setPage] = useState(1);
 
    // Set the initial state for the markers state to the current user markers
    // This function happens the first time the component renders
    useEffect(() => {
-      if (currentUser && currentUser.markers) {
+      if (currentUser.markers) {
+         // Delete the property owner because it does not refer to a type of markers
+         delete currentUser.markers.owner;
          setMarkers(currentUser.markers);
       }
    }, [currentUser]);
@@ -64,17 +67,19 @@ const Markers = () => {
             </div>}
 
             {/* If current user markers are not the same as the local state for markers 
-         render a button to save the changes displaying an action */}
+            render a button to save the changes displaying an action */}
             {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
                <div className={MarkersCSS.action_button}>
-                  <PrimaryButton
-                     fullWidth={true} onClick={() => setAction(true)}>change markers
-                  </PrimaryButton>
+                  <Button
+                     fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change markers
+                  </Button>
                </div>}
 
-            {/* Display an action if it is active */}
-            {action && <Action message={"Change markers"} type="markers" color="primary" buttonMessage="Change markers" setAction={setAction} />}
 
+            {/* Display an action if it is active */}
+            {action && <ActionWrapper title={"Change markers"} setAction={setAction}>
+               <ActionMarkers markers={markers} />
+            </ActionWrapper>}
          </div>
       </>
    );

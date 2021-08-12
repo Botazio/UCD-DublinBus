@@ -7,10 +7,10 @@ import Waiting from "../../../../reusable-components/waiting/Waiting";
 import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
 import SecondarySearchBarStops from "../../../../reusable-components/searchbar-stops/SecondarySearchBarStops";
-import Action from "../../../../reusable-components/action/Action";
-import PrimaryButton from "../../../../reusable-components/custom-buttons/PrimaryButton";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
-import { actionPost } from "../../../../helpers/utils";
+import { Button } from "@material-ui/core";
+import ActionWrapper from "../../../../reusable-components/action/ActionWrapper";
+import ActionAddStops from "../../../../reusable-components/action/ActionAddStops";
 
 // This component renders the managing system to add new favorite stops 
 const AllStops = () => {
@@ -73,48 +73,18 @@ const AllStops = () => {
 
             {/* Action button to save the changes. It is displayed if the active stops has at least one value */}
             {(activeStops.length !== 0) && <div className={FavoritesCSS.action_button}>
-               <PrimaryButton
-                  fullWidth={true} onClick={() => setAction(true)}>save changes
-               </PrimaryButton>
+               <Button
+                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>save changes
+               </Button>
             </div>}
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message="Change favorite stops" type="fav_stops" color="primary" buttonMessage="Change favorites" setAction={setAction} handleSubmit={handleSubmit} />}
+         {action && <ActionWrapper title={"Add favorites stops"} setAction={setAction}>
+            <ActionAddStops activeStops={activeStops} setActiveStops={setActiveStops} />
+         </ActionWrapper>}
       </>
    );
-
-   // This function is passed to the action to add selected stops to favorites
-   async function handleSubmit(isAuthenticated, setError, setIsPending, setOkMessage) {
-      // Wait for the fetch calls to finish 
-      const arrayResponses = await Promise.all(
-         activeStops.map((stop) => {
-            let body = { "stop": stop.stop_id };
-
-            let response = actionPost(
-               "https://csi420-02-vm6.ucd.ie/favoritestop/",
-               body,
-               isAuthenticated,
-               setError,
-               setIsPending,
-               setOkMessage
-            );
-
-            return response;
-         }
-         ));
-
-      // Set the active stops to an empty array even if the response is not ok
-      setActiveStops([]);
-
-      // Close the action component after one second
-      if (arrayResponses.length === activeStops.length) {
-         setTimeout(() => {
-            setAction(false);
-         }, 1000);
-      }
-
-   };
 
 };
 

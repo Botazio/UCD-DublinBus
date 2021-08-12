@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../../../providers/AuthContext";
 import ProfileCSS from "../Profile.module.css";
-import Action from "../../../reusable-components/action/Action";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
+import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import ActionEmail from "../../../reusable-components/action/ActionEmail";
 
 // This component renders a header and a button that allows the user 
 // to change his user mail. The function to change the email is passed 
@@ -16,7 +17,7 @@ const UserMail = () => {
    const { currentUser } = useAuth();
 
    // Message to display in the action
-   const actionMessage = "Enter a new email";
+   const actionTitle = "Enter a new email";
 
    // Messages to display in the header
    const headerTitle = "Change user email";
@@ -33,7 +34,9 @@ const UserMail = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="email" color="primary" buttonMessage="Change my email" inputField="true" setAction={setAction} />}
+         {action && <ActionWrapper title={actionTitle} setAction={setAction}>
+            <ActionEmail />
+         </ActionWrapper>}
       </>
    );
 };

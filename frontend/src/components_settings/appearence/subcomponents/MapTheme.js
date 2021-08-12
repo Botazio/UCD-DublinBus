@@ -1,8 +1,8 @@
-import { useTheme } from "@material-ui/core";
+import { Button, useTheme } from "@material-ui/core";
 import { useEffect } from "react";
 import { useState } from "react";
-import Action from "../../../reusable-components/action/Action";
-import PrimaryButton from "../../../reusable-components/custom-buttons/PrimaryButton";
+import ActionMap from "../../../reusable-components/action/ActionMap";
+import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
 import AppearenceCSS from "../Appearence.module.css";
 import DisplayMapBox from "./DisplayMapBox";
 import MapThemesButtons from "./MapThemesButtons";
@@ -41,22 +41,18 @@ const MapTheme = () => {
 
                {/* Compares the current theme to the box theme */}
                {JSON.stringify(currentTheme.map) !== JSON.stringify(boxTheme.map) &&
-                  <PrimaryButton
-                     onClick={() => setAction(true)}>change theme
-                  </PrimaryButton>}
+                  <Button
+                     fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
+                  </Button>}
             </div>
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={"Change map theme"} type="theme" color="primary" buttonMessage="Change map" setAction={setAction} handleSubmit={handleSubmit} />}
+         {action && <ActionWrapper title={"Change map theme"} setAction={setAction}>
+            <ActionMap map={boxTheme.map} />
+         </ActionWrapper>}
       </>
    );
-
-   // This function is called by the action subcomponent 
-   function handleSubmit(user, setCurrentUser) {
-      setCurrentUser({ ...user, map: boxTheme.map });
-      setAction(false);
-   }
 };
 
 export default MapTheme;

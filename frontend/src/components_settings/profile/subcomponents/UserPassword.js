@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ProfileCSS from "../Profile.module.css";
-import Action from "../../../reusable-components/action/Action";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
+import ActionPassword from "../../../reusable-components/action/ActionPassword";
+import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
 
 // This component renders a header and a button that allows the user 
 // to change his password. The function to change the password is passed 
@@ -12,7 +13,7 @@ const UserPassword = () => {
    const [action, setAction] = useState(false);
 
    // Message to display in the action
-   const actionMessage = "Enter a new password";
+   const actionTitle = "Enter a new password";
 
    // Messages to display in the header
    const headerTitle = "Change password";
@@ -28,7 +29,9 @@ const UserPassword = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="password" color="primary" buttonMessage="Change my password" inputField="true" setAction={setAction} />}
+         {action && <ActionWrapper title={actionTitle} setAction={setAction}>
+            <ActionPassword />
+         </ActionWrapper>}
       </>
    );
 };

@@ -1,8 +1,9 @@
 import { Button } from "@material-ui/core";
 import { useState } from "react";
 import ProfileCSS from "../Profile.module.css";
-import Action from "../../../reusable-components/action/Action";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
+import ActionDelete from "../../../reusable-components/action/ActionDelete";
+import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
 
 // This component renders a header and a button that allows the user 
 // to delete his account. The function to delete the account is passed 
@@ -25,7 +26,9 @@ const DeleteAccount = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={"Delete account"} type="delete" color="secondary" buttonMessage="Delete" setAction={setAction} />}
+         {action && <ActionWrapper title={"Delete account"} setAction={setAction}>
+            <ActionDelete />
+         </ActionWrapper>}
       </>
    );
 };

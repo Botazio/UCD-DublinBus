@@ -13,7 +13,22 @@ const defaultTheme = createTheme({
       font_color: "#000000",
       font_size: "1rem"
    },
-   map: "defaultThemeLight"
+   palette: {
+      primary: {
+         main: "#0094EC"
+      }
+   },
+   map: "defaultThemeLight",
+});
+
+const customTheme = (theme, mapTheme) => createTheme({
+   theme: theme,
+   palette: {
+      primary: {
+         main: theme.primary
+      }
+   },
+   map: mapTheme,
 });
 
 const CustomThemeProvider = (props) => {
@@ -22,12 +37,9 @@ const CustomThemeProvider = (props) => {
 
    // If there is a user set up the theme to the user preferences
    useEffect(() => {
-      // This will change in the moment the backend provides users with default theme
-      if (currentUser && currentUser.theme) {
-         setTheme(currentUser.theme);
-      }
-      if (currentUser && currentUser.map) {
-         setTheme({ ...defaultTheme, map: currentUser.map });
+      // If there is a user use the user theme
+      if (currentUser) {
+         setTheme(customTheme(currentUser.theme, currentUser.map));
       }
       else {
          setTheme(defaultTheme);
