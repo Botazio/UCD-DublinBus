@@ -4,7 +4,7 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 import facebook
 
-# overriding _verify_iat_and_exp to account for server system clock 
+# overriding _verify_iat_and_exp to account for server system clock
 # being behind by approximately 25 minutes
 def _verify_iat_and_exp_edited(payload):
     """Verifies the ``iat`` (Issued At) and ``exp`` (Expires) claims in a token
@@ -65,4 +65,3 @@ class Provider:
             return profile
         except facebook.GraphAPIError as invalid_token:
             return invalid_token
-
