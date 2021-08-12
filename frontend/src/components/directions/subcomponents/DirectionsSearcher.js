@@ -152,11 +152,10 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       "direction_id": selectedLine.direction_id,
       "departure_stop_id": origin.stop_id,
       "arrival_stop_id": destination.stop_id,
-      "datetime": date + ", " + hour,
-      "num_predictions": 10
+      "datetime": date + ", " + hour
     };
 
-    fetch("https://csi420-02-vm6.ucd.ie/predict/", {
+    fetch("https://dublin-bus.net/predict/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
