@@ -65,3 +65,4 @@ class Provider:
             return profile
         except facebook.GraphAPIError as invalid_token:
             return invalid_token
+
