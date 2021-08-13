@@ -41,7 +41,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
          {/* Display the popup for the quantile dots plot graph */}
          {open && <Dialog open={open} onClose={handleClose}>
             <div className={DirectionsCSS.quantile_graph}>
-               <img src={dotplotFile} alt="Quatile Dot Plot Unavailable" />
+               <img src={dotplotFile} alt="Quantile Dot Plot Unavailable" />
                <Collapsible trigger={<HelpIcon></HelpIcon>}>
                   The Quantile Dotplot is an easy way to make probability estimates of journey times. There will always be
                   20 dots in this chart and the number of dots before a point on the x-axis is the fraction of
