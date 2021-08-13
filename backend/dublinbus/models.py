@@ -7,6 +7,7 @@ from .managers import CustomUserManager
 class Stop(models.Model):
     """
     A class to represent a Dublin Bus stop
+
     Attributes
     ---
         stop_id: str
@@ -34,6 +35,7 @@ class Shape(models.Model):
     A class to describe the path that a vehicle travels along a route alignment.
     Shapes are associated with Trips, and consist of a sequence of points
     through which the vehicle passes in order.
+
     Attributes
     ---
         shape_id: str
@@ -59,6 +61,7 @@ class Shape(models.Model):
 class Route(models.Model):
     """
     A class to represent a Dublin Bus route
+
     Attributes
     ---
         route_id: str
@@ -84,6 +87,7 @@ class Route(models.Model):
 class Calendar(models.Model):
     """
     A class to represent a set of dates when service is available for routes.
+
     Attributes
     ---
         service_id: str
@@ -131,6 +135,7 @@ class Trip(models.Model):
     A class to represent a Dublin Bus trip. A trip is a specific
     instance of a Route at a particular time and direction. Every
     Route will have one or more Trips.
+
     Attributes
     ---
         trip_id: str
@@ -163,6 +168,7 @@ class StopTime(models.Model):
     A class that represents when a bus on a particular Trip is scheduled
     to stop at a certain stop in that trip. This does not account for
     any real-time delays
+
     Attributes
     ---
         arrival_time: timestamp
@@ -195,6 +201,7 @@ class Line(models.Model):
     """
     A class to represents the bus lines that run through all Dublin bus stops.
     1-to-many relationship with Stop class.
+
     Attributes
     ---
         stop: Stop
