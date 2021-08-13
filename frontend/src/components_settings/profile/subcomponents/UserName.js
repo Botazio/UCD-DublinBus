@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ProfileCSS from "../Profile.module.css";
-import Action from "../../../reusable-components/action/Action";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
+import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import ActionUserName from "../../../reusable-components/action/ActionUserName";
 
 // This component renders a header and a button that allows the user 
 // to change his user name. The function to change the name is passed 
@@ -12,7 +13,7 @@ const UserName = () => {
    const [action, setAction] = useState(false);
 
    // Message to display in the action
-   const actionMessage = "Enter a new username";
+   const actionTitle = "Enter a new username";
 
    // Messages to display in the header
    const headerTitle = "Change username";
@@ -28,7 +29,9 @@ const UserName = () => {
          </div>
 
          {/* Display an action if it is active */}
-         {action && <Action message={actionMessage} type="name" color="primary" buttonMessage="Change my username" inputField="true" setAction={setAction} />}
+         {action && <ActionWrapper title={actionTitle} setAction={setAction}>
+            <ActionUserName />
+         </ActionWrapper>}
       </>
    );
 };

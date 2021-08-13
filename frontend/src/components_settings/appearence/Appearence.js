@@ -1,7 +1,7 @@
-import ThemeBox from "./subcomponents/ThemeBox";
 import AppearenceCSS from "./Appearence.module.css";
 import SettingsHeader from "../../reusable-components/settings-header.js/SettingsHeader";
 import MapTheme from "./subcomponents/MapTheme";
+import InterfaceTheme from "./subcomponents/InterfaceTheme";
 
 // messages to display in the reusable components
 const themeTitle = "Theme preferences";
@@ -21,9 +21,9 @@ const Profile = () => {
 
          <div className={AppearenceCSS.theme_wrapper}>
             {/* Predifined themes */}
-            <ThemeBox title="Predefined themes" info={preThemeInfo} type="predefined" />
+            <InterfaceTheme title="Predefined themes" info={preThemeInfo} type="predefined" />
             {/* Custom themes */}
-            <ThemeBox title="Custom themes" info={cusThemeInfo} type="custom" />
+            <InterfaceTheme title="Custom themes" info={cusThemeInfo} type="custom" />
          </div>
 
          {/* Reusable header component */}
