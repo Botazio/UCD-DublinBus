@@ -303,7 +303,7 @@ def plot_probabilistic_predictions(stop_pair, predictions):
     A probability density curve and a quantile dotplot
     """
 
-    _, axes = plt.subplots(1, 1, figsize=(8, 8))
+    _, axes = plt.subplots(1, 1, figsize=(10, 10))
 
     # Kernel density estimate (KDE)
     # Used as alternative to histogram to visualise distribution
@@ -327,16 +327,16 @@ def plot_probabilistic_predictions(stop_pair, predictions):
     departure_stop_num = Stop.objects.get(stop_id=stop_pair.split("_")[0]).stop_num
     arrival_stop_num = Stop.objects.get(stop_id=stop_pair.split("_")[-1]).stop_num
 
-    axes.set_xlabel("Journey Time (minutes)", fontsize=16)
+    axes.set_xlabel("Journey Time (minutes)", fontsize=18)
     axes.set_title(
         f"Quantile Dotplot: Stop {departure_stop_num} to Stop {arrival_stop_num}",
-        fontsize=16
+        fontsize=24
     )
 
     for spine in ("left", "right", "top"):
         axes.spines[spine].set_visible(False)
     axes.yaxis.set_visible(False)
-    axes.set_xticklabels(['{:.2f}'.format(center) for center in centers])
+    axes.set_xticklabels(['{0:.2f}'.format(center) for center in centers])
     axes.tick_params(axis='x', which='both', labelsize=16)
 
     # Plot mean as a red line
