@@ -1,24 +1,16 @@
-import { Button } from "@material-ui/core";
-import { useState } from "react";
-import SettingsHeader from "../../reusable-components/settings-header.js/SettingsHeader";
+import FeedbackForm from "./subcomponents/FeedbackForm";
+import FeedbackPreferences from "./subcomponents/FeedbackPreferences";
 
 // This component is the main component for the profile section
 // in the settings page
 const Feedback = () => {
-   // State to control when to display and hide the action message
-   const [action, setAction] = useState(false);
-
-   // Messages to display in the header
-   const headerTitle = "Feedback preferences";
-   const headerBody = "Choose here if you want to receive feedback alerts!";
-
    return (
       <>
-         <SettingsHeader title={headerTitle} body={headerBody} />
+         {/* Form to enter opinions about the about the app */}
+         <FeedbackForm />
 
-         <Button
-            variant="outlined" color="primary" onClick={() => setAction(true)}>select alerts
-         </Button>
+         {/* Allows the user to habilitate or disabled preferences */}
+         <FeedbackPreferences />
       </>
    );
 };
