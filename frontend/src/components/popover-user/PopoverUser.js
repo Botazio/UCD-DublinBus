@@ -51,34 +51,36 @@ const PopoverUser = ({ currentUser, logout }) => {
           horizontal: 'right',
         }}
         onClose={handlePopoverClose}>
-        {/* User avatar, name and link to the user profile */}
-        <div className={PopoverUserCSS.popover_header}>
-          <Avatar className={PopoverUserCSS.avatar}>
-            {currentUser.username.charAt(0)}
-          </Avatar>
-          <div className={PopoverUserCSS.popover_items}>
-            <h4>{currentUser.username}</h4>
+        <div className={PopoverUserCSS.popover_wrapper}>
+          {/* User avatar, name and link to the user profile */}
+          <div className={PopoverUserCSS.popover_header}>
+            <Avatar className={PopoverUserCSS.avatar}>
+              {currentUser.username.charAt(0)}
+            </Avatar>
+            <div className={PopoverUserCSS.popover_items}>
+              <h4>{currentUser.username}</h4>
 
-            {/* Render a different button depending on the url */}
-            {location === "/" && <Link to="/user">
-              <Button variant="outlined" color="primary" size="small" startIcon={<EditRoundedIcon />}>Edit profile</Button>
-            </Link>}
-            {location === "/user" && <Link to="/">
-              <Button variant="outlined" color="primary" size="small" startIcon={<HomeRoundedIcon />}>Homepage</Button>
-            </Link>}
+              {/* Render a different button depending on the url */}
+              {location === "/" && <Link to="/user">
+                <Button variant="outlined" color="primary" size="small" startIcon={<EditRoundedIcon />}>Edit profile</Button>
+              </Link>}
+              {location === "/user" && <Link to="/">
+                <Button variant="outlined" color="primary" size="small" startIcon={<HomeRoundedIcon />}>Homepage</Button>
+              </Link>}
 
+            </div>
           </div>
-        </div>
 
-        {/* Logout button */}
-        <div className={PopoverUserCSS.popover_logout_wrapper}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="small"
-            startIcon={<PowerSettingsNewRoundedIcon />}
-            fullWidth={true}
-            onClick={() => logout()}>Logout</Button>
+          {/* Logout button */}
+          <div className={PopoverUserCSS.popover_logout_wrapper}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              startIcon={<PowerSettingsNewRoundedIcon />}
+              fullWidth={true}
+              onClick={() => logout()}>Logout</Button>
+          </div>
         </div>
       </Popover>
     </>
