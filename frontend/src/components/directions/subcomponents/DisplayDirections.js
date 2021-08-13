@@ -5,6 +5,8 @@ import DirectionsCSS from "../Directions.module.css";
 import { Dialog, useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
+import HelpIcon from '@material-ui/icons/Help';
+import Collapsible from 'react-collapsible';
 
 // This component displays the directions after the server
 // sends back the results
@@ -39,13 +41,21 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
          {/* Display the popup for the quantile dots plot graph */}
          {open && <Dialog open={open} onClose={handleClose}>
             <div className={DirectionsCSS.quantile_graph}>
-               <img src={dotplotFile} alt="Quatile Dot Plot Unavailable" />
+               <img src={dotplotFile} alt="Quantile Dot Plot Unavailable" />
+               <Collapsible trigger={<HelpIcon></HelpIcon>}>
+                  The Quantile Dotplot is an easy way to make probability estimates of journey times. There will always be
+                  20 dots in this chart and the number of dots before a point on the x-axis is the fraction of
+                  journeys that should take less than this time. For example, if there are 5
+                  dots before 2 minutes, 5/20 (or 25%) of journeys should take less than
+                  this time. The red line is the mean predicted journey time.
+                  <a href="https://dl.acm.org/doi/10.1145/2858036.2858558" target="_blank" rel="noreferrer"> Learn more</a>.
+               </Collapsible>
             </div>
          </Dialog>}
       </Card>
    );
 
-   // Get the predicted time 
+   // Get the predicted time
    function getPredictedTime(times) {
       const q20 = handleUnits(getQuantile(times, 0.2));
       const q80 = handleUnits(getQuantile(times, 0.8));
