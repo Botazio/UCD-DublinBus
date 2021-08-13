@@ -104,7 +104,7 @@ export default function WeatherInfo() {
         width="50px"
         alt="weather-icon"
         src={
-          "http://openweathermap.org/img/w/" +
+          "https://openweathermap.org/img/w/" +
           weatherData.daily[i].weather[0]["icon"] +
           ".png"
         }
@@ -185,7 +185,7 @@ export default function WeatherInfo() {
         width="50px"
         alt="weather-icon"
         src={
-          "http://openweathermap.org/img/w/" +
+          "https://openweathermap.org/img/w/" +
           weatherData.hourly[x].weather[0]["icon"] +
           ".png"
         }

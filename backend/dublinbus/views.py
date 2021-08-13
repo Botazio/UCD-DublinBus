@@ -248,9 +248,6 @@ class Predict(APIView):
                 The datetime for the prediction. This should be a date in the
                 future. Example format: 07/28/2021, 20:35:14
 
-            num_predictions: int (optional)
-                The number of requested predictions
-
             Python Example:
 
                 import requests
@@ -318,9 +315,9 @@ class Predict(APIView):
             # Get the service IDs that are valid for the date
             calendar_id__in=utils.date_to_service_ids(parsed_datetime)
         ).values(
-                'trip_id', 'stoptime', 'stoptime__stop_id',
-                'stoptime__stop_sequence', 'stoptime__stop__stop_num',
-                'stoptime__arrival_time', 'stoptime__departure_time'
+            'trip_id', 'stoptime', 'stoptime__stop_id',
+            'stoptime__stop_sequence', 'stoptime__stop__stop_num',
+            'stoptime__arrival_time', 'stoptime__departure_time'
         )
 
         # There are likely many Trip IDs that meet this (different times of the day)
@@ -333,44 +330,35 @@ class Predict(APIView):
         )
 
         # Filter the trip stop times down to start and end point we're interested in
-        chosen_trip_stop_times = utils.filter_trip_stop_times(
+        chosen_trip_stop_times = list(utils.filter_trip_stop_times(
             chosen_trip,
             request.data['departure_stop_id'],
             request.data['arrival_stop_id']
+        ))
+
+        num_predictions = 5 if len(chosen_trip_stop_times) > 10 else 10
+
+        multiprocessing_results = utils.multiprocessing_adjacent_stop_prediction(
+            chosen_trip_stop_times,
+            features,
+            num_predictions
         )
 
-        # Array of predictions for the journey
-        results = {
-            'total_predictions': np.zeros(int(request.data.get('num_predictions', 100))),
+        response = {
+            'total_predictions': np.zeros(num_predictions),
             'stop_pairs': []
         }
 
-        for stop_a, stop_b in chosen_trip_stop_times:
-
-            stop_pair_time_predictions = utils.predict_adjacent_stop(
-                stop_a['stoptime__stop__stop_num'],
-                stop_b['stoptime__stop__stop_num'],
-                features,
-                num_predictions=int(request.data.get('num_predictions', 100))
-            )
-
-            # Store the results for this stop pair
-            results['stop_pairs'].append({
-                'departure_stop': stop_a['stoptime__stop__stop_num'],
-                'arrival_stop': stop_b['stoptime__stop__stop_num'],
-                'predictions': stop_pair_time_predictions
-            })
-
-            # Add predictions for current adjacent stop pair to
-            # total journey prediction
-            results['total_predictions'] += stop_pair_time_predictions
+        for res in multiprocessing_results:
+            response['total_predictions'] += res['predictions']
+            response['stop_pairs'].append(res)
 
         utils.plot_probabilistic_predictions(
             f"{request.data['departure_stop_id']}_to_{request.data['arrival_stop_id']}",
-            results['total_predictions']
+            response['total_predictions']
         )
 
-        return Response(results, status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class FavoriteStopView(APIView):

@@ -74,7 +74,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'http://34.245.228.88:3000', # http://localhost:3000
+    'http://localhost:3000',
+    'https://mystifying-swirles-3ffb35.netlify.app',
+    'https://romantic-sammet-631a7a.netlify.app'
 )
 
 JWT_AUTH = {
