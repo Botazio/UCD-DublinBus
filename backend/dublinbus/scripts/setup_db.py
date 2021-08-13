@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from csv import reader
 import pandas as pd
-from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line
+from dublinbus.models import Stop, Route, Trip, StopTime, Calendar, Line, Shape
 
 GTFS_STATIC_DIR = os.environ.get('GTFS_STATIC_DIR')
 
@@ -14,10 +14,11 @@ Trip.objects.all().delete() # PK trip_id , FK route, FK calendar
 Calendar.objects.all().delete() # PK service_id
 Stop.objects.all().delete() # PK stop_id
 Route.objects.all().delete() # PK route_id
+Shape.objects.all().delete() # PK shape_id
 
 # Ingest GTFS-static data
 # order of ingestion the inverse to deletion - populate tables with PKs first before ones with FKs
-# Calendar -> Stop -> Route -> Trip -> StopTime -> Line
+# Calendar -> Stop -> Route -> Shape -> Trip -> StopTime -> Line
 # a. Save raw txt files into database
 with open('{}/data/calendar.txt'.format(GTFS_STATIC_DIR), 'r') as calendar_file:
 
@@ -27,7 +28,7 @@ with open('{}/data/calendar.txt'.format(GTFS_STATIC_DIR), 'r') as calendar_file:
     next(csv_reader, None)
 
     for row in csv_reader:
-        print(row)
+        #print(row)
         c = Calendar(
             service_id = row[0],
             monday = row[1] == "1",
@@ -51,7 +52,7 @@ with open('{}/data/stops.txt'.format(GTFS_STATIC_DIR), 'r') as stops_file:
     next(csv_reader, None)
 
     for row in csv_reader:
-        print(row)
+        #print(row)
 
         try:
             stop_num = int(row[1].split(" ")[-1])
@@ -78,7 +79,7 @@ with open('{}/data/routes.txt'.format(GTFS_STATIC_DIR), 'r') as routes_file:
     next(csv_reader, None)
 
     for row in csv_reader:
-        print(row)
+        #print(row)
         r = Route(
             route_id=row[0],
             agency_id=row[1],
@@ -89,6 +90,24 @@ with open('{}/data/routes.txt'.format(GTFS_STATIC_DIR), 'r') as routes_file:
 
         r.save()
 
+with open('{}/data/shapes.txt'.format(GTFS_STATIC_DIR), 'r') as shapes_file:
+
+    csv_reader = reader(shapes_file)
+
+    # skip header
+    next(csv_reader, None)
+
+    for row in csv_reader:
+        #print(row)
+        sh = Shape(
+            shape_id=row[0],
+            shape_pt_lat=float(row[1]),
+            shape_pt_lon=float(row[2]),
+            shape_pt_sequence=int(row[3]),
+            shape_dist_traveled=float(row[4])
+        )
+
+        sh.save()
 
 with open('{}/data/trips.txt'.format(GTFS_STATIC_DIR), 'r') as trips_file:
 
@@ -98,7 +117,7 @@ with open('{}/data/trips.txt'.format(GTFS_STATIC_DIR), 'r') as trips_file:
     next(csv_reader, None)
 
     for row in csv_reader:
-        print(row)
+        #print(row)
 
         t = Trip(
             trip_id=row[2],
@@ -120,7 +139,7 @@ with open('{}/data/stop_times.txt'.format(GTFS_STATIC_DIR), 'r') as stop_times_f
     next(csv_reader, None)
 
     for row in csv_reader:
-        print(row)
+       # print(row)
         arrival_time = row[1]
         departure_time = row[2]
 
@@ -190,7 +209,7 @@ def get_lines(stop_id):
     Returns
         List of distinct bus lines that pass through given stop.
     """
-    print(stop_id)
+    #print(stop_id)
     trip_ids_qs = StopTime.objects.filter(stop_id=stop_id).values('trip__route__route_short_name')
     trip_ids = pd.DataFrame(list(trip_ids_qs))
     return trip_ids["trip__route__route_short_name"].unique()

@@ -8,7 +8,7 @@ from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
 import numpy as np
 
-from dublinbus.models import Route, Stop, Trip, StopTime, Calendar
+from dublinbus.models import Route, Stop, Trip, StopTime, Calendar, Shape
 import dublinbus.utils as utils
 
 from rest_framework import status, generics
@@ -194,21 +194,43 @@ def lines(request):
             # otherwise append the most recent future trip
             result[i]['trip_id'] = trip_id[0]
 
-        # append stops list per route & direction
-        result[i]['stops'] = list(
-            StopTime.objects.filter(trip_id=record['trip_id']
-                                    ).values("arrival_time",
-                                             "departure_time",
-                                             "stop_sequence",
-                                             "stop_headsign",
-                                             "shape_dist_traveled",
-                                             "stop_id",
-                                             stop_name=F("stop__stop_name"),
-                                             stop_num=F("stop__stop_num"),
-                                             stop_lat=F("stop__stop_lat"),
-                                             stop_lon=F("stop__stop_lon")
-                                             )
-                                    )
+    return JsonResponse(list(result), safe=False)
+
+def stops_by_trip(request, trip_id):
+    """Returns the stops in a trip in order of stop sequence."""
+
+    try:
+        result = StopTime.objects.filter(trip_id=trip_id
+                                         ).values("arrival_time",
+                                                  "departure_time",
+                                                  "stop_sequence",
+                                                  "stop_headsign",
+                                                  "shape_dist_traveled",
+                                                  "stop_id",
+                                                  stop_name=F("stop__stop_name"),
+                                                  stop_num=F("stop__stop_num"),
+                                                  stop_lat=F("stop__stop_lat"),
+                                                  stop_lon=F("stop__stop_lon")
+                                                  ).order_by('stop_sequence')
+    except Trip.DoesNotExist as trip_not_exist:
+        raise Http404("Invalid Trip ID") from trip_not_exist
+
+    return JsonResponse(list(result), safe=False)
+
+def shape_by_trip(request, trip_id):
+    """Returns the shape of a trip in order of point sequence."""
+
+    try:
+        # get the shape_id associated with selected trip_id
+        shape_id = Trip.objects.get(trip_id=trip_id).shape_id
+    except Trip.DoesNotExist as trip_not_exist:
+        raise Http404("Invalid Trip ID") from trip_not_exist
+
+    try:
+        result = Shape.objects.filter(shape_id=shape_id
+                                      ).values().order_by('shape_pt_sequence')
+    except Shape.DoesNotExist as shape_not_exist:
+        raise Http404("Invalid Shape ID") from shape_not_exist
 
     return JsonResponse(list(result), safe=False)
 
