@@ -30,6 +30,33 @@ class Stop(models.Model):
     def __str__(self):
         return str(self.stop_name)
 
+class Shape(models.Model):
+    """
+    A class to describe the path that a vehicle travels along a route alignment.
+    Shapes are associated with Trips, and consist of a sequence of points
+    through which the vehicle passes in order.
+
+    Attributes
+    ---
+        shape_id: str
+            Identifies a shape.
+        shape_pt_lat: str
+            Latitude of a shape point.
+        shape_pt_lon: str
+            Longitude of a shape point.
+        shape_pt_sequence: str
+            Sequence in which the shape points connect to form the shape.
+            Values must increase along the trip but do not need to be consecutive.
+        shape_dist_traveled: str
+            Actual distance traveled along the shape from the first shape point
+            to the point specified in this record
+    """
+
+    shape_id = models.CharField(max_length=120)
+    shape_pt_lat = models.FloatField()
+    shape_pt_lon = models.FloatField()
+    shape_pt_sequence = models.IntegerField()
+    shape_dist_traveled = models.FloatField()
 
 class Route(models.Model):
     """
@@ -46,7 +73,6 @@ class Route(models.Model):
         route_long_name: str
             A longer name for the Dublin Bus route
         route_type: str
-
     """
 
     route_id = models.CharField(max_length=120, primary_key=True)
@@ -61,6 +87,7 @@ class Route(models.Model):
 class Calendar(models.Model):
     """
     A class to represent a set of dates when service is available for routes.
+
     Attributes
     ---
         service_id: str
@@ -120,7 +147,6 @@ class Trip(models.Model):
         shape_id:
             The shape ID from shapes.txt.
         trip_headsign:
-
         direction_id: int
             The direction the trip is running in. Either 0 or 1.
         route: Route
@@ -155,11 +181,8 @@ class StopTime(models.Model):
             The stop number for this stop on this trip starting
             from 1. For example, 3 is the third stop on this trip.
         stop_headsign: str
-
         pickup_type: int
-
         drop_off_type: int
-
         shape_dist_traveled: float
             Total distance travelled since first stop in the sequence (in metres (?))
     """
