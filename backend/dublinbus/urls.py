@@ -13,6 +13,8 @@ urlpatterns = [
     path('favoritestop/<int:primary_key>/', views.FavoriteStopView.as_view()),
     path('favoritejourney/', views.FavoriteJourneyView.as_view()),
     path('favoritejourney/<int:primary_key>/', views.FavoriteJourneyView.as_view()),
+    path('favoriteline/', views.FavoriteLineView.as_view()),
+    path('favoriteline/<int:primary_key>/', views.FavoriteLineView.as_view()),
     path('markers/', views.MarkerView.as_view()),
     path('markers/<int:primary_key>/', views.MarkerView.as_view()),
     path('theme/', views.ThemeView.as_view()),

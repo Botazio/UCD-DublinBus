@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
 import environ
-from .models import FavoriteStop, FavoriteJourney, Marker, Theme
+from .models import FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme
 from . import providers
 from .register import register_social_user
 
@@ -81,6 +81,14 @@ class FavoriteJourneySerializer(serializers.ModelSerializer):
         fields = ('pk', 'created', 'owner', "stop_origin", "stop_destination")
         depth = 1
 
+class FavoriteLineSerializer(serializers.ModelSerializer):
+    '''FavoriteLineSerializer'''
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = FavoriteLine
+        fields = ('pk', 'created', 'owner', "route_short_name", "direction_id")
+        depth = 1
+
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
 
@@ -99,7 +107,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'favoritejourneys',
                   'theme',
                   'markers')
-        depth = 1
+        depth = 2
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     ''' Serializer class for handling signups
@@ -151,7 +159,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                   'markers',
                   'password',
                   'token')
-        depth = 1
+        depth = 2
 
 class MarkerSerializer(serializers.ModelSerializer):
     '''MarkerSerializer'''
