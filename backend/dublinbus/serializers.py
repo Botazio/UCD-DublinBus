@@ -105,6 +105,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'map',
                   'favoritestops',
                   'favoritejourneys',
+                  'favoritelines',
                   'theme',
                   'markers')
         depth = 2
@@ -155,6 +156,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                   'map',
                   'favoritestops',
                   'favoritejourneys',
+                  'favoritelines',
                   'theme',
                   'markers',
                   'password',
