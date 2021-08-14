@@ -290,9 +290,9 @@ class FavoriteLine(models.Model):
         unique_together = (("owner", "route_short_name", "direction_id"),)
 
     def __str__(self):
-        return str(self.owner)
-        + ' - ' + str(self.route_short_name)
-        + ' - ' + str(self.direction_id)
+        return str(self.owner) +\
+               ' - ' + str(self.route_short_name) +\
+               ' - ' + str(self.direction_id)
 
 class Theme(models.Model):
     """
