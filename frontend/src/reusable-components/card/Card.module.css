@@ -22,5 +22,9 @@
    padding: 15px 15px 25px 15px !important;
 }
 .last {
-   margin-bottom: 15px;
+   margin-bottom: 15px !important;
+}
+.full_width {
+   width: 100% !important;
+   margin-top: 15px !important;
 }

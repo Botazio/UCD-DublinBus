@@ -2,9 +2,9 @@ import Card from "../../../reusable-components/card/Card";
 import LinesCSS from "../Lines.module.css";
 import ScheduleIconRoundedIcon from '@material-ui/icons/ScheduleRounded';
 
-const LineBox = ({ selectedLine }) => {
+const LineBox = ({ selectedLine, variant }) => {
    return (
-      <Card variant="last">
+      <Card variant={variant ? variant : "last"}>
          <div className={LinesCSS.line_title}>
             <div>
                <h4>Line {selectedLine.route__route_short_name}</h4>
