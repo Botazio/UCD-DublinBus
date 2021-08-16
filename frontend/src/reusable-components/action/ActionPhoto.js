@@ -12,8 +12,6 @@ const ActionPhoto = (props) => {
    // Grab the user from the provider
    const { currentUser, isAuthenticated } = useAuth();
 
-   console.log(currentUser);
-
    // Function to select an image
    const imageSelecterHandler = event => {
       setSelectedImage(event.target.files[0]);

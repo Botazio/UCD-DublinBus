@@ -30,7 +30,7 @@
 }
 .button > p {
    text-transform: capitalize;
-   margin-left: 10px;
+   margin-left: 4px;
 }
 .active {
    border-left: 2px solid gray;

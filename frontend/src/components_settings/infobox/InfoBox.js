@@ -3,6 +3,7 @@ import Appearence from "../appearence/Appearence";
 import InfoBoxCSS from "./InfoBox.module.css";
 import Markers from "../markers/Markers";
 import Favorites from "../favorites/Favorites";
+import Feedback from "../feedback/Feedback";
 
 // Renders a different section depending in which button is active 
 const InfoBox = ({ buttonActive }) => {
@@ -13,6 +14,7 @@ const InfoBox = ({ buttonActive }) => {
          {buttonActive === "appearence" && <Appearence />}
          {buttonActive === "favorites" && <Favorites />}
          {buttonActive === "markers" && <Markers />}
+         {buttonActive === "feedback" && <Feedback />}
       </div>
    );
 };

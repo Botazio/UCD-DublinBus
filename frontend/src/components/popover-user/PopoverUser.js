@@ -5,6 +5,8 @@ import PowerSettingsNewRoundedIcon from '@material-ui/icons/PowerSettingsNewRoun
 import Avatar from '@material-ui/core/Avatar';
 import { useLocation } from "react-use";
 import { Button, Popover } from "@material-ui/core";
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 
 // This component renders a popover when the user icon is clicked
 // Allows the user to logout or to go to the settings page
@@ -49,30 +51,35 @@ const PopoverUser = ({ currentUser, logout }) => {
           horizontal: 'right',
         }}
         onClose={handlePopoverClose}>
-        {/* User avatar, name and link to the user profile */}
-        <div className={PopoverUserCSS.popover_header}>
-          <Avatar className={PopoverUserCSS.avatar}>
-            {currentUser.username.charAt(0)}
-          </Avatar>
-          <div className={PopoverUserCSS.popover_items}>
-            <h4>{currentUser.username}</h4>
+        <div className={PopoverUserCSS.popover_wrapper}>
+          {/* User avatar, name and link to the user profile */}
+          <div className={PopoverUserCSS.popover_header}>
+            <Avatar className={PopoverUserCSS.avatar}>
+              {currentUser.username.charAt(0)}
+            </Avatar>
+            <div className={PopoverUserCSS.popover_items}>
+              <h4>{currentUser.username}</h4>
 
-            {/* Render a different button depending on the url */}
-            {location === "/" && <Link to="/user">
-              <Button variant="outlined" color="primary" size="small">Edit profile</Button>
-            </Link>}
-            {location === "/user" && <Link to="/">
-              <Button variant="outlined" color="primary" size="small">Homepage</Button>
-            </Link>}
+              {/* Render a different button depending on the url */}
+              {location === "/" && <Link to="/user">
+                <Button variant="outlined" color="primary" size="small" startIcon={<EditRoundedIcon />}>Edit profile</Button>
+              </Link>}
+              {location === "/user" && <Link to="/">
+                <Button variant="outlined" color="primary" size="small" startIcon={<HomeRoundedIcon />}>Homepage</Button>
+              </Link>}
 
+            </div>
           </div>
-        </div>
 
-        {/* Logout button */}
-        <div className={PopoverUserCSS.popover_logout_wrapper}>
-          <div onClick={() => logout()}>
-            <PowerSettingsNewRoundedIcon fontSize="medium" />
-            <h4>LOGOUT</h4>
+          {/* Logout button */}
+          <div className={PopoverUserCSS.popover_logout_wrapper}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              startIcon={<PowerSettingsNewRoundedIcon />}
+              fullWidth={true}
+              onClick={() => logout()}>Logout</Button>
           </div>
         </div>
       </Popover>

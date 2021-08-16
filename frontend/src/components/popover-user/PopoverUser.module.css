@@ -4,12 +4,16 @@
 .pointer {
   cursor: pointer;
 }
+.popover_wrapper {
+  display: flex;
+  flex-direction: column;
+}
 .popover_header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 90%;
-  padding: 10px;
+  padding: 5px;
   margin: 5px;
 }
 .popover_items {
@@ -26,12 +30,8 @@
   margin: 2px 0px;
 }
 .popover_logout_wrapper {
-  width: 100%;
-  border-top: 1px solid #ccc;
-  padding: 10px 15px;
-}
-.popover_logout_wrapper > div {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+  width: 90%;
+  border-top: 1px solid lightgray;
+  padding: 10px;
+  align-self: center;
 }

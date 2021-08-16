@@ -2,10 +2,11 @@ import ReactDOM from "react-dom";
 import { useState } from "react";
 import SettingsBarCSS from "./SettingsBar.module.css";
 import SettingsBarSwitch from "./subcomponents/SettingsBarSwitch";
-import { ReactComponent as IconUser } from "./fixtures/icon-user.svg";
-import { ReactComponent as IconPalette } from "./fixtures/icon-palette.svg";
-import { ReactComponent as IconFav } from "./fixtures/icon-fav.svg";
-import { ReactComponent as IconMarker } from "./fixtures/icon-marker.svg";
+import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
+import PaletteRoundedIcon from '@material-ui/icons/PaletteRounded';
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
+import FeedbackRoundedIcon from '@material-ui/icons/FeedbackRounded';
 import InfoBox from "../infobox/InfoBox";
 
 // Main component of the settings page. Handles which section is active
@@ -56,10 +57,11 @@ const SettingsBar = () => {
          <div className={SettingsBarCSS.sidebar + " " + (sideBar ? SettingsBarCSS.sidebar_active : SettingsBarCSS.sidebar_inactive)}>
             <div className={SettingsBarCSS.sidebar_title}><p>Account Settings</p></div>
             {/* Render the section buttons */}
-            {sectionButton("profile", <IconUser width={20} height={20} />)}
-            {sectionButton("appearence", <IconPalette width={20} height={20} />)}
-            {sectionButton("favorites", <IconFav width={20} height={20} />)}
-            {sectionButton("markers", <IconMarker width={20} height={20} />)}
+            {sectionButton("profile", <PersonRoundedIcon />)}
+            {sectionButton("appearence", <PaletteRoundedIcon />)}
+            {sectionButton("favorites", <FavoriteRoundedIcon />)}
+            {sectionButton("markers", <RoomRoundedIcon />)}
+            {sectionButton("feedback", <FeedbackRoundedIcon />)}
          </div>
 
 

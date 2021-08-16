@@ -1,8 +1,20 @@
-.container {
+.markers_wrapper {
    border: 1px solid lightgray;
    border-radius: 5px;
    margin-bottom: 15px;
+}
+.container {
    padding: 15px;
+}
+.markers_header {
+   background-color: #fafafa;
+   padding: 15px;
+   border-radius: 5px 5px 0px 0px;
+   border-bottom: 1px solid lightgray;
+}
+.markers_header > h3 {
+   font-size: 1rem;
+   font-weight: 500;
 }
 .switch_container {
    display: flex;

@@ -5,6 +5,8 @@ import DirectionsCSS from "../Directions.module.css";
 import { Dialog, useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
+import DialogWrapper from "../../../reusable-components/dialog-feedback/DialogWrapper";
+import FeedbackDefault from "../../../reusable-components/dialog-feedback/FeedbackDefault";
 import HelpIcon from '@material-ui/icons/Help';
 import Collapsible from 'react-collapsible';
 
@@ -34,6 +36,12 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
       <Card variant="last" >
          {/* Display the prediction time */}
          {searchResults && getPredictedTime(searchResults.total_predictions)}
+
+         {/* Display a dialog asking for user feedback after getting the results */}
+         {searchResults && <DialogWrapper time="5000">
+            <FeedbackDefault title="Was this information helpful?" />
+         </DialogWrapper>}
+
 
          {/* Display the expanded results */}
          {searchResults && expanded && <ExpandedResults searchResults={searchResults} selectedHour={selectedHour} />}
