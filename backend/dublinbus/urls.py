@@ -9,6 +9,7 @@ urlpatterns = [
     path('predict/', views.Predict.as_view(), name='predict'),
     path('users/', views.UserView.as_view()),
     path('users/<int:primary_key>/', views.UserView.as_view()),
+    path('user_icon/', views.UserIconView.as_view()),
     path('favoritestop/', views.FavoriteStopView.as_view()),
     path('favoritestop/<int:primary_key>/', views.FavoriteStopView.as_view()),
     path('favoritejourney/', views.FavoriteJourneyView.as_view()),

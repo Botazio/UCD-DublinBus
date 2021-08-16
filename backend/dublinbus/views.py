@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from django.db.models import F
 from django.shortcuts import render
-from django.http import JsonResponse, Http404, HttpResponseBadRequest
+from django.http import JsonResponse, Http404, HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import get_user_model
 from django.views.decorators.cache import cache_page
 import numpy as np
@@ -596,6 +596,29 @@ class UserView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserIconView(APIView):
+    """ Get or Delete a User image.
+    """
+
+    def get(self, request):
+        """Get a User image."""
+        image_data = open(request.user.image.path, "rb").read()
+        return HttpResponse(image_data, content_type="image/png")
+
+    def delete(self, request):
+        """Delete an uploaded User image."""
+        # if the user had uploaded image (i.e. not using default icon)
+        if request.user.image.name != 'default.png':
+            # then delete their uploaded image from /dublinbus_image
+            request.user.image.delete()
+            # then set user image back to default
+            request.user.image.name = 'default.png'
+            request.user.save()
+            return Response("Deleted icon successfully.",
+                            status=status.HTTP_204_NO_CONTENT)
+        return Response("No uploaded icon to delete.",
+            status=status.HTTP_400_BAD_REQUEST)
 
 class MarkerView(APIView):
     """
