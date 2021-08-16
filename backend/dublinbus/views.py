@@ -20,13 +20,14 @@ from rest_framework.generics import GenericAPIView
 from .serializers import UserSerializerWithToken, \
     FavoriteStopSerializer, \
     FavoriteJourneySerializer, \
+    FavoriteLineSerializer, \
     MarkerSerializer, \
     ThemeSerializer, \
     UserSerializer, \
     ChangePasswordSerializer, \
     GoogleSocialAuthSerializer, \
     FacebookSocialAuthSerializer
-from .models import FavoriteStop, FavoriteJourney, Marker, Theme
+from .models import FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme
 from .permissions import IsOwner, IsUser
 
 logging.basicConfig(
@@ -479,6 +480,46 @@ class FavoriteJourneyView(APIView):
         self.check_object_permissions(self.request, favorite_journey)
         favorite_journey.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FavoriteLineView(APIView):
+    """
+    Get, Post or Delete a FavoriteLine instance(s) for the currently authenticated user.
+    """
+
+    permission_classes = [IsOwner]
+
+    def get(self, request):
+        """Return a list of all the FavoriteLines for the currently authenticated user."""
+        favorite_lines = FavoriteLine.objects.filter(owner=self.request.user)
+        serializer = FavoriteLineSerializer(favorite_lines, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new FavoriteLine for the currently authenticated user."""
+        serializer = FavoriteLineSerializer(data=request.data)
+        if serializer.is_valid():
+            # Associating the user that created the FavoriteLine, with the FavoriteStop instance
+            serializer.save(owner=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def get_object(primary_key):
+        """Return the FavoriteLines object for the currently authenticated user."""
+        try:
+            return FavoriteLine.objects.get(pk=primary_key)
+        except FavoriteLine.DoesNotExist as favorite_line_not_exist:
+            raise Http404(
+                f"Cannot find FavoriteLine: {primary_key}"
+                ) from favorite_line_not_exist
+
+    def delete(self, request, primary_key):
+        """Delete a FavoriteLine for the currently authenticated user."""
+        favorite_line = self.get_object(primary_key)
+        self.check_object_permissions(self.request, favorite_line)
+        favorite_line.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UserView(APIView):
     """

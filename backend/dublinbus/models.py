@@ -274,6 +274,26 @@ class FavoriteJourney(models.Model):
     def __str__(self):
         return str(self.owner) + ' - ' + str(self.stop_origin) + ' -> ' + str(self.stop_destination)
 
+class FavoriteLine(models.Model):
+    """
+    A class that represents the user's favorite Dublin Bus lines e.g. 37 inbound.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('dublinbus.CustomUser',
+                              related_name='favoritelines',
+                              on_delete=models.CASCADE)
+    route_short_name = models.CharField(max_length=120)
+    direction_id = models.IntegerField()
+
+    class Meta:
+        ordering = ['created']
+        unique_together = (("owner", "route_short_name", "direction_id"),)
+
+    def __str__(self):
+        return str(self.owner) +\
+               ' - ' + str(self.route_short_name) +\
+               ' - ' + str(self.direction_id)
+
 class Theme(models.Model):
     """
     A class that represents the user's selection of appearance options.
