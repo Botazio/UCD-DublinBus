@@ -54,8 +54,6 @@ const MyStops = () => {
       setPage(value);
    };
 
-   return "";
-
    // Error handling when fetching for the data
    if (!favoriteStops) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
