@@ -6,6 +6,7 @@ from django.db.models import F
 from django.shortcuts import render
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth import get_user_model
+from django.views.decorators.cache import cache_page
 import numpy as np
 
 from dublinbus.models import Route, Stop, Trip, StopTime, Calendar, Shape
@@ -43,6 +44,7 @@ def index(request):
     """Temporary homepage for the application"""
     return render(request, 'dublinbus/index.html')
 
+@cache_page(60 * 60)
 def stops(request):
     """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
 
@@ -112,6 +114,7 @@ def stop(request, stop_id):
                                 key=lambda arrival: arrival['scheduled_arrival_time'])
     return JsonResponse(result)
 
+@cache_page(60 * 60)
 def route(request, route_id):
     """Returns all of the trips for a particular route."""
 
@@ -213,6 +216,7 @@ def lines(request):
 
     return JsonResponse(list(result), safe=False)
 
+@cache_page(60 * 60)
 def stops_by_trip(request, trip_id):
     """Returns the stops in a trip in order of stop sequence."""
 
@@ -234,6 +238,7 @@ def stops_by_trip(request, trip_id):
 
     return JsonResponse(list(result), safe=False)
 
+@cache_page(60 * 60)
 def shape_by_trip(request, trip_id):
     """Returns the shape of a trip in order of point sequence."""
 
