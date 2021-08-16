@@ -7,5 +7,4 @@ for i in "${arr[@]}"
 do
 	echo "$i"
 	python -u -m models.run_model linear-regression learning-curve "$i"
-	python -u -m models.run_model random-forest learning-curve "$i"
 done
