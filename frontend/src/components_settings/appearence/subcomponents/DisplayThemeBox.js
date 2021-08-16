@@ -1,5 +1,5 @@
 import AppearenceCSS from "../Appearence.module.css";
-import { ReactComponent as IconClose } from "../../../fixtures/icons/icon-close.svg";
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 
 // This components shows the styles in a small box that simulates a common user interface
 // Takes the styles from the box theme
@@ -18,7 +18,7 @@ const DisplayThemeBox = ({ boxTheme }) => {
                </div>
             </div>
             <div className={AppearenceCSS.display_theme_body_sidebar} style={{ backgroundColor: boxTheme.theme.background_secondary }}>
-               <IconClose fill={boxTheme.theme.icon_color} width="10px" height="10px" ></IconClose>
+               <CloseRoundedIcon htmlColor={boxTheme.theme.icon_color} />
             </div>
          </div>
 
