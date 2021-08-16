@@ -60,12 +60,14 @@ const FavoriteLines = () => {
                      <LineBox selectedLine={line} variant="full_width" />
                   );
                })}
+
+               {/* Pagination for the results */}
+               {visibleLines && <div className={FavoritesCSS.pagination}>
+                  <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleLines.length / 10)} color="primary" size="small" />
+               </div>}
+
             </Card>}
 
-            {/* Pagination for the results */}
-            {visibleLines && <div className={FavoritesCSS.pagination}>
-               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleLines.length / 10)} color="primary" size="small" />
-            </div>}
 
          </div>
       </>

@@ -11,8 +11,8 @@ const LineBox = ({ selectedLine, variant }) => {
                <p>{selectedLine.trip_headsign}</p>
             </div>
             <a href={"https://dublinbus.ie/Your-Journey1/Timetables/All-Timetables/" +
-                        staticTimetable[selectedLine.route__route_short_name]}
-               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon/></a>
+               staticTimetable[selectedLine.route__route_short_name]}
+               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon htmlColor="black" /></a>
          </div>
       </Card>
    );
@@ -140,6 +140,6 @@ const staticTimetable = {
    "155": "181/",
    "747": "74711211/",
    "757": "7471111/",
-}
+};
 
 export default LineBox;

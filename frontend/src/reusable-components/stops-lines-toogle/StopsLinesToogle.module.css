@@ -8,15 +8,6 @@
    border-radius: 5px;
    padding: 5px;
 }
-.toogle_buttons_button {
-   width: 50%;
-   background-color: white;
-   padding: 5px 5px;
-   border-radius: 5px;
-   font-size: 1rem;
-   cursor: pointer;
-}
-.toogle_buttons_active {
-   background-color: #DBF2FF;
-   border: 1px solid #00B5F4;
+.toogle_buttons_wrapper > button:first-child {
+   margin-right: 5px;
 }

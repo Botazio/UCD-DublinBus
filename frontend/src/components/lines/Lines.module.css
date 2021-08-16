@@ -19,8 +19,11 @@
   justify-content: space-between;
   align-items: center;
 }
-.line_title > div:first-child {
+.line_title > div {
   margin-right: 15px;
+}
+.line_title > div > p {
+  font-size: 0.9rem;
 }
 .line_title > svg {
   cursor: pointer;

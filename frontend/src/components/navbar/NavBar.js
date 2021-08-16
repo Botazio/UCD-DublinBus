@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../providers/AuthContext";
 import PopoverUser from "../popover-user/PopoverUser";
 import { useEffect } from "react";
-import PersonOutlineRoundedIcon from '@material-ui/icons/PersonOutlineRounded';
+import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
 
 const Navbar = () => {
   // Grab the functions and states from the authentication provider
@@ -35,7 +35,7 @@ const Navbar = () => {
         {/* Change the icon logo if there if the user has login*/}
         {!currentUser && (
           <Link to="/login">
-            <PersonOutlineRoundedIcon htmlColor="black" fontSize="large" />
+            <PersonRoundedIcon htmlColor="black" fontSize="large" />
           </Link>
         )}
         {currentUser && (<PopoverUser currentUser={currentUser} logout={logout} />)}

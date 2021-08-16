@@ -55,13 +55,13 @@ const FavoriteStops = () => {
             {visibleStops && <Card>
                <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
                <DisplayStops stops={visibleStops} page={page} variant="favorites" />
+
+               {/* Pagination for the results */}
+               {visibleStops && <div className={FavoritesCSS.pagination}>
+                  <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
+               </div>}
+
             </Card>}
-
-
-            {/* Pagination for the results */}
-            {visibleStops && <div className={FavoritesCSS.pagination}>
-               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
-            </div>}
 
          </div>
       </>
