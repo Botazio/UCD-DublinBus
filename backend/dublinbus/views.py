@@ -210,7 +210,7 @@ def lines(request):
                                              stop_lon=F("stop__stop_lon")
                                              )
                                     )
-                                    
+      
     return JsonResponse(list(result), safe=False)
 
 def stops_by_trip(request, trip_id):
