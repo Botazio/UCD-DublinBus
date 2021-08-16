@@ -108,7 +108,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'favoritelines',
                   'theme',
                   'markers')
-        depth = 2
+        depth = 1
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     ''' Serializer class for handling signups
@@ -161,7 +161,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
                   'markers',
                   'password',
                   'token')
-        depth = 2
+        depth = 1
 
 class MarkerSerializer(serializers.ModelSerializer):
     '''MarkerSerializer'''
