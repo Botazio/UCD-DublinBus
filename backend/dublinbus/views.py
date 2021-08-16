@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from django.db.models import F
 from django.shortcuts import render
-from django.http import JsonResponse, Http404, HttpResponseBadRequest
+from django.http import JsonResponse, Http404, HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import get_user_model
 from django.views.decorators.cache import cache_page
 import numpy as np
@@ -617,9 +617,8 @@ class UserIconView(APIView):
             request.user.save()
             return Response("Deleted icon successfully.",
                             status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response("No uploaded icon to delete.",
-                            status=status.HTTP_400_BAD_REQUEST)
+        return Response("No uploaded icon to delete.",
+            status=status.HTTP_400_BAD_REQUEST)
 
 class MarkerView(APIView):
     """
