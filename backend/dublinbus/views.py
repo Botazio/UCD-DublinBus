@@ -195,6 +195,22 @@ def lines(request):
             # otherwise append the most recent future trip
             result[i]['trip_id'] = trip_id[0]
 
+        # append stops list per route & direction
+        result[i]['stops'] = list(
+            StopTime.objects.filter(trip_id=record['trip_id']
+                                    ).values("arrival_time",
+                                             "departure_time",
+                                             "stop_sequence",
+                                             "stop_headsign",
+                                             "shape_dist_traveled",
+                                             "stop_id",
+                                             stop_name=F("stop__stop_name"),
+                                             stop_num=F("stop__stop_num"),
+                                             stop_lat=F("stop__stop_lat"),
+                                             stop_lon=F("stop__stop_lon")
+                                             )
+                                    )
+
     return JsonResponse(list(result), safe=False)
 
 def stops_by_trip(request, trip_id):
