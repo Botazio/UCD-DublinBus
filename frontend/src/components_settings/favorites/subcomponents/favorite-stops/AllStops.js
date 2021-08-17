@@ -46,10 +46,10 @@ const AllStops = () => {
    };
 
    // Error handling when fetching for the data
-   if (!favoriteStops) return <CustomError height="60" message="Unable to fetch the data" />;
+   if (!favoriteStops) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Error handling when fetching for the data
-   if (error) return <CustomError height="60" message="Unable to fetch the data" />;
+   if (error) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Wait for the data
    if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
@@ -74,13 +74,13 @@ const AllStops = () => {
             {/* Action button to save the changes. It is displayed if the active stops has at least one value */}
             {(activeStops.length !== 0) && <div className={FavoritesCSS.action_button}>
                <Button
-                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>save changes
+                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change favorites
                </Button>
             </div>}
          </div>
 
          {/* Display an action if it is active */}
-         {action && <ActionWrapper title={"Add favorites stops"} setAction={setAction}>
+         {action && <ActionWrapper title={"Add favorite stops"} setAction={setAction}>
             <ActionAddStops activeStops={activeStops} setActiveStops={setActiveStops} />
          </ActionWrapper>}
       </>

@@ -10,9 +10,9 @@ import Card from "../../../reusable-components/card/Card";
 import { useStops } from "../../../providers/StopsContext";
 import Waiting from "../../../reusable-components/waiting/Waiting";
 
-// This component renders the managing system to delete the already saved favorite stops 
+// This component renders the user favorite stops 
 const FavoriteStops = () => {
-   // Markers to be displayed on the page. They are filtered by the search bar 
+   // Stops to be displayed on the page. They are filtered by the search bar 
    const [visibleStops, setVisibleStops] = useState();
    // User stops
    const [filteredStops, setFilteredStops] = useState();
@@ -29,8 +29,7 @@ const FavoriteStops = () => {
    // Set the visible stops to all of them the first time the component renders
    useEffect(() => {
       if (stops && favoriteStops) {
-         // Do not show the stops that are already part of the 
-         // user favorite stops
+         // Get the full stop object 
          const arrayStops = stops.filter(({ stop_id: id1 }) => favoriteStops.some(({ stop: id2 }) => id2 === id1));
          setFilteredStops(arrayStops);
          setVisibleStops(arrayStops);
@@ -41,9 +40,6 @@ const FavoriteStops = () => {
    const handlePage = (event, value) => {
       setPage(value);
    };
-
-   // Error handling when fetching for the data
-   if (!favoriteStops) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Error handling when fetching for the data
    if (error) return <CustomError height="60" message="Unable to fetch the data" />;
@@ -59,15 +55,13 @@ const FavoriteStops = () => {
             {visibleStops && <Card>
                <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
                <DisplayStops stops={visibleStops} page={page} variant="favorites" />
+
+               {/* Pagination for the results */}
+               {visibleStops && <div className={FavoritesCSS.pagination}>
+                  <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
+               </div>}
+
             </Card>}
-
-            {/* Display a message if the user has not any favorite stops yet */}
-            {(favoriteStops.length === 0) && <div className={FavoritesCSS.no_stops_message}><h4>No saved stops</h4></div>}
-
-            {/* Pagination for the results */}
-            {visibleStops && <div className={FavoritesCSS.pagination}>
-               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
-            </div>}
 
          </div>
       </>

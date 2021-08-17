@@ -55,10 +55,10 @@ const MyStops = () => {
    };
 
    // Error handling when fetching for the data
-   if (!favoriteStops) return <CustomError height="60" message="Unable to fetch the data" />;
+   if (!favoriteStops) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Error handling when fetching for the data
-   if (error) return <CustomError height="60" message="Unable to fetch the data" />;
+   if (error) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Wait for the data
    if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
@@ -76,7 +76,7 @@ const MyStops = () => {
             ))}
 
             {/* Display a message if the user has not any favorite stops yet */}
-            {(favoriteStops.length === 0) && <div className={FavoritesCSS.no_stops_message}><h4>No saved stops</h4></div>}
+            {(favoriteStops.length === 0) && <div className={FavoritesCSS.no_items_message}><h4>No saved stops</h4></div>}
 
             {/* Pagination for the results */}
             {visibleStops && <div className={FavoritesCSS.pagination}>
@@ -86,14 +86,14 @@ const MyStops = () => {
             {/* Action button to save the changes */}
             {(activeStops.length !== 0) && <div className={FavoritesCSS.action_button}>
                <Button
-                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>save changes
+                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change favorites
                </Button>
             </div>}
          </div>
 
 
          {/* Display an action if it is active */}
-         {action && <ActionWrapper title={"Change map theme"} setAction={setAction}>
+         {action && <ActionWrapper title={"Delete favorite stops"} setAction={setAction}>
             <ActionDeleteStops activeStops={activeStops} setActiveStops={setActiveStops} />
          </ActionWrapper>}
       </>

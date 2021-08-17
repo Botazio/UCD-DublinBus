@@ -2,17 +2,17 @@ import Card from "../../../reusable-components/card/Card";
 import LinesCSS from "../Lines.module.css";
 import ScheduleIconRoundedIcon from '@material-ui/icons/ScheduleRounded';
 
-const LineBox = ({ selectedLine }) => {
+const LineBox = ({ selectedLine, variant }) => {
    return (
-      <Card variant="last">
+      <Card variant={variant ? variant : "last"}>
          <div className={LinesCSS.line_title}>
             <div>
                <h4>Line {selectedLine.route__route_short_name}</h4>
                <p>{selectedLine.trip_headsign}</p>
             </div>
             <a href={"https://dublinbus.ie/Your-Journey1/Timetables/All-Timetables/" +
-                        staticTimetable[selectedLine.route__route_short_name]}
-               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon/></a>
+               staticTimetable[selectedLine.route__route_short_name]}
+               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon htmlColor="black" /></a>
          </div>
       </Card>
    );
@@ -140,6 +140,6 @@ const staticTimetable = {
    "155": "181/",
    "747": "74711211/",
    "757": "7471111/",
-}
+};
 
 export default LineBox;

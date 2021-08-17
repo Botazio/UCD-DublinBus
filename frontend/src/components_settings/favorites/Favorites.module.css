@@ -58,18 +58,23 @@
 .searchbar:focus {
    box-shadow: 0 0 0 1pt #00B9FF;
 }
-.no_stops_message > h4 {
+.no_items_message > h4 {
    font-weight: 500;
    font-size: 1rem;
    margin-left: 5px;
 }
-.stop_wrapper {
+.stop_wrapper,
+.line_wrapper {
    display: flex;
    justify-content: space-between;
    align-items: center;
    padding: 7px 5px;
    border-top: 1px solid lightgray;
    cursor: pointer;
+}
+.line_header > p {
+   font-size: 0.9rem;
+
 }
 .icon {
    margin: 0px 10px;
