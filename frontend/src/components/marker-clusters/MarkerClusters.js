@@ -44,7 +44,6 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
     // remove event listeners as well for the map object
     return () => {
       mounted = false;
-      window.google.maps.event.clearListeners(mapRef, 'idle');
     };
   }, [mapRef]);
 

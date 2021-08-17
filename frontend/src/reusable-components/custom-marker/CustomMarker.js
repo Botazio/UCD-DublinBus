@@ -1,7 +1,7 @@
 import { Marker, useGoogleMap } from "@react-google-maps/api";
 
 // Cutomizable small component that creates a marker and centers the view at that position
-const CustomMarker = ({ id, position, options }) => {
+const CustomMarker = ({ id, position, options, ...restProps }) => {
   // Hook to access the map reference
   const mapRef = useGoogleMap();
 
@@ -17,6 +17,7 @@ const CustomMarker = ({ id, position, options }) => {
       position={position}
       options={options ? options : defaultOptions} // Use custom options if there are any
       onClick={() => handleClick()}
+      {...restProps}
     />
   );
 

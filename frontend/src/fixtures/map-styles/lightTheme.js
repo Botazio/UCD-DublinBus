@@ -24,15 +24,6 @@ const lightTheme = [
     ],
   },
   {
-    featureType: "administrative.neighborhood",
-    elementType: "all",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
     featureType: "landscape",
     elementType: "all",
     stylers: [
@@ -51,6 +42,15 @@ const lightTheme = [
       {
         weight: 0.9,
       },
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "poi",
+    elementType: "all",
+    stylers: [
       {
         visibility: "off",
       },
@@ -78,11 +78,11 @@ const lightTheme = [
     ],
   },
   {
-    featureType: "poi.attraction",
-    elementType: "all",
+    featureType: "poi.park",
+    elementType: "labels.icon",
     stylers: [
       {
-        visibility: "on",
+        visibility: "off",
       },
     ],
   },
@@ -105,73 +105,7 @@ const lightTheme = [
     ],
   },
   {
-    featureType: "road.highway",
-    elementType: "all",
-    stylers: [
-      {
-        visibility: "on",
-      },
-      {
-        color: "#fee379",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "geometry",
-    stylers: [
-      {
-        visibility: "on",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "labels",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "labels.icon",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway.controlled_access",
-    elementType: "labels.icon",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road.arterial",
-    elementType: "all",
-    stylers: [
-      {
-        visibility: "simplified",
-      },
-    ],
-  },
-  {
-    featureType: "road.arterial",
-    elementType: "labels",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road.arterial",
+    featureType: "road",
     elementType: "labels.icon",
     stylers: [
       {
