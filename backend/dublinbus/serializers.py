@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
 import environ
-from .models import FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme
+from .models import FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme, FeedbackAnswer, FeedbackQuestion
 from . import providers
 from .register import register_social_user
 
@@ -89,6 +89,16 @@ class FavoriteLineSerializer(serializers.ModelSerializer):
         fields = ('pk', 'created', 'owner', "route_short_name", "direction_id")
         depth = 1
 
+class FeedbackAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackAnswer
+        fields = '__all__'
+
+class FeedbackQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackQuestion
+        fields = '__all__'
+        
 class UserSerializer(serializers.ModelSerializer):
     '''UserSerializer'''
 

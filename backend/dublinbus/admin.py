@@ -34,5 +34,6 @@ admin.site.register(FavoriteLine)
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Marker)
 admin.site.register(Theme)
-
+admin.site.register(FeedbackQuestion)
+admin.site.register(FeedbackAnswer)
 

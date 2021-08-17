@@ -226,7 +226,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     auth_provider = models.CharField(
         max_length=255, blank=False,
         null=False, default='email')
-
+    allow_feedback = models.BooleanField(default=True)
+    
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'password']
 
@@ -294,6 +295,27 @@ class FavoriteLine(models.Model):
                ' - ' + str(self.route_short_name) +\
                ' - ' + str(self.direction_id)
 
+class FeedbackQuestion(models.Model):
+    question_number = models.IntegerField(primary_key=True)
+    question_text = models.CharField(max_length=1000)
+
+    class Meta:
+        ordering = ['question_number']
+
+    def __str__(self):
+        return str(self.question_number) + ': ' + str(self.question_text)
+
+class FeedbackAnswer(models.Model):
+    question = models.ForeignKey(FeedbackQuestion, on_delete=models.CASCADE)
+    rating = models.IntegerField(null=True, blank=True)
+    text = models.CharField(max_length=1000, blank=True)
+
+    class Meta:
+        ordering = ['question']
+
+    def __str__(self):
+        return str(self.question) + ' [rating]' + str(self.rating) + ' [text] ' + str(self.text)
+        
 class Theme(models.Model):
     """
     A class that represents the user's selection of appearance options.
