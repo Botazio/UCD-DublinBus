@@ -9,15 +9,17 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.cache import cache_page
 import numpy as np
 
-from dublinbus.models import Route, Stop, Trip, StopTime, Calendar, Shape
-import dublinbus.utils as utils
-
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.generics import GenericAPIView
+
+import dublinbus.utils as utils
+from dublinbus.models import Route, Stop, Trip, StopTime, Calendar, Shape, \
+    FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme, \
+    FeedbackQuestion
 from .serializers import UserSerializerWithToken, \
     FavoriteStopSerializer, \
     FavoriteJourneySerializer, \
@@ -27,8 +29,8 @@ from .serializers import UserSerializerWithToken, \
     UserSerializer, \
     ChangePasswordSerializer, \
     GoogleSocialAuthSerializer, \
-    FacebookSocialAuthSerializer
-from .models import FavoriteStop, FavoriteJourney, FavoriteLine, Marker, Theme
+    FacebookSocialAuthSerializer, \
+    FeedbackAnswerSerializer, FeedbackQuestionSerializer
 from .permissions import IsOwner, IsUser
 
 logging.basicConfig(
@@ -541,6 +543,58 @@ class FavoriteLineView(APIView):
         favorite_line.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class FeedbackQuestions(APIView):
+    """
+    Get, Post or Delete a FeedbackQuestion instance.
+    """
+
+    permission_classes = [IsAdminUser]
+
+    @staticmethod
+    def get_ques_object(primary_key):
+        """Return the FeedbackQuestion object."""
+        try:
+            return FeedbackQuestion.objects.get(question_number=primary_key)
+        except FeedbackQuestion.DoesNotExist as ques_not_exist:
+            raise Http404(f"Cannot find Feedback Question: {primary_key}") from ques_not_exist
+
+    def get(self, request, primary_key):
+        """Return the Feedback Question for the currently authenticated admin user."""
+        question = self.get_ques_object(primary_key)
+        serializer = FeedbackQuestionSerializer(question)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Create a new Feedback Question for the currently authenticated admin user."""
+        serializer = FeedbackQuestionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FeedbackAnswers(APIView):
+    """
+    Post FeedbackAnswer instance.
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    @staticmethod
+    def get_ques_object(primary_key):
+        """Return the FeedbackQuestion object."""
+        try:
+            return FeedbackQuestion.objects.get(question_number=primary_key)
+        except FeedbackQuestion.DoesNotExist as ques_not_exist:
+            raise Http404(f"Cannot find Feedback Question: {primary_key}") from ques_not_exist
+
+    def post(self, request):
+        """Create a new FeedbackAmswer."""
+        question = self.get_ques_object(request.data['question'])
+        serializer = FeedbackAnswerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(question=question)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserView(APIView):
     """

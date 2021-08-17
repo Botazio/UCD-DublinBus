@@ -26,4 +26,7 @@ urlpatterns = [
     path('shape_by_trip/<str:trip_id>/', views.shape_by_trip, name='shape_by_trip'),
     path('google/', views.GoogleSocialAuthView.as_view()),
     path('facebook/', views.FacebookSocialAuthView.as_view()),
+    path('feedback_question/', views.FeedbackQuestions.as_view()),
+    path('feedback_question/<int:primary_key>/', views.FeedbackQuestions.as_view()),
+    path('feedback_answer/', views.FeedbackAnswers.as_view()),
 ]
