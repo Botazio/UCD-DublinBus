@@ -227,7 +227,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=255, blank=False,
         null=False, default='email')
     allow_feedback = models.BooleanField(default=True)
-    
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'password']
 
@@ -296,6 +296,9 @@ class FavoriteLine(models.Model):
                ' - ' + str(self.direction_id)
 
 class FeedbackQuestion(models.Model):
+    """
+    A class that represents questions created by admins put to authenticated users.
+    """
     question_number = models.IntegerField(primary_key=True)
     question_text = models.CharField(max_length=1000)
 
@@ -306,6 +309,9 @@ class FeedbackQuestion(models.Model):
         return str(self.question_number) + ': ' + str(self.question_text)
 
 class FeedbackAnswer(models.Model):
+    """
+    A class that represents authenticated users' answers to questions created by admins.
+    """
     question = models.ForeignKey(FeedbackQuestion, on_delete=models.CASCADE)
     rating = models.IntegerField(null=True, blank=True)
     text = models.CharField(max_length=1000, blank=True)
@@ -315,7 +321,7 @@ class FeedbackAnswer(models.Model):
 
     def __str__(self):
         return str(self.question) + ' [rating]' + str(self.rating) + ' [text] ' + str(self.text)
-        
+
 class Theme(models.Model):
     """
     A class that represents the user's selection of appearance options.

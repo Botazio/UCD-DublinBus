@@ -544,7 +544,10 @@ class FavoriteLineView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class FeedbackQuestions(APIView):
-
+    """
+    Get, Post or Delete a FeedbackQuestion instance.
+    """
+    
     permission_classes = [IsAdminUser]
 
     @staticmethod
@@ -556,11 +559,13 @@ class FeedbackQuestions(APIView):
             raise Http404(f"Cannot find Feedback Question: {primary_key}") from ques_not_exist
 
     def get(self, request, primary_key):
+        """Return the Feedback Question for the currently authenticated admin user."""
         question = self.get_ques_object(primary_key)
         serializer = FeedbackQuestionSerializer(question)
         return Response(serializer.data)
 
     def post(self, request):
+        """Create a new Feedback Question for the currently authenticated admin user."""
         serializer = FeedbackQuestionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -568,7 +573,10 @@ class FeedbackQuestions(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FeedbackAnswers(APIView):
-
+    """
+    Post FeedbackAnswer instance.
+    """
+    
     permission_classes = (IsAuthenticated,)
 
     @staticmethod
