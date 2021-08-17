@@ -66,6 +66,7 @@ export default function MapContainer(props) {
   // Render a different map depending on the user settings
   const mapTheme = mapStyles[useTheme().map];
   options.styles = mapTheme;
+
   // Error handling when loading the map
   if (loadError) return <CustomError message="Error loading maps" height="60" />;
   if (!isLoaded) return <Waiting variant="dark" />;
