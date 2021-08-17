@@ -547,7 +547,7 @@ class FeedbackQuestions(APIView):
     """
     Get, Post or Delete a FeedbackQuestion instance.
     """
-    
+
     permission_classes = [IsAdminUser]
 
     @staticmethod
@@ -576,7 +576,7 @@ class FeedbackAnswers(APIView):
     """
     Post FeedbackAnswer instance.
     """
-    
+
     permission_classes = (IsAuthenticated,)
 
     @staticmethod
