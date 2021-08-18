@@ -28,12 +28,12 @@ const ActionFeedbackAlerts = (props) => {
    // Function to submit the info
    async function handleSubmit(value) {
       // Body to pass to the fetch request
-      let body = value;
+      let body = { "allow_feedback": value };
 
 
       // Grab the response from the request
       let response = await actionFetch(
-         `https://csi420-02-vm6.ucd.ie/theme/${currentUser.pk}/`,
+         `https://csi420-02-vm6.ucd.ie/users/${currentUser.pk}/`,
          "PUT",
          body,
          props.setError,

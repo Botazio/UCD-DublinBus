@@ -42,7 +42,7 @@ const FeedbackForm = () => {
 
          {/* Display an action if it is active */}
          {action && <ActionWrapper title={"Send feedback"} setAction={setAction}>
-            <ActionSendFeedback text={value} />
+            <ActionSendFeedback question="2" text={value} setValue={setValue} />
          </ActionWrapper>}
       </>
    );

@@ -7,10 +7,15 @@ import { useLocation } from "react-use";
 import { Button, Popover } from "@material-ui/core";
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import { useAuth } from "../../providers/AuthContext";
+import CustomAvatar from "../../reusable-components/custom-avatar/CustomAvatar";
 
 // This component renders a popover when the user icon is clicked
 // Allows the user to logout or to go to the settings page
-const PopoverUser = ({ currentUser, logout }) => {
+const PopoverUser = () => {
+  // Grab the functions and states from the authentication provider
+  const { currentUser, logout } = useAuth();
+
   // State to handle the popover
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -33,9 +38,7 @@ const PopoverUser = ({ currentUser, logout }) => {
     <>
       {/* When the user clicks on the icon it opens or closes the popover */}
       <div className={PopoverUserCSS.pointer} onClick={handlePopoverOpen}>
-        <Avatar className={PopoverUserCSS.avatar}>
-          {currentUser.username.charAt(0)}
-        </Avatar>
+        <CustomAvatar />
       </div>
 
       {/* Display the popover when the state is active */}

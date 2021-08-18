@@ -120,7 +120,8 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
             label: {
               text: "A",
               color: "white"
-            }
+            },
+            zIndex: 100,
           }}
         />}
       {destination &&
@@ -131,7 +132,8 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
             label: {
               text: "B",
               color: "white"
-            }
+            },
+            zIndex: 100,
           }}
         />}
 

@@ -1,3 +1,6 @@
 .section_wrapper {
    margin-top: 20px;
 }
+.section_wrapper > button {
+   margin-top: 10px;
+}
