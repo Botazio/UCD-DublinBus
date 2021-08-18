@@ -30,6 +30,7 @@ const Directions = () => {
       {!selectedLine && <div className={DirectionsCSS.searchbar_lines}>
         <PrimarySearchBarLines placeholder="Search line..." lines={lines} setSelectedLine={setSelectedLine} />
       </div>}
+      {/* Display the directions system */}
       {selectedLine && <DirectionsSearcher selectedLine={selectedLine} setSelectedLine={setSelectedLine} />}
     </>
   );

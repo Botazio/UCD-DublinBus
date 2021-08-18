@@ -9,6 +9,7 @@ import Waiting from "../../../reusable-components/waiting/Waiting";
 import { useLines } from "../../../providers/LinesContext";
 import SecondarySearchBarLines from "../../../reusable-components/searchbar-lines/SecondarySearchBarLines";
 import LineBox from "../../lines/subcomponents/LineBox";
+import DisplayLine from "../../display-line/DisplayLine";
 
 // This component renders the favorite lines
 const FavoriteLines = () => {
@@ -18,6 +19,8 @@ const FavoriteLines = () => {
    const [filteredLines, setFilteredLines] = useState();
    // State for the pagination in the results
    const [page, setPage] = useState(1);
+   // State for the selected line
+   const [selectedLine, setSelectedLine] = useState();
 
    // Get the data from the provider
    const { data: lines, isPending, error } = useLines();
@@ -57,7 +60,7 @@ const FavoriteLines = () => {
                <SecondarySearchBarLines lines={filteredLines} setVisibleLines={setVisibleLines} classes={FavoritesCSS.searchbar} />
                {visibleLines.map((line) => {
                   return (
-                     <LineBox selectedLine={line} variant="full_width" />
+                     <LineBox selectedLine={line} variant="full_width" onClick={() => setSelectedLine(line)} />
                   );
                })}
 
@@ -65,6 +68,9 @@ const FavoriteLines = () => {
                {visibleLines && <div className={FavoritesCSS.pagination}>
                   <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleLines.length / 10)} color="primary" size="small" />
                </div>}
+
+               {/* If there is a line selected display the line on the map*/}
+               {selectedLine && <DisplayLine tripId={selectedLine.trip_id} />}
 
             </Card>}
 

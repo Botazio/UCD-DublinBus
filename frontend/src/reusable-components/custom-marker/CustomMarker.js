@@ -25,10 +25,7 @@ const CustomMarker = ({ id, position, options, ...restProps }) => {
   function handleClick() {
     const zoom = mapRef.getZoom();
 
-    // Zooms more the higher is the view
-    if (zoom <= 13) {
-      mapRef.setZoom(15);
-    } else if (13 < zoom && zoom <= 16) {
+    if (zoom <= 16) {
       mapRef.setZoom(zoom + 1);
     }
 

@@ -38,7 +38,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
          {searchResults && getPredictedTime(searchResults.total_predictions)}
 
          {/* Display a dialog asking for user feedback after getting the results */}
-         {searchResults && <DialogWrapper time="5000">
+         {searchResults && <DialogWrapper time="10000">
             <FeedbackDefault title="Was this information helpful?" />
          </DialogWrapper>}
 
