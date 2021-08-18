@@ -10,6 +10,7 @@ from django.conf import settings
 from dublinbus.models import Calendar, Stop
 from quantile_dotplot import ntile_dotplot, compute_ntiles
 import keras
+import tensorflow as tf
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -223,6 +224,7 @@ def predict_adjacent_stop(departure_stop_num, arrival_stop_num, features, num_pr
         An array of predictions for the travel time between the two adjacent stops. Returns
         an array of the expected travel times if a prediction cannot be found.
     """
+    tf.compat.v1.disable_eager_execution()
 
     model_path = f"./model_output/NeuralNetwork/{departure_stop_num}_to_{arrival_stop_num}/"
 
