@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLines } from "../../providers/LinesContext";
 import PrimarySearchBarLines from "../../reusable-components/searchbar-lines/PrimarySearchBarLines";
 import LineBox from "./subcomponents/LineBox";
+import DisplayLine from "../display-line/DisplayLine";
 
 // This component is the main component for the lines system.
 const Lines = () => {
@@ -33,8 +34,11 @@ const Lines = () => {
             </div>
          </div>
 
-         {/* If there is a line selected display the next buses*/}
+         {/* If there is a line selected display the info for that line */}
          {selectedLine && <LineBox selectedLine={selectedLine} />}
+
+         {/* If there is a line selected display the line on the map*/}
+         {selectedLine && <DisplayLine tripId={selectedLine.trip_id} />}
       </>
    );
 };

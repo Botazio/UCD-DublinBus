@@ -25,6 +25,9 @@
 .line_title > div > p {
   font-size: 0.9rem;
 }
-.line_title > svg {
+.line_title > a {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

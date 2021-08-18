@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import CustomMarker from "../../../reusable-components/custom-marker/CustomMarker";
 import DisplayDirections from "./DisplayDirections";
 import moment from "moment";
+import DisplayLine from "../../display-line/DisplayLine";
 
 // This is a subcomponent from the direction search system.
 // Allows the user to enter the Origin stop and the Destination stop
@@ -107,9 +108,32 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
         setSelectedHour={setSelectedHour}
       />
 
+      {/* Display the line on the map */}
+      <DisplayLine tripId={selectedLine.trip_id} />
+
       {/* Display markers on the map if origin or destination are selected */}
-      {origin && <CustomMarker id="origin" position={{ lat: origin.stop_lat, lng: origin.stop_lon }} />}
-      {destination && <CustomMarker id="destination" position={{ lat: destination.stop_lat, lng: destination.stop_lon }} />}
+      {origin &&
+        <CustomMarker
+          id="origin"
+          position={{ lat: origin.stop_lat, lng: origin.stop_lon }}
+          options={{
+            label: {
+              text: "A",
+              color: "white"
+            }
+          }}
+        />}
+      {destination &&
+        <CustomMarker
+          id="destination"
+          position={{ lat: destination.stop_lat, lng: destination.stop_lon }}
+          options={{
+            label: {
+              text: "B",
+              color: "white"
+            }
+          }}
+        />}
 
       {/* Display the results from the search */}
       {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}

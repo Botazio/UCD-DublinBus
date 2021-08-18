@@ -27,6 +27,7 @@ const PrimarySearchBarStops = ({ placeholder, stops, selectedStop, setSelectedSt
   // Function that controls wheter the user enters new input
   const handleChange = (e) => setTerm(e.target.value);
 
+
   return (
     <Combobox
       onSelect={(stop_name) => {
@@ -44,7 +45,7 @@ const PrimarySearchBarStops = ({ placeholder, stops, selectedStop, setSelectedSt
         onChange={handleChange}
       />
       {results && (
-        <ComboboxPopover style={{ zIndex: 10000 }}>
+        <ComboboxPopover style={{ zIndex: 1000 }}>
           {results.length > 0 ? (
             <ComboboxList>
               {results.slice(0, 5).map((result) => (
