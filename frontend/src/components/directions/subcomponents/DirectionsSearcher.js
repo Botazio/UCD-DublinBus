@@ -123,6 +123,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
             },
             zIndex: 100,
           }}
+          title={origin.stop_name}
         />}
       {destination &&
         <CustomMarker
@@ -135,6 +136,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
             },
             zIndex: 100,
           }}
+          title={destination.stop_name}
         />}
 
       {/* Display the results from the search */}

@@ -90,6 +90,7 @@ const Stops = () => {
         <CustomMarker
           id={selectedStop.stop_id}
           position={{ lat: selectedStop.stop_lat, lng: selectedStop.stop_lon }}
+          title={selectedStop.stop_name}
         />
       )}
     </>
