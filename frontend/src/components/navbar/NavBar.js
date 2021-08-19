@@ -38,7 +38,7 @@ const Navbar = () => {
             <PersonRoundedIcon htmlColor="black" fontSize="large" />
           </Link>
         )}
-        {currentUser && (<PopoverUser currentUser={currentUser} logout={logout} />)}
+        {currentUser && (<PopoverUser logout={logout} />)}
       </div>
 
     </nav>

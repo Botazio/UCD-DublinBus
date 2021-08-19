@@ -1,13 +1,9 @@
 import ResponseAction from "./subcomponents/ResponseAction";
 import SubmitButtonAction from "./subcomponents/SubmitButtonAction";
 import { actionFetch } from "../../helpers/utils";
-import { useAuth } from "../../providers/AuthContext";
 
 // Component that handles the logic to change the user photo
 const ActionSendFeedback = (props) => {
-   // Grab the user from the provider
-   const { currentUser, isAuthenticated } = useAuth();
-
    return (
       <>
          {/* Submit response messages */}
@@ -23,12 +19,15 @@ const ActionSendFeedback = (props) => {
    // Function to submit the info
    async function handleSubmit() {
       // Body to pass to the fetch request
-      let body = props.text;
+      let body;
+      if (props.question === "1") body = { "question": props.question, "rating": props.rating };
+      if (props.question === "2") body = { "question": props.question, "text": props.text };
+      if (props.question === "3") body = { "question": props.question, "rating": props.rating, "text": props.text };
 
       // Grab the response from the request
       let response = await actionFetch(
-         `https://csi420-02-vm6.ucd.ie/theme/${currentUser.pk}/`,
-         "PUT",
+         `https://csi420-02-vm6.ucd.ie/feedback_answer/`,
+         "POST",
          body,
          props.setError,
          props.setIsPending,
@@ -37,8 +36,8 @@ const ActionSendFeedback = (props) => {
 
       // If the response is ok, update the user state and close the action
       if (response.ok) {
-         isAuthenticated();
          setTimeout(() => {
+            props.setValue("");
             props.setAction(false);
          }, 1000);
       }

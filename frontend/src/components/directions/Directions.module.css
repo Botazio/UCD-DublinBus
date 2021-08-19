@@ -100,7 +100,7 @@
 .expand_results_icon {
   position: absolute;
   right: 50%;
-  top: -32px;
+  top: -37px;
   transform: translateX(50%);
   z-index: 10;
 }
@@ -152,15 +152,32 @@
 /* Styles for the quantile dots plot */
 .quantile_graph {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   padding: 15px;
 }
 .quantile_graph > img {
-  width: 500px;
+  width: 400px;
   height: auto;
+}
+.quantile_graph > div {
+  text-align: justify;
+  font-size: 1rem;
+  line-height: 22px;
+}
+.quantile_graph > div > span > svg {
+  cursor: pointer;
 }
 @media screen and (max-width: 600px) {
   .quantile_graph > img {
     width: 100%;
     height: auto;
+  }
+  .quantile_graph > div {
+    text-align: justify;
+    font-size: 0.9rem;
+    line-height: 20px;
   }
 }

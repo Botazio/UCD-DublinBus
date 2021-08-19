@@ -1,12 +1,16 @@
 import { Dialog } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { cloneElement, useEffect, useState } from "react";
 import { useAuth } from "../../providers/AuthContext";
 
 // This component waits x time before it displays a dialog
 // Is only available for registered users
 const DialogWrapper = ({ time, children, ...restProps }) => {
    // State to control when the dialog is open
-   const [open, setOpen] = useState(false);
+   const [action, setAction] = useState(false);
+   // States to display the current state of the action
+   const [error, setError] = useState(null);
+   const [isPending, setIsPending] = useState(false);
+   const [OkMessage, setOkMessage] = useState(false);
 
    // Grab the user from the provider
    const { currentUser } = useAuth();
@@ -15,24 +19,38 @@ const DialogWrapper = ({ time, children, ...restProps }) => {
    // after a customizable amount of time
    useEffect(() => {
       setTimeout(() => {
-         setOpen(true);
+         setAction(true);
       }, [time]);
    }, [time]);
 
    const handleClose = () => {
-      setOpen(false);
+      setAction(false);
    };
 
    // If there is no user login return
    if (!currentUser) return "";
 
+   // If the user has deactivated the alerts return
+   if (!currentUser.allow_feedback) return "";
+
    return (
       <Dialog
-         open={open}
+         open={action}
          onClose={handleClose}
          {...restProps}
       >
-         {children}
+         {/* Render the children inside the wrapper and pass the props to it */}
+         {cloneElement(children,
+            {
+               error: error,
+               setError: setError,
+               isPending: isPending,
+               setIsPending: setIsPending,
+               OkMessage: OkMessage,
+               setOkMessage: setOkMessage,
+               setAction: setAction
+            }
+         )}
       </Dialog>
    );
 };

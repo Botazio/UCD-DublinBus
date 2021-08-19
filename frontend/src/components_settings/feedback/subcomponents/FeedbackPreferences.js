@@ -4,11 +4,15 @@ import FeedbackCSS from "../Feedback.module.css";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 import ActionFeedbackAlerts from "../../../reusable-components/action/ActionFeedbackAlerts";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import { useAuth } from "../../../providers/AuthContext";
 
 
 const FeedbackPreferences = () => {
    // State to control when to display and hide the action message
    const [action, setAction] = useState(false);
+
+   // Grab the user from the provider 
+   const { currentUser } = useAuth();
 
    // Messages to display in the header
    const headerTitle = "Feedback preferences";
@@ -18,6 +22,7 @@ const FeedbackPreferences = () => {
       <>
          <div className={FeedbackCSS.section_wrapper}>
             <SettingsHeader title={headerTitle} body={headerBody} />
+            <p>Feedback alerts: {currentUser.allow_feedback ? "on" : "off"}</p> {/* is not defined yet */}
 
             <Button
                variant="outlined" color="primary" onClick={() => setAction(true)}>select alerts

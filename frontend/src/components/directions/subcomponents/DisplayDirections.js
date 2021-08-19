@@ -2,13 +2,12 @@ import Card from "../../../reusable-components/card/Card";
 import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
 import MinimizeRoundedIcon from '@material-ui/icons/MinimizeRounded';
 import DirectionsCSS from "../Directions.module.css";
-import { Dialog, useTheme } from "@material-ui/core";
+import { useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
 import DialogWrapper from "../../../reusable-components/dialog-feedback/DialogWrapper";
 import FeedbackDefault from "../../../reusable-components/dialog-feedback/FeedbackDefault";
-import HelpIcon from '@material-ui/icons/Help';
-import Collapsible from 'react-collapsible';
+import QuantileGraph from "./QuantileGraph";
 
 // This component displays the directions after the server
 // sends back the results
@@ -30,8 +29,6 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
       setOpen(false);
    };
 
-   const dotplotFile = `https://dublin-bus.net/images/dotplot_${origin.stop_id}_to_${destination.stop_id}.png`;
-
    return (
       <Card variant="last" >
          {/* Display the prediction time */}
@@ -47,19 +44,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
          {searchResults && expanded && <ExpandedResults searchResults={searchResults} selectedHour={selectedHour} />}
 
          {/* Display the popup for the quantile dots plot graph */}
-         {open && <Dialog open={open} onClose={handleClose}>
-            <div className={DirectionsCSS.quantile_graph}>
-               <img src={dotplotFile} alt="Quantile Dot Plot Unavailable" />
-               <Collapsible trigger={<HelpIcon></HelpIcon>}>
-                  The Quantile Dotplot is an easy way to make probability estimates of journey times. There will always be
-                  20 dots in this chart and the number of dots before a point on the x-axis is the fraction of
-                  journeys that should take less than this time. For example, if there are 5
-                  dots before 2 minutes, 5/20 (or 25%) of journeys should take less than
-                  this time. The red line is the mean predicted journey time.
-                  <a href="https://dl.acm.org/doi/10.1145/2858036.2858558" target="_blank" rel="noreferrer"> Learn more</a>.
-               </Collapsible>
-            </div>
-         </Dialog>}
+         {open && <QuantileGraph open={open} handleClose={handleClose} origin={origin} destination={destination} />}
       </Card>
    );
 
@@ -76,7 +61,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
       }
 
       return (
-         <div className={DirectionsCSS.header_results}>
+         <div className={DirectionsCSS.header_results} style={{ padding: "5px 0px" }}>
             <div onClick={() => setExpanded(!expanded)}>
                <h4 style={{ color: theme.primary }}>{resultTime}</h4>
                <div

@@ -13,6 +13,8 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   // Error that is used to display a message for the user in the components signin and signup
   const [errorMessage, setErrorMessage] = useState();
+  // User image
+  const [userImage, setUserImage] = useState();
 
   // function to sign up
   function signup(username, email, password) {
@@ -45,7 +47,6 @@ export function AuthProvider({ children }) {
         if (err.name === "AbortError") {
           console.log("fetch abort");
         } else {
-          console.log(err);
           setErrorMessage("Failed to create an account");
         }
       });
@@ -154,12 +155,48 @@ export function AuthProvider({ children }) {
       });
   }
 
+  // function to get the user image
+  function getUserImage() {
+    fetch("https://csi420-02-vm6.ucd.ie/user_icon/", {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem("token")}`
+      },
+      method: "GET"
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw Error("could not fetch the data for that resource");
+        }
+        return res.blob();
+      })
+      .then((data) => {
+        // Return if we get Andrew image
+        if (data.size === 3534) {
+          setUserImage("default");
+          return;
+        }
+        const objectURL = URL.createObjectURL(data);
+        setUserImage(objectURL);
+      })
+      .catch((err) => {
+        console.log("hello");
+        if (err.name === "AbortError") {
+          console.log("fetch abort");
+        } else {
+          setUserImage(null);
+        }
+      });
+  }
+
+
   const value = {
     currentUser,
     setCurrentUser,
     signup,
     signin,
     signinOAuth,
+    userImage,
+    getUserImage,
     isAuthenticated,
     logout,
     errorMessage,
