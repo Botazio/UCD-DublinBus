@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import PopoverUserCSS from "./PopoverUser.module.css";
 import PowerSettingsNewRoundedIcon from '@material-ui/icons/PowerSettingsNewRounded';
-import Avatar from '@material-ui/core/Avatar';
 import { useLocation } from "react-use";
 import { Button, Popover } from "@material-ui/core";
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
@@ -57,9 +56,7 @@ const PopoverUser = () => {
         <div className={PopoverUserCSS.popover_wrapper}>
           {/* User avatar, name and link to the user profile */}
           <div className={PopoverUserCSS.popover_header}>
-            <Avatar className={PopoverUserCSS.avatar}>
-              {currentUser.username.charAt(0)}
-            </Avatar>
+            <CustomAvatar />
             <div className={PopoverUserCSS.popover_items}>
               <h4>{currentUser.username}</h4>
 

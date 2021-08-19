@@ -1,7 +1,6 @@
 import { useAuth } from "../../providers/AuthContext";
 import MarkersCSS from "./Markers.module.css";
 import SettingsHeader from "../../reusable-components/settings-header.js/SettingsHeader";
-import defaultMarkers from "../../fixtures/markers/defaultMarkers";
 import { useState } from "react";
 import { useEffect } from "react";
 import SwitchMarker from "./subcomponents/SwitchMarker";
@@ -18,9 +17,9 @@ const markersBody = "Choose which markers do you want Dublin Bus to display on t
 // This is the main component for the markers section
 const Markers = () => {
    // Default markers
-   const [markers, setMarkers] = useState(defaultMarkers);
+   const [markers, setMarkers] = useState();
    // Markers to be displayed on the page. They are filtered by the search bar 
-   const [visibleMarkers, setVisibleMarkers] = useState(defaultMarkers);
+   const [visibleMarkers, setVisibleMarkers] = useState();
    // State to control when to display and hide the action message
    const [action, setAction] = useState(false);
    // State for the pagination in the results
@@ -36,6 +35,7 @@ const Markers = () => {
          // Delete the property owner because it does not refer to a type of markers
          delete currentUser.markers.owner;
          setMarkers(currentUser.markers);
+         setVisibleMarkers(currentUser.markers);
       }
    }, [currentUser]);
 
@@ -48,6 +48,8 @@ const Markers = () => {
    function handleChange(title, state) {
       setMarkers({ ...markers, [title]: !state });
    };
+
+   if (!markers) return "";
 
    return (
       <>

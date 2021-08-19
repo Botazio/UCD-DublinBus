@@ -9,8 +9,8 @@ const ActionPhoto = (props) => {
    // State that controls the selected image 
    const [selectedImage, setSelectedImage] = useState();
 
-   // Grab the user from the provider
-   const { currentUser, isAuthenticated } = useAuth();
+   // Grab the user from the provider and the function to update the user image
+   const { currentUser, getUserImage } = useAuth();
 
    // Function to select an image
    const imageSelecterHandler = event => {
@@ -68,7 +68,7 @@ const ActionPhoto = (props) => {
 
       // If the response is ok, update the user state and close the action
       if (response.ok) {
-         isAuthenticated();
+         getUserImage();
          setTimeout(() => {
             props.setAction(false);
          }, 1000);
@@ -82,8 +82,8 @@ const ActionPhoto = (props) => {
 
       // Grab the response from the request
       let response = await actionFetch(
-         `https://csi420-02-vm6.ucd.ie/users/${currentUser.pk}/`,
-         "PUT",
+         `https://csi420-02-vm6.ucd.ie/user_icon/`,
+         "DELETE",
          body,
          props.setError,
          props.setIsPending,
@@ -92,7 +92,7 @@ const ActionPhoto = (props) => {
 
       // If the response is ok, update the user state and close the action
       if (response.ok) {
-         isAuthenticated();
+         getUserImage();
          setTimeout(() => {
             props.setAction(false);
          }, 1000);

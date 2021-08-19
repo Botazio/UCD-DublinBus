@@ -1,26 +1,26 @@
 import { Avatar, useTheme } from "@material-ui/core";
-import useFetchAuth from "../../helpers/useFetchAuth";
+import { useEffect } from "react";
 import { useAuth } from "../../providers/AuthContext";
 
-const CustomAvatar = () => {
+const CustomAvatar = (props) => {
    // Grab the current user from the provider
-   const { currentUser } = useAuth();
+   const { currentUser, userImage, getUserImage } = useAuth();
 
    // Grab the theme from the provider
    const color = useTheme().theme.primary;
 
-   // Get the data from the provider
-   const { data, isPending, error } = useFetchAuth("https://csi420-02-vm6.ucd.ie/user_icon/");
+   // Check if there is a user image. In case there is not call the function to get it
+   useEffect(() => {
+      if (!userImage) getUserImage();
+      // eslint-disable-next-line
+   }, [userImage]);
 
-   console.log(data);
 
    return (
       <>
-         {(error || isPending) &&
-            <Avatar style={{ backgroundColor: color }}>
-               {currentUser.username.charAt(0)}
-            </Avatar>}
-         {data && console.log("hey")}
+         <Avatar src={userImage} style={{ backgroundColor: color }} {...props}>
+            {currentUser.username.charAt(0)}
+         </Avatar>
       </>
    );
 };
