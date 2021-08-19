@@ -5,7 +5,6 @@ import lightTheme from "../../fixtures/map-styles/lightTheme";
 import darkTheme from "../../fixtures/map-styles/darkTheme";
 import greyTheme from "../../fixtures/map-styles/greyTheme";
 import { useStops } from "../../providers/StopsContext";
-import { useTheme } from "@material-ui/core";
 import { useLines } from "../../providers/LinesContext";
 import CustomError from "../../reusable-components/error/CustomError";
 import Waiting from "../../reusable-components/waiting/Waiting";
@@ -77,7 +76,7 @@ export default function MapContainer(props) {
     if (currentUser) {
       handleTheme(mapStyles[currentUser.map]);
     }
-
+    // eslint-disable-next-line
   }, [currentUser]);
 
 
