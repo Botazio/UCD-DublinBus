@@ -1,0 +1,23 @@
+.button {
+  width: 85%;
+  padding: 8px 10px;
+  margin-top: 15px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+}
+.button > p::first-letter {
+  text-transform: capitalize;
+}
+.button > svg {
+  margin-right: 4px;
+}
+.active {
+  background-color: #fafafa;
+  border: 1px solid #0094EC;
+}
+.active > svg {
+  fill: #0094EC;
+}

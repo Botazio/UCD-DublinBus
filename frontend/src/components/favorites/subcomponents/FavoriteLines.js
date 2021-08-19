@@ -25,11 +25,11 @@ const FavoriteLines = () => {
    // Get the data from the provider
    const { data: lines, isPending, error } = useLines();
 
-   // Get the user stops from the user provider
+   // Get the user lines from the user provider
    const { currentUser } = useAuth();
    const favoriteLines = currentUser.favoritelines;
 
-   // Set the visible stops to all of them the first time the component renders
+   // Set the visible lines to all of them the first time the component renders
    useEffect(() => {
       if (lines && favoriteLines) {
          // Get the full line object
@@ -39,6 +39,7 @@ const FavoriteLines = () => {
          setVisibleLines(arrayLines);
       }
    }, [lines, favoriteLines]);
+
 
    // function that sets the results page with the new value
    const handlePage = (event, value) => {
@@ -58,11 +59,10 @@ const FavoriteLines = () => {
             {/* Loop through the visible lines and display them */}
             {visibleLines && <Card>
                <SecondarySearchBarLines lines={filteredLines} setVisibleLines={setVisibleLines} classes={FavoritesCSS.searchbar} />
-               {visibleLines.map((line) => {
-                  return (
-                     <LineBox selectedLine={line} variant="full_width" onClick={() => setSelectedLine(line)} />
-                  );
-               })}
+               {visibleLines.slice((page - 1) * 10, ((page - 1) * 10) + 10).map((line) => (
+                  <LineBox key={line.trip_id} line={line} active={selectedLine ? (selectedLine.trip_id === line.trip_id) : false} variant="full_width" onClick={() => setSelectedLine(line)} />
+               )
+               )}
 
                {/* Pagination for the results */}
                {visibleLines && <div className={FavoritesCSS.pagination}>

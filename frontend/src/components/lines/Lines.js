@@ -35,7 +35,7 @@ const Lines = () => {
          </div>
 
          {/* If there is a line selected display the info for that line */}
-         {selectedLine && <LineBox selectedLine={selectedLine} />}
+         {selectedLine && <LineBox line={selectedLine} />}
 
          {/* If there is a line selected display the line on the map*/}
          {selectedLine && <DisplayLine tripId={selectedLine.trip_id} />}

@@ -2,16 +2,16 @@ import Card from "../../../reusable-components/card/Card";
 import LinesCSS from "../Lines.module.css";
 import ScheduleIconRoundedIcon from '@material-ui/icons/ScheduleRounded';
 
-const LineBox = ({ selectedLine, variant, ...restProps }) => {
+const LineBox = ({ line, variant, active, ...restProps }) => {
    return (
-      <Card variant={variant ? variant : "last"} {...restProps}>
+      <Card variant={variant ? variant : "last"} {...restProps} style={active ? { backgroundColor: "#0094EC20" } : {}}>
          <div className={LinesCSS.line_title}>
             <div>
-               <h4>Line {selectedLine.route__route_short_name}</h4>
-               <p>{selectedLine.trip_headsign}</p>
+               <h4>Line {line.route__route_short_name}</h4>
+               <p>{line.trip_headsign}</p>
             </div>
             <a href={"https://dublinbus.ie/Your-Journey1/Timetables/All-Timetables/" +
-               staticTimetable[selectedLine.route__route_short_name]}
+               staticTimetable[line.route__route_short_name]}
                target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon htmlColor="black" /></a>
          </div>
       </Card>

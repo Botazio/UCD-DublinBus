@@ -13,37 +13,6 @@
 .sidebar_inactive {
   transform: translateX(-100%);
 }
-.button {
-  width: 85%;
-  background-color: white;
-  padding: 7px 10px;
-  margin-top: 15px;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-  display: flex;
-  align-items: center;
-  border: 1px solid lightgray;
-}
-.button:hover {
-  border: 1px solid #0094EC;
-}
-.button > p::first-letter {
-  text-transform: capitalize;
-}
-.button > svg {
-  margin-right: 4px;
-}
-.active {
-  background-color: #fafafa;
-  border: 1px solid #0094EC;
-}
-.active > svg {
-  fill: #0094EC;
-}
-.active:hover {
-  border: 1px solid #0094EC;
-}
 .list_icon {
   cursor: pointer;
   display: flex;
@@ -67,11 +36,5 @@
   }
   .infobar_sidebar_inactive {
     transform: translateX(0px);
-  }
-  .button {
-    padding: 10px 15px;
-  }
-  .button:hover {
-    border-left: 0px;
   }
 }
