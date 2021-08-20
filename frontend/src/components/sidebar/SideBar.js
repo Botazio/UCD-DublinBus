@@ -33,7 +33,6 @@ const SideBar = () => {
   // Center the view in Dublin after changing sections if the distance is more than
   // 50km to the center of Dublin
   useEffect(() => {
-    console.log(mapRef.getCenter().lng());
     var dist = geodist({ lat: 53.349804, lon: -6.26031 }, { lat: mapRef.getCenter().lat(), lon: mapRef.getCenter().lng() }, { exact: true, unit: 'km' });
     if (dist > 50 && (buttonActive !== "near me")) mapRef.panTo({ lat: 53.349804, lng: -6.26031 });
   }, [buttonActive, mapRef]);
