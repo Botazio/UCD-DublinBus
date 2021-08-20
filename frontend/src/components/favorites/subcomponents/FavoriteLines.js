@@ -57,22 +57,23 @@ const FavoriteLines = () => {
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Loop through the visible lines and display them */}
-            {visibleLines && <Card>
-               <SecondarySearchBarLines lines={filteredLines} setVisibleLines={setVisibleLines} classes={FavoritesCSS.searchbar} />
-               {visibleLines.slice((page - 1) * 10, ((page - 1) * 10) + 10).map((line) => (
-                  <LineBox key={line.trip_id} line={line} active={selectedLine ? (selectedLine.trip_id === line.trip_id) : false} variant="full_width" onClick={() => setSelectedLine(line)} />
-               )
-               )}
+            {visibleLines &&
+               <Card variant="last">
+                  <SecondarySearchBarLines lines={filteredLines} setVisibleLines={setVisibleLines} classes={FavoritesCSS.searchbar} />
+                  {visibleLines.slice((page - 1) * 10, ((page - 1) * 10) + 10).map((line) => (
+                     <LineBox key={line.trip_id} line={line} active={selectedLine ? (selectedLine.trip_id === line.trip_id) : false} variant="full_width" onClick={() => setSelectedLine(line)} />
+                  )
+                  )}
 
-               {/* Pagination for the results */}
-               {visibleLines && <div className={FavoritesCSS.pagination}>
-                  <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleLines.length / 10)} color="primary" size="small" />
-               </div>}
+                  {/* Pagination for the results */}
+                  {visibleLines && <div className={FavoritesCSS.pagination}>
+                     <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleLines.length / 10)} color="primary" size="small" />
+                  </div>}
 
-               {/* If there is a line selected display the line on the map*/}
-               {selectedLine && <DisplayLine tripId={selectedLine.trip_id} />}
+                  {/* If there is a line selected display the line on the map*/}
+                  {selectedLine && <DisplayLine tripId={selectedLine.trip_id} />}
 
-            </Card>}
+               </Card>}
 
 
          </div>

@@ -52,7 +52,7 @@ const FavoriteStops = () => {
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Loop through the visible stops and display them */}
-            {visibleStops && <Card>
+            {visibleStops && <Card variant="last">
                <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />
                <DisplayStops stops={visibleStops} page={page} variant="favorites" />
 

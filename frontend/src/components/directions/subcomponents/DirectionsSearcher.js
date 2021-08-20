@@ -143,10 +143,10 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}
 
       {/* Display a message if an error occurs during the search */}
-      {searchError && <Card variant="last"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
+      {searchError && <Card variant="margin_bottom"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
 
       {/* Display a waiting icon during the search*/}
-      {searchPending && <Card variant="last"><Waiting variant="dark" size="small" /></Card>}
+      {searchPending && <Card variant="margin_bottom"><Waiting variant="dark" size="small" /></Card>}
 
       {/* Search Button */}
       <SearchButton searchAvailable={searchAvailable} onClick={() => handleSearch()} />

@@ -39,7 +39,16 @@ const DisplayStops = ({ stops, page, variant }) => {
 
     // Disabled the active stop if it is not in the visible stops 
     useEffect(() => {
-        if (!stops.includes(activeStop)) setActiveStop(null);
+        // Variable that avoids updating the component when it is unmounted
+        let mounted = true;
+
+        if (!stops.includes(activeStop)) {
+            if (mounted) setActiveStop(null);
+        }
+
+        return () => {
+            mounted = false;
+        };
     }, [stops, activeStop]);
 
     // Set the active stop to false if expanded is false

@@ -21,8 +21,11 @@
    margin: 0;
    padding: 15px 15px 25px 15px;
 }
-.last {
+.margin_bottom {
    margin-bottom: 15px;
+}
+.last {
+   margin-bottom: 30px;
 }
 .full_width {
    width: 100%;
