@@ -39,26 +39,25 @@ const DisplayStops = ({ stops, page, variant }) => {
 
     // Disabled the active stop if it is not in the visible stops 
     useEffect(() => {
+        if (!stops.includes(activeStop)) setActiveStop(null);
+    }, [stops, activeStop]);
+
+    // Set the active stop to false if expanded is false
+    useEffect(() => {
         // Variable that avoids updating the component when it is unmounted
         let mounted = true;
 
-        if (!stops.includes(activeStop)) {
-            if (mounted) setActiveStop(null);
+        if (!expanded) {
+            // Wait for the animation to finish
+            setTimeout(() => {
+                if (mounted) setActiveStop(null);
+            }, 150);
         }
 
         return () => {
             mounted = false;
         };
-    }, [stops, activeStop]);
 
-    // Set the active stop to false if expanded is false
-    useEffect(() => {
-        if (!expanded) {
-            // Wait for the animation to finish
-            setTimeout(() => {
-                setActiveStop(null);
-            }, 150);
-        }
     }, [expanded]);
 
     const handleChange = (stop) => (event, isExpanded) => {
