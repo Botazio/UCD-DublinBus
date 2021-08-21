@@ -650,7 +650,8 @@ class FeedbackTestCase(TestCase):
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content),
-                         {"question_number":["feedback question with this question number already exists."]})
+                         {"question_number"
+                          :["feedback question with this question number already exists."]})
 
         # feedback_question - GET - superuser
         response = self.client.get('/feedback_question/1/'
@@ -676,7 +677,8 @@ class FeedbackTestCase(TestCase):
         self.assertEqual(json.loads(response.content),
                          {"detail":"You do not have permission to perform this action."})
 
-        # feedback_question - POST - any authenticated user can post an answer to an existing feedback question
+        # feedback_question - POST -
+        # any authenticated user can post an answer to an existing feedback question
         response = self.client.post('/feedback_answer/'
                                 , data={"question": "1"
                                         , "rating": "5"
@@ -865,17 +867,6 @@ class UnauthorisedRoutesTestCase1(TestCase):
         self.assertEqual(res['stop_name'], "Dummy Stop, stop 1234")
         self.assertEqual(res['stop_lat'], 53.3943327828838)
         self.assertEqual(res['stop_lon'], -6.39185248232822)
-        '''
-        self.assertEqual(res['arrivals'][0]['direction'], 1)
-        self.assertEqual(res['arrivals'][0]['final_destination_stop_name'], 'Dummy Stop, stop 4321')
-        self.assertEqual(res['arrivals'][0]['line'], '37')
-        self.assertEqual(res['arrivals'][0]['route_id'], '90-37-d12-1')
-        self.assertEqual(res['arrivals'][0]['scheduled_arrival_time'], '23:00:00')
-        self.assertEqual(res['arrivals'][0]['scheduled_departure_time'], '23:00:00')
-        self.assertEqual(res['arrivals'][0]['service_id'], 'y12345')
-        self.assertEqual(res['arrivals'][0]['stop_sequence'], 1)
-        self.assertEqual(res['arrivals'][0]['trip_id'], '4028.y12345.90-37-d12-1.38.I')
-        '''
 
         # stop does not exist
         response = self.client.get('/stop/8240DB009999/')
@@ -922,31 +913,13 @@ class UnauthorisedRoutesTestCase2(ResourceTestCaseMixin, TestCase):
     # StopTime
     def test_get_api_json_stops_by_trip(self):
         'test_get_api_json_stops_by_trip'
-        response = self.api_client.get('/stops_by_trip/4028.y12345.90-37-d12-1.38.I/', format='json')
+        response = self.api_client.get('/stops_by_trip/4028.y12345.90-37-d12-1.38.I/'
+                                       , format='json')
         self.assertValidJSONResponse(response)
 
     # Trip Shape
     def test_get_api_json_shape_by_trip(self):
         'test_get_api_json_shape_by_trip'
-        response = self.api_client.get('/shape_by_trip/4028.y12345.90-37-d12-1.38.I/', format='json')
+        response = self.api_client.get('/shape_by_trip/4028.y12345.90-37-d12-1.38.I/'
+                                       , format='json')
         self.assertValidJSONResponse(response)
-
-'''
-    # Stop StopTime realtime_gtfs
-    def test_get_api_json_stop(self):
-        response = self.api_client.get('/stop/1234DB001234/', format='json')
-        print('test_get_api_json_stop - response.content', response.content)
-        self.assertValidJSONResponse(response)
-
-    def test_get_api_json_predict(self):
-        response = self.api_client.get('/predict/', format='json')
-        self.assertValidJSONResponse(response)
-    
-class AuthorisedRoutesTestCase(TestCase):
-    pass
-    # get forbidden 401 IsUser IsAdmin isAuthenticated
-    # cant see other Users data
-    # trying to post a favoritestop without being signed in
-
-'''
-
