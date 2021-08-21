@@ -58,6 +58,9 @@ class Shape(models.Model):
     shape_pt_sequence = models.IntegerField()
     shape_dist_traveled = models.FloatField()
 
+    def __str__(self):
+        return str(self.shape_id)
+
 class Route(models.Model):
     """
     A class to represent a Dublin Bus route
@@ -197,6 +200,9 @@ class StopTime(models.Model):
     shape_dist_traveled = models.FloatField()
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.trip) + ' - ' + str(self.stop)
+
 class Line(models.Model):
     """
     A class to represents the bus lines that run through all Dublin bus stops.
@@ -211,6 +217,9 @@ class Line(models.Model):
     """
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
     line = models.CharField(max_length=10)
+
+    def __str__(self):
+        return str(self.stop)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
