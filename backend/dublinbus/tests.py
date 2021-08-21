@@ -297,8 +297,7 @@ class CustomUserLogInTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['username'], 'testuser1')
         # should be no token returned for user object
-        with self.assertRaises(KeyError):
-            response.data['token']
+        self.assertFalse('token' in response.data)
 
 class CustomUserDetailsTestCase(TestCase):
     'CustomUserDetailsTestCase'
@@ -317,7 +316,9 @@ class CustomUserDetailsTestCase(TestCase):
         'test_change_password'
         # Password fields didn't match
         response = self.client.put('/change_password/{}/'.format(self.primary_key)
-                                   ,data = {"password": "new", "password2": "mismatch", "old_password": "testuser1"}
+                                   ,data = {"password": "new"
+                                            , "password2": "mismatch"
+                                            , "old_password": "testuser1"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 400)
@@ -326,7 +327,9 @@ class CustomUserDetailsTestCase(TestCase):
 
         # Old password is not correct
         response = self.client.put(reverse('change_password', kwargs={'pk': self.primary_key})
-                                   ,data = {"password": "new", "password2": "new", "old_password": "incorrect"}
+                                   ,data = {"password": "new"
+                                            , "password2": "new"
+                                            , "old_password": "incorrect"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 400)
@@ -335,7 +338,9 @@ class CustomUserDetailsTestCase(TestCase):
 
         # successfully change password
         response = self.client.put(reverse('change_password', kwargs={'pk': self.primary_key})
-                                   ,data = {"password": "new", "password2": "new", "old_password": "testuser1"}
+                                   ,data = {"password": "new"
+                                            , "password2": "new"
+                                            , "old_password": "testuser1"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 200)
@@ -468,15 +473,18 @@ class CustomUserDeleteTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
         # check all data associated with user is deleted
-        response = self.client.get('/users/', HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
+        response = self.client.get('/users/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
         self.assertEqual(response.status_code, 401)
         self.assertEqual(json.loads(response.content),
                          {"detail":"Invalid signature."})
-        response = self.client.get('/markers/', HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
+        response = self.client.get('/markers/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
         self.assertEqual(response.status_code, 401)
         self.assertEqual(json.loads(response.content),
                          {"detail":"Invalid signature."})
-        response = self.client.get('/theme/', HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
+        response = self.client.get('/theme/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser1))
         self.assertEqual(response.status_code, 401)
         self.assertEqual(json.loads(response.content),
                          {"detail":"Invalid signature."})
@@ -487,11 +495,19 @@ class FavoritesTestCase(TestCase):
 
     def setUp(self):
         'setUp'
-        stop1 = Stop.objects.create(stop_id="1234DB001234", stop_name="Dummy Stop, stop 1234", stop_num="1234",
-                        stop_lat="53.3943327828838", stop_lon="-6.39185248232822")
-        stop2 = Stop.objects.create(stop_id="4321DB004321", stop_name="Dummy Stop, stop 4321", stop_num="4321",
-                        stop_lat="53.3927725776921", stop_lon="-6.39881284842172")
-        cu1 = CustomUser.objects.create(username="testuser1", email="testuser1@gmail.com", password="testuser1")
+        stop1 = Stop.objects.create(stop_id="1234DB001234"
+                                    , stop_name="Dummy Stop, stop 1234"
+                                    , stop_num="1234"
+                                    , stop_lat="53.3943327828838"
+                                    , stop_lon="-6.39185248232822")
+        stop2 = Stop.objects.create(stop_id="4321DB004321"
+                                    , stop_name="Dummy Stop, stop 4321"
+                                    , stop_num="4321"
+                                    , stop_lat="53.3927725776921"
+                                    , stop_lon="-6.39881284842172")
+        cu1 = CustomUser.objects.create(username="testuser1"
+                                        , email="testuser1@gmail.com"
+                                        , password="testuser1")
         FavoriteStop.objects.create(owner=cu1, stop=stop1)
         FavoriteJourney.objects.create(owner=cu1, stop_origin=stop1, stop_destination=stop2)
         FavoriteLine.objects.create(owner=cu1, route_short_name="39a", direction_id="1")
@@ -520,16 +536,19 @@ class FavoritesTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
 
         # GET
-        response = self.client.get('/favoritestop/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/favoritestop/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 200)
 
         # DELETE - testuser2 trying to delete testuser1's favoritestop
-        response = self.client.delete('/favoritestop/1/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoritestop/1/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.content),
                          {"detail":"You do not have permission to perform this action."})
         # DELETE - testuser2 trying to delete their own favoritestop
-        response = self.client.delete('/favoritestop/2/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoritestop/2/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 204)
 
 
@@ -537,7 +556,8 @@ class FavoritesTestCase(TestCase):
         'test_favoritejourney'
         # POST
         response = self.client.post('/favoritejourney/'
-                                   ,data = {"stop_origin": "doesnotexist12345", "stop_destination": "4321DB004321"}
+                                   ,data = {"stop_origin": "doesnotexist12345"
+                                            , "stop_destination": "4321DB004321"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                     )
         self.assertEqual(response.status_code, 404)
@@ -545,22 +565,26 @@ class FavoritesTestCase(TestCase):
                          {"detail":"Not found."})
 
         response = self.client.post('/favoritejourney/'
-                                    , data={"stop_origin": "1234DB001234", "stop_destination": "4321DB004321"}
+                                    , data={"stop_origin": "1234DB001234"
+                                            , "stop_destination": "4321DB004321"}
                                     , HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                     )
         self.assertEqual(response.status_code, 201)
 
         # GET
-        response = self.client.get('/favoritejourney/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/favoritejourney/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 200)
 
         # DELETE - testuser2 trying to delete testuser1's favoritejourney
-        response = self.client.delete('/favoritejourney/1/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoritejourney/1/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.content),
                          {"detail":"You do not have permission to perform this action."})
         # DELETE - testuser2 trying to delete their own favoritejourney
-        response = self.client.delete('/favoritejourney/2/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoritejourney/2/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 204)
 
     def test_favoriteline(self):
@@ -573,16 +597,19 @@ class FavoritesTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
 
         # GET
-        response = self.client.get('/favoriteline/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.get('/favoriteline/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 200)
 
         # DELETE - testuser2 trying to delete testuser1's favoriteline
-        response = self.client.delete('/favoriteline/1/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoriteline/1/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.content),
                          {"detail":"You do not have permission to perform this action."})
         # DELETE - testuser2 trying to delete their own favoriteline
-        response = self.client.delete('/favoriteline/2/', HTTP_AUTHORIZATION='JWT {}'.format(self.token))
+        response = self.client.delete('/favoriteline/2/'
+                                      , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
         self.assertEqual(response.status_code, 204)
 
 class FeedbackTestCase(TestCase):
@@ -607,7 +634,8 @@ class FeedbackTestCase(TestCase):
         'test_feedback'
         # feedback_question - POST - superuser
         response = self.client.post('/feedback_question/'
-                                   ,data = {"question_number": "1", "question_text": "Please rate our app from 1-5."}
+                                   ,data = {"question_number": "1"
+                                            , "question_text": "Please rate our app from 1-5."}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token_superuser)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 201)
@@ -616,7 +644,8 @@ class FeedbackTestCase(TestCase):
 
         # POST - feedback question with this question number already exists
         response = self.client.post('/feedback_question/'
-                                   ,data = {"question_number": "1", "question_text": "Please write an opinion.."}
+                                   ,data = {"question_number": "1"
+                                            , "question_text": "Please write an opinion.."}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token_superuser)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 400)
@@ -624,14 +653,16 @@ class FeedbackTestCase(TestCase):
                          {"question_number":["feedback question with this question number already exists."]})
 
         # feedback_question - GET - superuser
-        response = self.client.get('/feedback_question/1/', HTTP_AUTHORIZATION='JWT {}'.format(self.token_superuser))
+        response = self.client.get('/feedback_question/1/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token_superuser))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content),
                          {"question_number":1,"question_text":"Please rate our app from 1-5."})
 
         # feedback_question - POST - normaluser
         response = self.client.post('/feedback_question/'
-                                   ,data = {"question_number": "10", "question_text": "Please rate our app from 1-5."}
+                                   ,data = {"question_number": "10"
+                                            , "question_text": "Please rate our app from 1-5."}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 403)
@@ -639,14 +670,17 @@ class FeedbackTestCase(TestCase):
                          {"detail":"You do not have permission to perform this action."})
 
         # feedback_question - GET - normaluser
-        response = self.client.get('/feedback_question/1/', HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser))
+        response = self.client.get('/feedback_question/1/'
+                                   , HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(json.loads(response.content),
                          {"detail":"You do not have permission to perform this action."})
 
         # feedback_question - POST - any authenticated user can post an answer to an existing feedback question
         response = self.client.post('/feedback_answer/'
-                                , data={"question": "1", "rating": "5", "text": "This is my feedback."}
+                                , data={"question": "1"
+                                        , "rating": "5"
+                                        , "text": "This is my feedback."}
                                 , HTTP_AUTHORIZATION='JWT {}'.format(self.token_superuser)
                                 , content_type='application/json')
         self.assertEqual(response.status_code, 201)
@@ -659,25 +693,59 @@ class UnauthorisedRoutesTestCase1(TestCase):
 
     def setUp(self):
         'setUp'
-        stop1 = Stop.objects.create(stop_id="1234DB001234", stop_name="Dummy Stop, stop 1234", stop_num="1234",
-                            stop_lat="53.3943327828838", stop_lon="-6.39185248232822")
-        stop2 = Stop.objects.create(stop_id="4321DB004321", stop_name="Dummy Stop, stop 4321", stop_num="4321",
-                                 stop_lat="53.3927725776921", stop_lon="-6.39881284842172")
+        stop1 = Stop.objects.create(stop_id="1234DB001234"
+                                    , stop_name="Dummy Stop, stop 1234"
+                                    , stop_num="1234"
+                                    , stop_lat="53.3943327828838"
+                                    , stop_lon="-6.39185248232822")
+        stop2 = Stop.objects.create(stop_id="4321DB004321"
+                                    , stop_name="Dummy Stop, stop 4321"
+                                    , stop_num="4321"
+                                    , stop_lat="53.3927725776921"
+                                    , stop_lon="-6.39881284842172")
         Line.objects.create(stop=stop1, line="37")
         Line.objects.create(stop=stop1, line="39")
         Line.objects.create(stop=stop1, line="39a")
-        route = Route.objects.create(route_id="90-37-d12-1", agency_id="978", route_short_name="37", route_long_name="",
-                             route_type="3")
-        calendar = Calendar.objects.create(service_id="y12345", monday="1",tuesday="1",wednesday="1",thursday="1",friday="1",saturday="1",sunday="1",start_date="2021-01-01",end_date="2099-01-01")
-        trip = Trip.objects.create(route=route, calendar=calendar, trip_id="4028.y12345.90-37-d12-1.38.I",
-                        shape_id="90-37-d12-1.38.I", trip_headsign="Dummy 1- Dummy 2", direction_id="1")
-        Shape.objects.create(shape_id="90-37-d12-1.38.I",shape_pt_lat="53.3942225535033",shape_pt_lon="-6.39167619978278",shape_pt_sequence="1",shape_dist_traveled="0.00")
-        Shape.objects.create(shape_id="90-37-d12-1.38.I",shape_pt_lat="53.3948455819658",shape_pt_lon="-6.39055502092115",shape_pt_sequence="2",shape_dist_traveled="101.62")
-        StopTime.objects.create(trip=trip, arrival_time="23:00:00", departure_time="23:00:00", stop=stop1,
-                                stop_sequence="1", stop_headsign="Dummy", pickup_type="0", drop_off_type="0",
+        route = Route.objects.create(route_id="90-37-d12-1"
+                                     , agency_id="978"
+                                     , route_short_name="37"
+                                     , route_long_name=""
+                                     , route_type="3")
+        calendar = Calendar.objects.create(service_id="y12345"
+                                           , monday="1"
+                                           ,tuesday="1"
+                                           ,wednesday="1"
+                                           ,thursday="1"
+                                           ,friday="1"
+                                           ,saturday="1"
+                                           ,sunday="1"
+                                           ,start_date="2021-01-01"
+                                           ,end_date="2099-01-01")
+        trip = Trip.objects.create(route=route
+                                   , calendar=calendar
+                                   , trip_id="4028.y12345.90-37-d12-1.38.I"
+                                   , shape_id="90-37-d12-1.38.I"
+                                   , trip_headsign="Dummy 1- Dummy 2"
+                                   , direction_id="1")
+        Shape.objects.create(shape_id="90-37-d12-1.38.I"
+                             ,shape_pt_lat="53.3942225535033"
+                             ,shape_pt_lon="-6.39167619978278"
+                             ,shape_pt_sequence="1"
+                             ,shape_dist_traveled="0.00")
+        Shape.objects.create(shape_id="90-37-d12-1.38.I"
+                             ,shape_pt_lat="53.3948455819658"
+                             ,shape_pt_lon="-6.39055502092115"
+                             ,shape_pt_sequence="2"
+                             ,shape_dist_traveled="101.62")
+        StopTime.objects.create(trip=trip, arrival_time="23:00:00"
+                                , departure_time="23:00:00", stop=stop1
+                                ,stop_sequence="1", stop_headsign="Dummy"
+                                , pickup_type="0", drop_off_type="0",
                                 shape_dist_traveled="0.00")
-        StopTime.objects.create(trip=trip, arrival_time="23:01:55", departure_time="23:01:55", stop=stop2,
-                                stop_sequence="3", stop_headsign="Dummy", pickup_type="0", drop_off_type="0",
+        StopTime.objects.create(trip=trip, arrival_time="23:01:55"
+                                , departure_time="23:01:55", stop=stop2
+                                , stop_sequence="3", stop_headsign="Dummy"
+                                , pickup_type="0", drop_off_type="0",
                                 shape_dist_traveled="1064.70")
 
     def test_stops(self):
