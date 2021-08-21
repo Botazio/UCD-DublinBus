@@ -23,11 +23,22 @@ export async function actionFetch(url, type, body, setError, setIsPending, setOk
       body: JSON.stringify(body),
    });
 
+
+   // If the response is not ok set the error message
    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      setIsPending(false);
-      setError(message);
+      try {
+         const error = await response.json();
+         setIsPending(false);
+         if (error) {
+            setError(error[Object.keys(error)[0]]);
+         }
+      }
+      catch {
+         setError(`An error has occured: ${response.status}`);
+         setIsPending(false);
+      }
    }
+
 
    if (response.ok) {
       setIsPending(false);
@@ -52,10 +63,19 @@ export async function actionFetchMedia(url, type, body, setError, setIsPending, 
       body: body
    });
 
+   // If the response is not ok set the error message
    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      setIsPending(false);
-      setError(message);
+      try {
+         const error = await response.json();
+         setIsPending(false);
+         if (error) {
+            setError(error[Object.keys(error)[0]]);
+         }
+      }
+      catch {
+         setError(`An error has occured: ${response.status}`);
+         setIsPending(false);
+      }
    }
 
    if (response.ok) {

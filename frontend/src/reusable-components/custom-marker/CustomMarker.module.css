@@ -1,0 +1,9 @@
+.infowindow {
+   width: 180px;
+   color: #333;
+}
+.infowindow > p {
+   margin-right: 10px;
+   font-size: 14px;
+   font-weight: 500;
+}

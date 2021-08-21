@@ -9,6 +9,7 @@ import iconClusterOrange from "./fixtures/icon-cluster-orange.png";
 import iconClusterYellow from "./fixtures/icon-cluster-yellow.png";
 import iconClusterBlue from "./fixtures/icon-cluster-blue.png";
 import iconClusterWhite from "./fixtures/icon-cluster-white.png";
+import CustomMarker from "../../reusable-components/custom-marker/CustomMarker";
 
 // This component renders the stops merging then into clusters
 // avoiding performance issues
@@ -107,9 +108,8 @@ const MarkerClusters = ({ stops, mapRef, setSelectedStop }) => {
             ></Marker>
           );
         }
-
         return (
-          <Marker
+          <CustomMarker
             key={"marker" + cluster.properties.stopId}
             position={{
               lat: latitude,

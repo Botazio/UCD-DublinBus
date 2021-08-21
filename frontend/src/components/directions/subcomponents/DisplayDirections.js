@@ -30,7 +30,7 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
    };
 
    return (
-      <Card variant="last" >
+      <Card variant="margin_bottom" >
          {/* Display the prediction time */}
          {searchResults && getPredictedTime(searchResults.total_predictions)}
 

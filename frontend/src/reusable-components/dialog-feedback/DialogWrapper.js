@@ -18,9 +18,17 @@ const DialogWrapper = ({ time, children, ...restProps }) => {
    // Opens the dialog the first time the component renders
    // after a customizable amount of time
    useEffect(() => {
+      // Variable that avoids updating the component when it is unmounted
+      let mounted = true;
+
       setTimeout(() => {
-         setAction(true);
+         if (mounted) setAction(true);
       }, [time]);
+
+      return () => {
+         mounted = false;
+      };
+
    }, [time]);
 
    const handleClose = () => {

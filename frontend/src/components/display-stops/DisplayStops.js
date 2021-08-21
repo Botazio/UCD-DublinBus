@@ -1,12 +1,13 @@
 import DisplayStopsCSS from './DisplayStops.module.css';
 import StopBusArrivals from '../stop-bus-arrivals/StopBusArrivals';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import iconStop from "../../fixtures/icons/icon-stop.png";
 import { withStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { AccordionDetails } from '@material-ui/core';
 import CustomMarker from '../../reusable-components/custom-marker/CustomMarker';
+import { useGoogleMap } from '@react-google-maps/api';
 
 // Styles for the accordion
 const AccordionSummary = withStyles({
@@ -22,9 +23,42 @@ const AccordionSummary = withStyles({
 // This div are wrapped by an accordion
 const DisplayStops = ({ stops, page, variant }) => {
     // state to hold which stop has been clicked
-    const [activeStop, setActiveStop] = useState("");
+    const [activeStop, setActiveStop] = useState();
     // state to control the accordion
     const [expanded, setExpanded] = useState(false);
+
+    // reference to the map using the GoogleMap provider
+    const mapRef = useGoogleMap();
+
+    // Center the map view to the selected stop position
+    useEffect(() => {
+        if (activeStop) {
+            mapRef.panTo({ lat: activeStop.stop_lat, lng: activeStop.stop_lon });
+        }
+    }, [mapRef, activeStop]);
+
+    // Disabled the active stop if it is not in the visible stops 
+    useEffect(() => {
+        if (!stops.includes(activeStop)) setActiveStop(null);
+    }, [stops, activeStop]);
+
+    // Set the active stop to false if expanded is false
+    useEffect(() => {
+        // Variable that avoids updating the component when it is unmounted
+        let mounted = true;
+
+        if (!expanded) {
+            // Wait for the animation to finish
+            setTimeout(() => {
+                if (mounted) setActiveStop(null);
+            }, 150);
+        }
+
+        return () => {
+            mounted = false;
+        };
+
+    }, [expanded]);
 
     const handleChange = (stop) => (event, isExpanded) => {
         setExpanded(isExpanded ? stop : false);
@@ -71,6 +105,19 @@ const DisplayStops = ({ stops, page, variant }) => {
                 );
             })}
 
+            {/* Display a red marker on the active stop */}
+            {activeStop &&
+                <CustomMarker
+                    key={"active_marker" + activeStop.stop_id}
+                    position={{
+                        lat: activeStop.stop_lat,
+                        lng: activeStop.stop_lon,
+                    }}
+                    title={activeStop.stop_name}
+                />
+            }
+
+
             {/* Map the stops array and display a custom marker */}
             {stops.map((stop) => (
                 <CustomMarker
@@ -80,6 +127,7 @@ const DisplayStops = ({ stops, page, variant }) => {
                         lng: stop.stop_lon,
                     }}
                     options={{ icon: customIcon }}
+                    title={stop.stop_name}
                 />
             ))}
         </>

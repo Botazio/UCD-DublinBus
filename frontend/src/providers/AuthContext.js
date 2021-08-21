@@ -16,76 +16,79 @@ export function AuthProvider({ children }) {
   // User image
   const [userImage, setUserImage] = useState();
 
-  // function to sign up
-  function signup(username, email, password) {
+  // Function to sign up
+  async function signup(username, email, password) {
     const body = { username: username, email: email, password: password };
 
-    // set the error to null
+    // Set the error to null
     setErrorMessage(null);
 
-    fetch("https://csi420-02-vm6.ucd.ie/users/", {
+    // Await for the response
+    const res = await fetch("https://csi420-02-vm6.ucd.ie/users/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw Error();
-        }
-        return res.json();
-      })
-      .then((json) => {
-        // set the token in the local storage so it does not depend on react state
-        localStorage.setItem("token", json.token);
+    });
 
-        // set the current user to the response
-        setCurrentUser(json);
-      })
-      .catch((err) => {
-        if (err.name === "AbortError") {
-          console.log("fetch abort");
-        } else {
-          setErrorMessage("Failed to create an account");
+    // If the response is not ok set the error message
+    if (!res.ok) {
+      try {
+        const error = await res.json();
+        if (error) {
+          setErrorMessage(error[Object.keys(error)[0]]);
         }
-      });
+      }
+      catch {
+        setErrorMessage("Failed to create an account");
+      }
+    }
+
+    // If the response is ok, set the token in local storage and the current
+    // user to the response 
+    if (res.ok) {
+      const json = await res.json();
+      localStorage.setItem("token", json.token);
+      setCurrentUser(json);
+    }
   }
 
-  // function to sign in
-  function signin(username, password) {
+  // Function to sign in
+  async function signin(username, password) {
     const body = { username: username, password: password };
 
     // set the error to null
     setErrorMessage(null);
 
-    fetch("https://csi420-02-vm6.ucd.ie/token-auth/", {
+    const res = await fetch("https://csi420-02-vm6.ucd.ie/token-auth/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw Error();
-        }
-        return res.json();
-      })
-      .then((json) => {
-        // set the token in the local storage so it does not depend on react state
-        localStorage.setItem("token", json.token);
+    });
 
-        // set the current user to the response
-        setCurrentUser(json);
-      })
-      .catch((err) => {
-        if (err.name === "AbortError") {
-          console.log("fetch abort");
-        } else {
-          setErrorMessage("Failed to sign in");
+    // If the response is not ok set the error message
+    if (!res.ok) {
+      try {
+        const error = await res.json();
+        if (error) {
+          setErrorMessage(error[Object.keys(error)[0]]);
         }
-      });
+      }
+      catch {
+        setErrorMessage("Failed to sign in");
+      }
+    }
+
+    // If the response is ok, set the token in local storage and the current
+    // user to the response 
+    if (res.ok) {
+      const json = await res.json();
+      localStorage.setItem("token", json.token);
+      setCurrentUser(json);
+    }
   }
 
   // function to check if the user is authenticated
@@ -117,42 +120,41 @@ export function AuthProvider({ children }) {
   }
 
   // function to login with google and facebook
-  function signinOAuth(company, token) {
+  async function signinOAuth(company, token) {
     const body = { "auth_token": token };
 
     // set the error to null
     setErrorMessage(null);
 
-    fetch(`https://csi420-02-vm6.ucd.ie/${company}/`, {
+    const res = await fetch(`https://csi420-02-vm6.ucd.ie/${company}/`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(body),
-    })
-      .then((res) => {
-        console.log(res);
-        if (!res.ok) {
-          throw Error();
-        }
-        return res.json();
-      })
-      .then((json) => {
-        // set the token in the local storage so it does not depend on react state
-        localStorage.setItem("token", json.token);
+    });
 
-        // set the current user to the response
-        setCurrentUser(json);
-      })
-      .catch((err) => {
-        if (err.name === "AbortError") {
-          console.log("fetch abort");
-        } else {
-          console.log(err);
-          setErrorMessage("Failed to sign in using " + company);
+    // If the response is not ok set the error message
+    if (!res.ok) {
+      try {
+        const error = await res.json();
+        if (error) {
+          setErrorMessage(error[Object.keys(error)[0]]);
         }
-      });
+      }
+      catch {
+        setErrorMessage("Failed to sign in using " + company);
+      }
+    }
+
+    // If the response is ok, set the token in local storage and the current
+    // user to the response 
+    if (res.ok) {
+      const json = await res.json();
+      localStorage.setItem("token", json.token);
+      setCurrentUser(json);
+    }
   }
 
   // function to get the user image
@@ -178,13 +180,8 @@ export function AuthProvider({ children }) {
         const objectURL = URL.createObjectURL(data);
         setUserImage(objectURL);
       })
-      .catch((err) => {
-        console.log("hello");
-        if (err.name === "AbortError") {
-          console.log("fetch abort");
-        } else {
-          setUserImage(null);
-        }
+      .catch(() => {
+        setUserImage(null);
       });
   }
 

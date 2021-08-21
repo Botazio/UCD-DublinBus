@@ -6,7 +6,6 @@
   height: 120px;
   border-radius: 25px;
   box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
-  background-color: white;
 }
 .container > div {
   height: 60px;
@@ -22,18 +21,7 @@
   display: none;
 }
 .container > div > svg {
-  fill: rgba(0,0,0, 0.6);
   margin-right: 0px;
-}
-.container > div:hover > svg {
-  fill: rgba(0,0,0, 0.9);
-}
-.active {
-  background-color: #00B9FF;
-  color: white;
-}
-.active > svg {
-  fill: white!important;
 }
 
 /* Display the switcher on the right side when the screen width is 
@@ -56,7 +44,6 @@ between 600px-900px */
     display: block;
   }
   .container > div > svg {
-    fill: rgba(0,0,0, 0.6);
     margin-right: 5px;
   }
 }
