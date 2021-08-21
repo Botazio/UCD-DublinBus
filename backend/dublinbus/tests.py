@@ -1,107 +1,126 @@
 import json
 from django.utils import timezone
-from dublinbus.models import Stop, Shape, Route, Calendar, Trip, StopTime, Line, \
-    CustomUser, FavoriteStop, FavoriteJourney, FavoriteLine, FeedbackQuestion, FeedbackAnswer, \
-    Theme, Marker
 from django.test import TestCase # , Client
 from django.db.utils import IntegrityError
 from django.urls import reverse
 from model_bakery import baker
 from tastypie.test import ResourceTestCaseMixin
+from dublinbus.models import Stop, Shape, Route, Calendar, Trip, StopTime, Line, \
+    CustomUser, FavoriteStop, FavoriteJourney, FavoriteLine, FeedbackQuestion, FeedbackAnswer, \
+    Theme, Marker
 
 # Testing models.py
 class ModelsBakerTestCase(TestCase):
-
+    'ModelsBakerTestCase'
     def test_stop(self):
-        object = baker.make(Stop)
-        self.assertTrue(isinstance(object, Stop))
-        self.assertEqual(object.__str__(), object.stop_name)
+        'test_stop'
+        obj = baker.make(Stop)
+        self.assertTrue(isinstance(obj, Stop))
+        self.assertEqual(obj.__str__(), obj.stop_name)
 
     def test_shape(self):
-        object = baker.make(Shape)
-        self.assertTrue(isinstance(object, Shape))
-        self.assertEqual(object.__str__(), object.shape_id)
+        'test_shape'
+        obj = baker.make(Shape)
+        self.assertTrue(isinstance(obj, Shape))
+        self.assertEqual(obj.__str__(), obj.shape_id)
 
     def test_route(self):
-        object = baker.make(Route)
-        self.assertTrue(isinstance(object, Route))
-        self.assertEqual(object.__str__(), object.route_id)
+        'test_route'
+        obj = baker.make(Route)
+        self.assertTrue(isinstance(obj, Route))
+        self.assertEqual(obj.__str__(), obj.route_id)
 
     def test_calendar(self):
-        object = baker.make(Calendar)
-        self.assertTrue(isinstance(object, Calendar))
-        self.assertEqual(object.__str__(), object.service_id)
+        'test_calendar'
+        obj = baker.make(Calendar)
+        self.assertTrue(isinstance(obj, Calendar))
+        self.assertEqual(obj.__str__(), obj.service_id)
 
     def test_trip(self):
-        object = baker.make(Trip)
-        self.assertTrue(isinstance(object, Trip))
-        self.assertEqual(object.__str__(), object.trip_id)
+        'test_trip'
+        obj = baker.make(Trip)
+        self.assertTrue(isinstance(obj, Trip))
+        self.assertEqual(obj.__str__(), obj.trip_id)
 
     def test_stoptime(self):
-        object = baker.make(StopTime)
-        self.assertTrue(isinstance(object, StopTime))
-        self.assertEqual(object.__str__(), object.trip_id + ' - ' + str(object.stop))
+        'test_stoptime'
+        obj = baker.make(StopTime)
+        self.assertTrue(isinstance(obj, StopTime))
+        self.assertEqual(obj.__str__(), obj.trip_id + ' - ' + str(obj.stop))
 
     def test_line(self):
-        object = baker.make(Line)
-        self.assertTrue(isinstance(object, Line))
-        self.assertEqual(object.__str__(), str(object.stop))
+        'test_line'
+        obj = baker.make(Line)
+        self.assertTrue(isinstance(obj, Line))
+        self.assertEqual(obj.__str__(), str(obj.stop))
 
     def test_custom_user(self):
-        object = baker.make(CustomUser)
-        self.assertTrue(isinstance(object, CustomUser))
-        self.assertEqual(object.__str__(), object.email)
+        'test_custom_user'
+        obj = baker.make(CustomUser)
+        self.assertTrue(isinstance(obj, CustomUser))
+        self.assertEqual(obj.__str__(), obj.email)
 
     def test_favoritestop(self):
-        object = baker.make(FavoriteStop)
-        self.assertTrue(isinstance(object, FavoriteStop))
-        self.assertEqual(object.__str__(), str(object.owner) + ' - ' + str(object.stop_id))
+        'test_favoritestop'
+        obj = baker.make(FavoriteStop)
+        self.assertTrue(isinstance(obj, FavoriteStop))
+        self.assertEqual(obj.__str__(), str(obj.owner) + ' - ' + str(obj.stop_id))
 
     def test_favoritejourney(self):
-        object = baker.make(FavoriteJourney)
-        self.assertTrue(isinstance(object, FavoriteJourney))
-        self.assertEqual(object.__str__(), str(object.owner) + ' - ' +\
-                                           str(object.stop_origin) + ' -> ' +\
-                                           str(object.stop_destination))
+        'test_favoritejourney'
+        obj = baker.make(FavoriteJourney)
+        self.assertTrue(isinstance(obj, FavoriteJourney))
+        self.assertEqual(obj.__str__(), str(obj.owner) + ' - ' +\
+                                           str(obj.stop_origin) + ' -> ' +\
+                                           str(obj.stop_destination))
 
     def test_favoriteline(self):
-        object = baker.make(FavoriteLine)
-        self.assertTrue(isinstance(object, FavoriteLine))
-        self.assertEqual(object.__str__(), str(object.owner) + ' - ' +\
-                                           str(object.route_short_name) + ' - ' +\
-                                           str(object.direction_id))
+        'test_favoriteline'
+        obj = baker.make(FavoriteLine)
+        self.assertTrue(isinstance(obj, FavoriteLine))
+        self.assertEqual(obj.__str__(), str(obj.owner) + ' - ' +\
+                                           str(obj.route_short_name) + ' - ' +\
+                                           str(obj.direction_id))
 
     def test_feedbackquestion(self):
-        object = baker.make(FeedbackQuestion)
-        self.assertTrue(isinstance(object, FeedbackQuestion))
-        self.assertEqual(object.__str__(), str(object.question_number) + ': ' +\
-                                           str(object.question_text))
+        'test_feedbackquestion'
+        obj = baker.make(FeedbackQuestion)
+        self.assertTrue(isinstance(obj, FeedbackQuestion))
+        self.assertEqual(obj.__str__(), str(obj.question_number) + ': ' +\
+                                           str(obj.question_text))
 
     def test_feedbackanswer(self):
-        object = baker.make(FeedbackAnswer)
-        self.assertTrue(isinstance(object, FeedbackAnswer))
-        self.assertEqual(object.__str__(), str(object.question) + ' [rating]' +\
-                                           str(object.rating) + ' [text] ' +\
-                                           str(object.text))
+        'test_feedbackanswer'
+        obj = baker.make(FeedbackAnswer)
+        self.assertTrue(isinstance(obj, FeedbackAnswer))
+        self.assertEqual(obj.__str__(), str(obj.question) + ' [rating]' +\
+                                           str(obj.rating) + ' [text] ' +\
+                                           str(obj.text))
 
     def test_theme(self):
-        object = baker.make(Theme)
-        self.assertTrue(isinstance(object, Theme))
-        self.assertEqual(object.__str__(), str(object.owner.username))
+        'test_theme'
+        obj = baker.make(Theme)
+        self.assertTrue(isinstance(obj, Theme))
+        self.assertEqual(obj.__str__(), str(obj.owner.username))
 
     def test_marker(self):
-        object = baker.make(Marker)
-        self.assertTrue(isinstance(object, Marker))
-        self.assertEqual(object.__str__(), str(object.owner.username))
+        'test_marker'
+        obj = baker.make(Marker)
+        self.assertTrue(isinstance(obj, Marker))
+        self.assertEqual(obj.__str__(), str(obj.owner.username))
 
 # testing models manually hardcoded values (not using baker)
 class CustomUserTestCase(TestCase):
+    'CustomUserTestCase'
 
     def setUp(self):
-        CustomUser.objects.create(username="testuser1", email="testuser1@gmail.com", password="testuser1")
+        'setUp'
+        CustomUser.objects.create(username="testuser1"
+                                  ,email="testuser1@gmail.com"
+                                  ,password="testuser1")
 
     def test_customuser(self):
-        """CustomUser """
+        'test_customuser'
         testuser1 = CustomUser.objects.get(username="testuser1")
 
         # check defaults have been set
@@ -113,14 +132,19 @@ class CustomUserTestCase(TestCase):
 
         # check fails when username, email not unique
         with self.assertRaises(IntegrityError):
-            CustomUser.objects.create(username="testuser1", email="testuser1@gmail.com", password="testuser1")
-            CustomUser.objects.create(username="testuser1", email="testuser1_unique@gmail.com", password="testuser1")
+            CustomUser.objects.create(username="testuser1"
+                                      ,email="testuser1@gmail.com"
+                                      ,password="testuser1")
+            CustomUser.objects.create(username="testuser1"
+                                      ,email="testuser1_unique@gmail.com"
+                                      ,password="testuser1")
 
 # Testing views.py
 class CustomUserSignUpTestCase(TestCase):
+    'CustomUserSignUpTestCase'
 
     def test_user_sign_up(self):
-        """ """
+        'test_user_sign_up'
         # missing username, password, email
         response = self.client.post('/users/',)
         self.assertEqual(response.status_code, 400)
@@ -151,7 +175,8 @@ class CustomUserSignUpTestCase(TestCase):
                          {'email': ['Enter a valid email address.']})
 
         # missing password
-        response = self.client.post('/users/', {"username": "testuser1", "email": "testuser1@gmail.com"})
+        response = self.client.post('/users/'
+                                    , {"username": "testuser1", "email": "testuser1@gmail.com"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content),
                          {'password': ['This field is required.']})
@@ -216,17 +241,20 @@ class CustomUserSignUpTestCase(TestCase):
                          {'username': ['custom user with this username already exists.']})
 
 class CustomUserLogInTestCase(TestCase):
+    'CustomUserLogInTestCase'
 
     def setUp(self):
+        'setUp'
         # create testuser1 to be able to log in with
         self.client.post('/users/', {"username": "testuser1",
                                      "email": "testuser1@gmail.com",
                                      "password": "testuser1"})
 
     def test_user_auth(self):
-
+        'test_user_auth'
         # account does not exist
-        response = self.client.post('/token-auth/', {"username": "doesnotexist", "password": "doesnotexist"})
+        response = self.client.post('/token-auth/'
+                                    , {"username": "doesnotexist", "password": "doesnotexist"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content),
                          {"non_field_errors":["Unable to log in with provided credentials."]})
@@ -244,19 +272,22 @@ class CustomUserLogInTestCase(TestCase):
                          {'username': ['This field is required.']})
 
         # account exists - wrong password
-        response = self.client.post('/token-auth/', {"username": "testuser1", "password": "wrong"})
+        response = self.client.post('/token-auth/'
+                                    , {"username": "testuser1", "password": "wrong"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content),
                          {'non_field_errors': ['Unable to log in with provided credentials.']})
 
         # account exists - wrong username
-        response = self.client.post('/token-auth/', {"username": "wrong", "password": "testuser1"})
+        response = self.client.post('/token-auth/'
+                                    , {"username": "wrong", "password": "testuser1"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content),
                          {'non_field_errors': ['Unable to log in with provided credentials.']})
 
         # account exists - successful login
-        response = self.client.post('/token-auth/', {"username": "testuser1", "password": "testuser1"})
+        response = self.client.post('/token-auth/'
+                                    , {"username": "testuser1", "password": "testuser1"})
         self.assertEqual(response.status_code, 200)
 
         # When a user signs in
@@ -270,20 +301,22 @@ class CustomUserLogInTestCase(TestCase):
             response.data['token']
 
 class CustomUserDetailsTestCase(TestCase):
+    'CustomUserDetailsTestCase'
 
     def setUp(self):
+        'setUp'
         # create testuser1
         response = self.client.post('/users/', {"username": "testuser1",
                                      "email": "testuser1@gmail.com",
                                      "password": "testuser1"})
         # all tests in this class use the primary key and token associated with this CustomUser
         self.token = response.data['token']
-        self.pk = response.data['pk']
+        self.primary_key = response.data['pk']
 
     def test_change_password(self):
-
+        'test_change_password'
         # Password fields didn't match
-        response = self.client.put('/change_password/{}/'.format(self.pk)
+        response = self.client.put('/change_password/{}/'.format(self.primary_key)
                                    ,data = {"password": "new", "password2": "mismatch", "old_password": "testuser1"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -292,7 +325,7 @@ class CustomUserDetailsTestCase(TestCase):
                          {"password":["Password fields didn't match."]})
 
         # Old password is not correct
-        response = self.client.put(reverse('change_password', kwargs={'pk': self.pk})
+        response = self.client.put(reverse('change_password', kwargs={'pk': self.primary_key})
                                    ,data = {"password": "new", "password2": "new", "old_password": "incorrect"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -301,15 +334,15 @@ class CustomUserDetailsTestCase(TestCase):
                          {"old_password":{"old_password":"Old password is not correct"}})
 
         # successfully change password
-        response = self.client.put(reverse('change_password', kwargs={'pk': self.pk})
+        response = self.client.put(reverse('change_password', kwargs={'pk': self.primary_key})
                                    ,data = {"password": "new", "password2": "new", "old_password": "testuser1"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
     def test_change_username(self):
-
-        response = self.client.put('/users/{}/'.format(self.pk)
+        'test_change_username'
+        response = self.client.put('/users/{}/'.format(self.primary_key)
                                    ,data = {"username": "changed_username"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -323,9 +356,9 @@ class CustomUserDetailsTestCase(TestCase):
                          {"detail":"Invalid signature."})
 
     def test_change_email(self):
-
+        'test_change_email'
         # invalid email
-        response = self.client.put('/users/{}/'.format(self.pk)
+        response = self.client.put('/users/{}/'.format(self.primary_key)
                                    ,data = {"email": "changed_email"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -334,7 +367,7 @@ class CustomUserDetailsTestCase(TestCase):
                          {'email': ['Enter a valid email address.']})
 
         # valid email
-        response = self.client.put('/users/{}/'.format(self.pk)
+        response = self.client.put('/users/{}/'.format(self.primary_key)
                                    ,data = {"email": "changed_email@gmail.com"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -343,6 +376,7 @@ class CustomUserDetailsTestCase(TestCase):
 
 
     def test_user_icon(self):
+        'test_user_icon'
         # DELETE
         response = self.client.delete('/user_icon/'
                                , HTTP_AUTHORIZATION='JWT {}'.format(self.token))
@@ -351,7 +385,8 @@ class CustomUserDetailsTestCase(TestCase):
                          "No uploaded icon to delete.")
 
     def test_change_map(self):
-        response = self.client.put('/users/{}/'.format(self.pk)
+        'test_change_map'
+        response = self.client.put('/users/{}/'.format(self.primary_key)
                                    ,data = {"map": "defaultThemeGrey"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -359,7 +394,8 @@ class CustomUserDetailsTestCase(TestCase):
         self.assertEqual(response.data['map'], 'defaultThemeGrey')
 
     def test_allow_feedback(self):
-        response = self.client.put('/users/{}/'.format(self.pk)
+        'test_allow_feedback'
+        response = self.client.put('/users/{}/'.format(self.primary_key)
                                    ,data = {"allow_feedback": "False"}
                                    ,HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                    ,content_type='application/json')
@@ -368,9 +404,10 @@ class CustomUserDetailsTestCase(TestCase):
 
 
     def test_markers(self):
+        'test_markers'
 
         # PUT
-        response = self.client.put('/markers/{}/'.format(self.pk)
+        response = self.client.put('/markers/{}/'.format(self.primary_key)
                                , data={"attraction":"True", "sports_complex":"True"}
                                , HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                , content_type='application/json')
@@ -386,8 +423,9 @@ class CustomUserDetailsTestCase(TestCase):
 
 
     def test_theme(self):
+        'test_theme'
         # PUT
-        response = self.client.put('/theme/{}/'.format(self.pk)
+        response = self.client.put('/theme/{}/'.format(self.primary_key)
                                , data={"icon_color": "#000001", "font_color": "#000001"}
                                , HTTP_AUTHORIZATION='JWT {}'.format(self.token)
                                , content_type='application/json')
@@ -401,9 +439,10 @@ class CustomUserDetailsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 class CustomUserDeleteTestCase(TestCase):
+    'CustomUserDeleteTestCase'
 
     def setUp(self):
-
+        'setUp'
         response_normaluser1 = self.client.post('/users/', {"username": "testuser1",
                                      "email": "testuser1@gmail.com",
                                      "password": "testuser1"})
@@ -415,7 +454,7 @@ class CustomUserDeleteTestCase(TestCase):
         self.token_normaluser2 = response_normaluser2.data['token']
 
     def test_delete_user(self):
-
+        'test_delete_user'
         # normaluser2 trying to delete normaluser1's account! the nerve!
         response = self.client.delete('/users/{}/'.format(self.pk_normaluser1)
                                , HTTP_AUTHORIZATION='JWT {}'.format(self.token_normaluser2))
@@ -444,15 +483,17 @@ class CustomUserDeleteTestCase(TestCase):
 
 
 class FavoritesTestCase(TestCase):
+    'FavoritesTestCase'
 
     def setUp(self):
-        s1 = Stop.objects.create(stop_id="1234DB001234", stop_name="Dummy Stop, stop 1234", stop_num="1234",
+        'setUp'
+        stop1 = Stop.objects.create(stop_id="1234DB001234", stop_name="Dummy Stop, stop 1234", stop_num="1234",
                         stop_lat="53.3943327828838", stop_lon="-6.39185248232822")
-        s2 = Stop.objects.create(stop_id="4321DB004321", stop_name="Dummy Stop, stop 4321", stop_num="4321",
+        stop2 = Stop.objects.create(stop_id="4321DB004321", stop_name="Dummy Stop, stop 4321", stop_num="4321",
                         stop_lat="53.3927725776921", stop_lon="-6.39881284842172")
         cu1 = CustomUser.objects.create(username="testuser1", email="testuser1@gmail.com", password="testuser1")
-        FavoriteStop.objects.create(owner=cu1, stop=s1)
-        FavoriteJourney.objects.create(owner=cu1, stop_origin=s1, stop_destination=s2)
+        FavoriteStop.objects.create(owner=cu1, stop=stop1)
+        FavoriteJourney.objects.create(owner=cu1, stop_origin=stop1, stop_destination=stop2)
         FavoriteLine.objects.create(owner=cu1, route_short_name="39a", direction_id="1")
 
         response = self.client.post('/users/', {"username": "testuser2",
@@ -462,7 +503,7 @@ class FavoritesTestCase(TestCase):
         #self.pk = response.data['pk']
 
     def test_favoritestop(self):
-
+        'test_favoritestop'
         # POST
         response = self.client.post('/favoritestop/'
                                    ,data = {"stop": "doesnotexist12345"}
@@ -493,7 +534,7 @@ class FavoritesTestCase(TestCase):
 
 
     def test_favoritejourney(self):
-
+        'test_favoritejourney'
         # POST
         response = self.client.post('/favoritejourney/'
                                    ,data = {"stop_origin": "doesnotexist12345", "stop_destination": "4321DB004321"}
@@ -523,7 +564,7 @@ class FavoritesTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
     def test_favoriteline(self):
-
+        'test_favoriteline'
         # POST
         response = self.client.post('/favoriteline/'
                                    ,data = {"route_short_name": "37", "direction_id": "1"}
@@ -545,8 +586,10 @@ class FavoritesTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
 
 class FeedbackTestCase(TestCase):
+    'FeedbackTestCase'
 
     def setUp(self):
+        'setUp'
         # create a normal user and a superuser
         response_normaluser = self.client.post('/users/', {"username": "testuser1",
                                      "email": "testuser1@gmail.com",
@@ -561,7 +604,7 @@ class FeedbackTestCase(TestCase):
         self.token_superuser = response_superuser.data['token']
 
     def test_feedback(self):
-
+        'test_feedback'
         # feedback_question - POST - superuser
         response = self.client.post('/feedback_question/'
                                    ,data = {"question_number": "1", "question_text": "Please rate our app from 1-5."}
@@ -612,9 +655,10 @@ class FeedbackTestCase(TestCase):
 
 
 class UnauthorisedRoutesTestCase1(TestCase):
+    'UnauthorisedRoutesTestCase1'
 
     def setUp(self):
-        print('0    setUp')
+        'setUp'
         stop1 = Stop.objects.create(stop_id="1234DB001234", stop_name="Dummy Stop, stop 1234", stop_num="1234",
                             stop_lat="53.3943327828838", stop_lon="-6.39185248232822")
         stop2 = Stop.objects.create(stop_id="4321DB004321", stop_name="Dummy Stop, stop 4321", stop_num="4321",
@@ -637,11 +681,9 @@ class UnauthorisedRoutesTestCase1(TestCase):
                                 shape_dist_traveled="1064.70")
 
     def test_stops(self):
-        """"""
-        print('5    test_stops')
+        'test_stops'
         response = self.client.get('/stops/')
         self.assertEqual(response.status_code, 200)
-        print('test_stops', response.content)
         res = json.loads(response.content)[0]
         self.assertEqual(res['stop_id'], "1234DB001234")
         self.assertEqual(res['stop_name'], "Dummy Stop, stop 1234")
@@ -652,8 +694,7 @@ class UnauthorisedRoutesTestCase1(TestCase):
 
 
     def test_route(self):
-        """"""
-        print('2    test_route')
+        'test_route'
         response = self.client.get('/route/90-37-d12-1/')
         self.assertEqual(response.status_code, 200)
         res = json.loads(response.content)
@@ -670,8 +711,7 @@ class UnauthorisedRoutesTestCase1(TestCase):
         self.assertEqual(res['trips'][0]['stops'][1]['stop_sequence'], 3)
 
     def test_lines(self):
-        """"""
-        print('1    test_lines')
+        'test_lines'
         url = reverse('lines')
         response = self.client.get(url) # '/lines/'
         self.assertEqual(response.status_code, 200)
@@ -703,11 +743,9 @@ class UnauthorisedRoutesTestCase1(TestCase):
         self.assertEqual(res['stops'][1]['stop_lon'], -6.39881284842172)
 
     def test_stops_by_trip(self):
-        """"""
-        print('6    test_stops_by_trip')
+        'test_stops_by_trip'
         response = self.client.get('/stops_by_trip/4028.y12345.90-37-d12-1.38.I/')
         self.assertEqual(response.status_code, 200)
-        print('test_stops_by_trip', response.content)
         res = json.loads(response.content)
         self.assertEqual(res[0]['arrival_time'], "23:00:00")
         self.assertEqual(res[0]['departure_time'], "23:00:00")
@@ -731,8 +769,7 @@ class UnauthorisedRoutesTestCase1(TestCase):
         self.assertEqual(res[1]['stop_lon'], -6.39881284842172)
 
     def test_shape_by_trip(self):
-        """"""
-        print('3    test_shape_by_trip')
+        'test_shape_by_trip'
         response = self.client.get('/shape_by_trip/4028.y12345.90-37-d12-1.38.I/')
         self.assertEqual(response.status_code, 200)
         res = json.loads(response.content)
@@ -751,17 +788,26 @@ class UnauthorisedRoutesTestCase1(TestCase):
 
 
     def test_stop(self):
-        """"""
-        print('4    test_stop')
+        'test_stop'
         response = self.client.get('/stop/1234DB001234/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['stop_name'], "Dummy Stop, stop 1234")
         res = json.loads(response.content)
-        print('4    test_stop', response.content)
         self.assertEqual(list(res.keys()), ['stop_name', 'stop_lat', 'stop_lon', 'arrivals'])
         self.assertEqual(res['stop_name'], "Dummy Stop, stop 1234")
         self.assertEqual(res['stop_lat'], 53.3943327828838)
         self.assertEqual(res['stop_lon'], -6.39185248232822)
+        '''
+        self.assertEqual(res['arrivals'][0]['direction'], 1)
+        self.assertEqual(res['arrivals'][0]['final_destination_stop_name'], 'Dummy Stop, stop 4321')
+        self.assertEqual(res['arrivals'][0]['line'], '37')
+        self.assertEqual(res['arrivals'][0]['route_id'], '90-37-d12-1')
+        self.assertEqual(res['arrivals'][0]['scheduled_arrival_time'], '23:00:00')
+        self.assertEqual(res['arrivals'][0]['scheduled_departure_time'], '23:00:00')
+        self.assertEqual(res['arrivals'][0]['service_id'], 'y12345')
+        self.assertEqual(res['arrivals'][0]['stop_sequence'], 1)
+        self.assertEqual(res['arrivals'][0]['trip_id'], '4028.y12345.90-37-d12-1.38.I')
+        '''
 
         # stop does not exist
         response = self.client.get('/stop/8240DB009999/')
@@ -769,16 +815,20 @@ class UnauthorisedRoutesTestCase1(TestCase):
 
 # Testing api.py    Unauthorised    same as above just testing apis using tastypie.test
 class UnauthorisedRoutesTestCase2(ResourceTestCaseMixin, TestCase):
+    'UnauthorisedRoutesTestCase2'
+
+    def get_credentials(self):
+        pass
 
     # html
     def test_get_api_json_index(self):
-        print('1    test_get_api_json_index')
+        'test_get_api_json_index'
         response = self.api_client.get('', format='html')
         self.assertEqual(response.status_code, 200)
 
     # Stop Line
     def test_get_api_json_stops(self):
-        print('5    test_get_api_json_stops')
+        'test_get_api_json_stops'
         response = self.api_client.get('/stops/', format='json')
         self.assertValidJSONResponse(response)
         res = json.loads(response.content)[0]
@@ -791,26 +841,44 @@ class UnauthorisedRoutesTestCase2(ResourceTestCaseMixin, TestCase):
 
     # Route Trip StopTime
     def test_get_api_json_route(self):
-        print('3    test_get_api_json_route')
+        'test_get_api_json_route'
         response = self.api_client.get('/route/90-37-d12-1/', format='json')
         self.assertValidJSONResponse(response)
 
     # Calendar Trip StopTime
     def test_get_api_json_lines(self):
-        print('2    test_get_api_json_lines')
+        'test_get_api_json_lines'
         response = self.api_client.get('/lines/', format='json')
         self.assertValidJSONResponse(response) # response.content b'[]'
 
     # StopTime
     def test_get_api_json_stops_by_trip(self):
-        print('6    test_get_api_json_stops_by_trip')
+        'test_get_api_json_stops_by_trip'
         response = self.api_client.get('/stops_by_trip/4028.y12345.90-37-d12-1.38.I/', format='json')
         self.assertValidJSONResponse(response)
 
     # Trip Shape
     def test_get_api_json_shape_by_trip(self):
-        print('4    test_get_api_json_shape_by_trip')
+        'test_get_api_json_shape_by_trip'
         response = self.api_client.get('/shape_by_trip/4028.y12345.90-37-d12-1.38.I/', format='json')
         self.assertValidJSONResponse(response)
 
+'''
+    # Stop StopTime realtime_gtfs
+    def test_get_api_json_stop(self):
+        response = self.api_client.get('/stop/1234DB001234/', format='json')
+        print('test_get_api_json_stop - response.content', response.content)
+        self.assertValidJSONResponse(response)
+
+    def test_get_api_json_predict(self):
+        response = self.api_client.get('/predict/', format='json')
+        self.assertValidJSONResponse(response)
+    
+class AuthorisedRoutesTestCase(TestCase):
+    pass
+    # get forbidden 401 IsUser IsAdmin isAuthenticated
+    # cant see other Users data
+    # trying to post a favoritestop without being signed in
+
+'''
 
