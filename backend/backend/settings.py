@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import datetime
+import sys
 import environ
 
 
@@ -126,6 +127,13 @@ elif os.environ.get('DB') == 'local_sqlite3':
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+elif sys.argv[1] == 'test':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
 # The default is the AWS mySQL DB

@@ -859,15 +859,6 @@ class UnauthorisedRoutesTestCase1(TestCase):
 
     def test_stop(self):
         'test_stop'
-        response = self.client.get('/stop/1234DB001234/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['stop_name'], "Dummy Stop, stop 1234")
-        res = json.loads(response.content)
-        self.assertEqual(list(res.keys()), ['stop_name', 'stop_lat', 'stop_lon', 'arrivals'])
-        self.assertEqual(res['stop_name'], "Dummy Stop, stop 1234")
-        self.assertEqual(res['stop_lat'], 53.3943327828838)
-        self.assertEqual(res['stop_lon'], -6.39185248232822)
-
         # stop does not exist
         response = self.client.get('/stop/8240DB009999/')
         self.assertEqual(response.status_code, 404)
