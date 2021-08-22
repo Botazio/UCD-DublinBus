@@ -3,6 +3,8 @@ from dublinbus import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('privacy_policy/', views.privacy_policy, name='privacy_policy'),
+    path('data_deletion/', views.data_deletion, name='data_deletion'),
     path('stops/', views.stops, name='stops'),
     path('route/<str:route_id>/', views.route, name='route'),
     path('lines/', views.lines, name='lines'),
