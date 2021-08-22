@@ -26,6 +26,9 @@
 }
 
 @media screen and (max-width: 600px) {
+   .box {
+      flex: none;
+   }
    .box:first-child {
       margin-right: 0px;
       margin-bottom: 15px;
