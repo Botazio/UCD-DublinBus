@@ -43,4 +43,4 @@ jobs:
 
       # --check returns 0 if there's no modifications needed or 1 if there's failed tests
       - name: Run unittest
-        run: python backend/manage.py test dublinbus/
+        run: python backend/manage.py test .
