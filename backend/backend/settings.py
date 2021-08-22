@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 import datetime
 import environ
-
+import sys
 
 # Initialise environment variables
 env = environ.Env()
@@ -128,6 +128,13 @@ elif os.environ.get('DB') == 'local_sqlite3':
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+elif sys.argv[1] == 'test':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 # The default is the AWS mySQL DB
 else:
     DATABASES = {
@@ -138,10 +145,6 @@ else:
             'PASSWORD': env('AWS_MYSQL_PASSWORD'),
             'HOST': 'dublin-bus.caghf9c2wznv.eu-west-1.rds.amazonaws.com',
             'PORT': '3306',
-            'TEST': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': str(BASE_DIR / 'db.sqlite3'),
-                },
         }
     }
 
