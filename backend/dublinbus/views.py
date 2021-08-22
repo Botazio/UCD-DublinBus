@@ -46,6 +46,14 @@ def index(request):
     """Temporary homepage for the application"""
     return render(request, 'dublinbus/index.html')
 
+def privacy_policy(request):
+    """Privacy Policy"""
+    return render(request, 'dublinbus/privacy_policy.html')
+
+def data_deletion(request):
+    """Data Deletion instructions"""
+    return render(request, 'dublinbus/data_deletion.html')
+
 @cache_page(60 * 60)
 def stops(request):
     """Returns a list of dictionaries of all the bus stops in Dublin Bus."""
