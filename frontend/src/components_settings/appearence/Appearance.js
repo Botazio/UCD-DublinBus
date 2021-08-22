@@ -11,9 +11,9 @@ const cusThemeInfo = "Create your custom theme. Use the color pickers to define 
 const mapPrefTitle = "Map preferences";
 const mapPrefBody = "Choose how the map looks!";
 
-// This component is the main component for the appearence section
+// This component is the main component for the appearance section
 // in the settings page
-const Profile = () => {
+const Appearance = () => {
    return (
       <>
          {/* Reusable header component */}
@@ -35,4 +35,4 @@ const Profile = () => {
    );
 };
 
-export default Profile;
+export default Appearance;

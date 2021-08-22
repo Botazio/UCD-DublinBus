@@ -23,3 +23,8 @@
   white-space: nowrap;
   overflow: hidden;
 }
+[data-reach-combobox-option]:hover,
+[data-reach-combobox-option][aria-selected="true"] {
+  background-color: transparent !important;
+  opacity: 0.8;
+}

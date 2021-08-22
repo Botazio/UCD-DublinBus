@@ -1,15 +1,14 @@
 import React, { useMemo } from "react";
-import SearchBarLinesCSS from "./SearchBarLines.module.css";
 import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
    Combobox,
-   ComboboxInput,
-   ComboboxPopover,
    ComboboxList,
    ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
+import CustomComboboxInput from "../custom-combobox-input/CustomComboboxInput";
+import CustomComboboxPopover from "../custom-combobox-popover/CustomComboboxPopover";
 
 // This reusable component provides the user with a combobox while
 // he enters text. The combobox contains suggestions for the user 
@@ -34,15 +33,14 @@ const PrimarySearchBarLines = ({ placeholder, lines, setSelectedLine }) => {
             handleSubmit(selectedLine);
          }}
       >
-         <ComboboxInput
-            className={SearchBarLinesCSS.search_input}
+         <CustomComboboxInput
             placeholder={placeholder}
             autoComplete="off"
             value={term}
             onChange={handleChange}
          />
          {results && (
-            <ComboboxPopover style={{ zIndex: 10000 }}>
+            <CustomComboboxPopover>
                {results.length > 0 ? (
                   <ComboboxList>
                      {results.slice(0, 5).map((result) => (
@@ -53,11 +51,11 @@ const PrimarySearchBarLines = ({ placeholder, lines, setSelectedLine }) => {
                      ))}
                   </ComboboxList>
                ) : (
-                  <span style={{ display: "block", margin: 8 }}>
+                  <p style={{ display: "block", margin: 8, fontSize: "1rem" }}>
                      No results found
-                  </span>
+                  </p>
                )}
-            </ComboboxPopover>
+            </CustomComboboxPopover>
          )}
       </Combobox>
    );

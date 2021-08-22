@@ -146,7 +146,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
       {searchError && <Card variant="margin_bottom"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
 
       {/* Display a waiting icon during the search*/}
-      {searchPending && <Card variant="margin_bottom"><Waiting variant="dark" size="small" /></Card>}
+      {searchPending && <Card variant="margin_bottom"><Waiting size={50} thickness={3} /></Card>}
 
       {/* Search Button */}
       <SearchButton searchAvailable={searchAvailable} onClick={() => handleSearch()} />

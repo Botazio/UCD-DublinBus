@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core";
+import CustomTextField from "../../custom-textfield/CustomTextField";
 import ActionCSS from "../Action.module.css";
 
 const TextFieldAction = ({ value, setValue, message, ...restProps }) => {
@@ -8,7 +8,7 @@ const TextFieldAction = ({ value, setValue, message, ...restProps }) => {
 
    return (
       <div className={ActionCSS.action_info}>
-         <TextField
+         <CustomTextField
             variant="outlined"
             color="primary"
             size="small"

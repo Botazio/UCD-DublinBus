@@ -5,12 +5,15 @@ import { makeStyles, useTheme } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
    root: {
       "& .Mui-selected": {
-         backgroundColor: theme.theme.primary + " !important",
+         backgroundColor: theme.theme.primary,
          color: theme.theme.background_primary + " !important",
       },
       "& .MuiPagination-ul": {
          flexWrap: "nowrap"
-      }
+      },
+      "& .MuiPaginationItem-root": {
+         color: theme.theme.font_color,
+      },
    },
 }));
 
@@ -19,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
 const PrimaryPagination = ({ children, ...restProps }) => {
 
    // Calls the current theme and uses it to create the styles for the pagination
-   const currentTheme = useTheme();
-   const classes = useStyles(currentTheme);
+   const theme = useTheme();
+   const classes = useStyles(theme);
+
 
    return (
       <Pagination classes={{ root: classes.root }} {...restProps}>

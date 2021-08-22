@@ -6,7 +6,7 @@ import StopBusArrivalsCSS from "./StopBusArrivals.module.css";
 import PrimaryPagination from "../../reusable-components/custom-pagination/PrimaryPagination";
 
 // This component renders the upcoming arrivals for a certain stop
-const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
+const StopBusArrivals = ({ selectedStop, size, thickness }) => {
   // State for the pagination in the results
   const [page, setPage] = useState(1);
 
@@ -21,12 +21,11 @@ const StopBusArrivals = ({ selectedStop, waitingColor, waitingSize }) => {
     setPage(value);
   };
 
-
   // Error handling when fetching for the data
   if (error) return <p>Unable to get the bus times</p>;
 
   // Wait for the data
-  if (isPending) return <div className={StopBusArrivalsCSS.waiting_wrapper}><Waiting variant={waitingColor} size={waitingSize} /></div>;
+  if (isPending) return <div className={StopBusArrivalsCSS.waiting_wrapper}><Waiting size={size} thickness={thickness} /></div>;
 
   return (
     <>

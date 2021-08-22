@@ -2,16 +2,16 @@ import React, { useMemo } from "react";
 import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
-  Combobox,
-  ComboboxInput
+  Combobox
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 import { useEffect } from "react";
+import CustomComboboxInput from "../custom-combobox-input/CustomComboboxInput";
 
 // This component gives stop suggestions to the user while input is being entered
 // The suggestions are not given inside a combobox. It just sets the visible lines to these suggestions.
 // The higher order component is the one in charge of handling this info
-const SecondarySearchBarLines = ({ lines, setVisibleLines, classes }) => {
+const SecondarySearchBarLines = ({ lines, setVisibleLines }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
@@ -34,8 +34,7 @@ const SecondarySearchBarLines = ({ lines, setVisibleLines, classes }) => {
 
   return (
     <Combobox style={{ width: "100%" }}>
-      <ComboboxInput
-        className={classes}
+      <CustomComboboxInput
         autoComplete="off"
         value={term}
         onChange={handleChange}

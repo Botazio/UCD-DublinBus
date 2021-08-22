@@ -41,7 +41,7 @@ const NearMeStops = ({ position }) => {
    if (error) return <CustomError height="60" message="Unable to fetch the data" />;
 
    // Wait for the data
-   if (isPending) return <Waiting variant="dark" />;
+   if (isPending) return <Waiting size={80} thickness={3} />;
 
    // If there are no stops around display an error
    if (nearStops === "no stops") {
@@ -59,13 +59,12 @@ const NearMeStops = ({ position }) => {
          <Card variant="last">
             {/* Do not display any data if there are not results */}
             {(nearStops !== "no stops") && <DisplayStops stops={visibleStops} page={page} variant="near me" />}
+
+            {/* Pagination for the results */}
+            {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>
+               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
+            </div>}
          </Card>
-
-         {/* Pagination for the results */}
-         {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>
-            <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
-         </div>}
-
       </>
    );
 
@@ -76,7 +75,7 @@ const NearMeStops = ({ position }) => {
 
       // Use geolocation to create an array with the closer stops
       let nearStopsArray = stops.filter((stop) => {
-         var dist = geodist({ lat: position.lat, lon: position.lng }, { lat: stop.stop_lat, lon: stop.stop_lon }, { exact: true, unit: 'km' });
+         var dist = geodist({ lat: position.lat, lng: position.lng, }, { lat: stop.stop_lat, lon: stop.stop_lon }, { exact: true, unit: 'km' });
          // if the distance is less than the distance set by the user
          // put the value into the array
          if (dist < distance) {

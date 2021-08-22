@@ -33,10 +33,10 @@ const LineContainer = ({ line, activeLines, setActiveLines, type }) => {
          return themeContext.theme.background_primary;
       }
       if (type === "add") {
-         return themeContext.theme.primary + 10;
+         return themeContext.theme.primary + 30;
       }
       if (type === "delete") {
-         return themeContext.palette.secondary.main + 10;
+         return themeContext.palette.secondary.main + 30;
       }
    }
 
@@ -45,7 +45,7 @@ const LineContainer = ({ line, activeLines, setActiveLines, type }) => {
          className={FavoritesCSS.line_wrapper}
          onClick={() => handleClick()}
          /* Change the background depending on the state */
-         style={{ backgroundColor: handleStyle() }}>
+         style={{ backgroundColor: handleStyle(), borderTop: `1px solid ${themeContext.theme.divider}` }}>
          <div className={FavoritesCSS.line_header}>
             <h4>Line {line.route__route_short_name}</h4>
             <p>{line.trip_headsign}</p>

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import ActionMap from "../../../reusable-components/action/ActionMap";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
-import AppearenceCSS from "../Appearence.module.css";
+import ContentBox from "../../../reusable-components/content-box/ContentBox";
 import DisplayMapBox from "./DisplayMapBox";
 import MapThemesButtons from "./MapThemesButtons";
 
@@ -26,26 +26,21 @@ const MapTheme = () => {
 
    return (
       <>
-         <div className={AppearenceCSS.theme_box}>
-            <div className={AppearenceCSS.theme_header}>
-               <h3>Map themes</h3>
-            </div>
-            <div className={AppearenceCSS.theme_info}>
-               <p>Select one of our predefined themes using the buttons down below.</p>
+         <ContentBox title="Map themes">
+            <p>Select one of our predefined themes using the buttons down below.</p>
 
-               {/* Mini map to see the different types of maps */}
-               <DisplayMapBox boxTheme={boxTheme} />
+            {/* Mini map to see the different types of maps */}
+            <DisplayMapBox boxTheme={boxTheme} />
 
-               {/* Buttons that control the state of the box theme */}
-               <MapThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />
+            {/* Buttons that control the state of the box theme */}
+            <MapThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />
 
-               {/* Compares the current theme to the box theme */}
-               {JSON.stringify(currentTheme.map) !== JSON.stringify(boxTheme.map) &&
-                  <Button
-                     fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
-                  </Button>}
-            </div>
-         </div>
+            {/* Compares the current theme to the box theme */}
+            {JSON.stringify(currentTheme.map) !== JSON.stringify(boxTheme.map) &&
+               <Button
+                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
+               </Button>}
+         </ContentBox>
 
          {/* Display an action if it is active */}
          {action && <ActionWrapper title={"Change map theme"} setAction={setAction}>

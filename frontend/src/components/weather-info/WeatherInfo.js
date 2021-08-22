@@ -11,9 +11,12 @@ import { ReactComponent as Sunrise } from "./fixtures/icon-sunrise.svg";
 import { ReactComponent as Ultraviolet } from "./fixtures/icon-ultraviolet.svg";
 import { ReactComponent as WaterDrop } from "./fixtures/icon-water-drop.svg";
 import Card from "../../reusable-components/card/Card";
+import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
+import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
+import { useTheme } from "@material-ui/core";
 
 // Styles for the graph
-const options = {
+const options = (theme) => ({
   width: "100%",
   height: "100%",
   backgroundColor: "transparent",
@@ -26,10 +29,10 @@ const options = {
   hAxis: {
     title: "Day",
     textStyle: {
-      color: "black",
+      color: theme.font_color,
     },
     titleTextStyle: {
-      color: "black",
+      color: theme.font_color,
     },
     minorGridlines: {
       count: 0,
@@ -37,25 +40,25 @@ const options = {
   },
   vAxis: {
     titleTextStyle: {
-      color: "black",
+      color: theme.font_color,
     },
     textStyle: {
-      color: "black",
+      color: theme.font_color,
     },
     minorGridlines: {
       count: 0,
     },
   },
   textStyle: {
-    color: "black",
+    color: theme.font_color,
   },
   titleTextStyle: {
     fontSize: 14,
     fontName: "Roboto, sans-serif",
-    color: "black",
+    color: theme.font_color,
   },
-  legend: 'bottom'
-};
+  legend: { textStyle: { color: theme.font_color }, position: "bottom" }
+});
 
 export default function WeatherInfo() {
   // Fetch the stations
@@ -69,6 +72,9 @@ export default function WeatherInfo() {
   // Current weather slide
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
+
   // Error handling when fetching for the data
   if (error)
     return (
@@ -76,7 +82,7 @@ export default function WeatherInfo() {
     );
 
   // Wait for the data
-  if (isPendingWeather) return <Waiting variant="dark" />;
+  if (isPendingWeather) return <Waiting size={80} thickness={3} />;
 
   // Get the data in a google data table
   const forecastWeather = [];
@@ -269,14 +275,14 @@ export default function WeatherInfo() {
             href="/#"
             onClick={() => handleCurrentSlide(currentSlide - 1)}
           >
-            &#10094;
+            <NavigateBeforeRoundedIcon htmlColor={theme.icon_color} />
           </div>
           <div
             className={WeatherInfoCSS.next_weather}
             href="/#"
             onClick={() => handleCurrentSlide(currentSlide + 1)}
           >
-            &#10095;
+            <NavigateNextRoundedIcon htmlColor={theme.icon_color} />
           </div>
           {weatherSlides[currentSlide]}
         </div>
@@ -289,10 +295,14 @@ export default function WeatherInfo() {
               <ScrollMenu
                 data={hourlySlides}
                 arrowLeft={
-                  <div className={WeatherInfoCSS.prev_weather}>&#10094;</div>
+                  <div className={WeatherInfoCSS.prev_weather}>
+                    <NavigateBeforeRoundedIcon htmlColor={theme.icon_color} />
+                  </div>
                 }
                 arrowRight={
-                  <div className={WeatherInfoCSS.next_weather}>&#10095;</div>
+                  <div className={WeatherInfoCSS.next_weather}>
+                    <NavigateNextRoundedIcon htmlColor={theme.icon_color} />
+                  </div>
                 }
                 alignCenter={false}
                 wheel={false}
@@ -308,7 +318,7 @@ export default function WeatherInfo() {
             <Chart
               chartType="LineChart"
               rows={forecastWeather}
-              options={options}
+              options={options(theme)}
               columns={[
                 {
                   type: "date",

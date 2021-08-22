@@ -1,8 +1,8 @@
-import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { useState } from "react";
 import ActionSendFeedback from "../../../reusable-components/action/ActionSendFeedback";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import CustomTextField from "../../../reusable-components/custom-textfield/CustomTextField";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
 
 const FeedbackForm = () => {
@@ -24,7 +24,7 @@ const FeedbackForm = () => {
          <SettingsHeader title={headerTitle} body={headerBody} />
 
          <form autoComplete="off">
-            <TextField
+            <CustomTextField
                id="outlined-multiline-static"
                multiline
                value={value}

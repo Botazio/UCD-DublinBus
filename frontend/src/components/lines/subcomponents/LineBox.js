@@ -1,8 +1,12 @@
 import Card from "../../../reusable-components/card/Card";
 import LinesCSS from "../Lines.module.css";
 import ScheduleIconRoundedIcon from '@material-ui/icons/ScheduleRounded';
+import { useTheme } from "@material-ui/core";
 
 const LineBox = ({ line, variant, active, ...restProps }) => {
+   // Grab the theme from the provider
+   const theme = useTheme().theme;
+
    return (
       <Card variant={variant ? variant : "last"} {...restProps} style={active ? { backgroundColor: "#0094EC20" } : {}}>
          <div className={LinesCSS.line_title}>
@@ -12,7 +16,7 @@ const LineBox = ({ line, variant, active, ...restProps }) => {
             </div>
             <a href={"https://dublinbus.ie/Your-Journey1/Timetables/All-Timetables/" +
                staticTimetable[line.route__route_short_name]}
-               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon htmlColor="black" /></a>
+               target="_blank" rel="noreferrer"><ScheduleIconRoundedIcon htmlColor={theme.icon_color} /></a>
          </div>
       </Card>
    );

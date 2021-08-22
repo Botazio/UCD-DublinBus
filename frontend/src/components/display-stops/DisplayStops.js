@@ -2,22 +2,26 @@ import DisplayStopsCSS from './DisplayStops.module.css';
 import StopBusArrivals from '../stop-bus-arrivals/StopBusArrivals';
 import { useEffect, useState } from 'react';
 import iconStop from "../../fixtures/icons/icon-stop.png";
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import { AccordionDetails } from '@material-ui/core';
+import { AccordionDetails, AccordionSummary } from '@material-ui/core';
 import CustomMarker from '../../reusable-components/custom-marker/CustomMarker';
 import { useGoogleMap } from '@react-google-maps/api';
 
 // Styles for the accordion
-const AccordionSummary = withStyles({
+const useStyles = makeStyles((theme) => ({
+    root: {
+        backgroundColor: theme.theme.background_primary,
+        color: theme.theme.font_color,
+        border: `1px solid ${theme.theme.divider}`
+    },
     content: {
         '&$expanded': {
             margin: '12px 0',
         },
     },
     expanded: {},
-})(MuiAccordionSummary);
+}));
 
 // This component returns a div and displays a marker for each stop in the array
 // This div are wrapped by an accordion
@@ -29,6 +33,10 @@ const DisplayStops = ({ stops, page, variant }) => {
 
     // reference to the map using the GoogleMap provider
     const mapRef = useGoogleMap();
+
+    // Calls the current theme and uses it to create the styles for the button
+    const currentTheme = useTheme();
+    const classes = useStyles(currentTheme);
 
     // Center the map view to the selected stop position
     useEffect(() => {
@@ -79,8 +87,8 @@ const DisplayStops = ({ stops, page, variant }) => {
                 return (
                     <div key={"div_" + stop.stop_id} className={DisplayStopsCSS.stop_container} onClick={() => setActiveStop(stop)}>
 
-                        <Accordion expanded={expanded === stop} onChange={handleChange(stop)} >
-                            <AccordionSummary>
+                        <Accordion classes={{ root: classes.root }} expanded={expanded === stop} onChange={handleChange(stop)} >
+                            <AccordionSummary classes={{ expanded: classes.expanded, content: classes.content }}>
                                 <div className={DisplayStopsCSS.stop_header}>
                                     <div className={DisplayStopsCSS.stop_title}>
                                         <h4>{stop.stop_name}</h4>
@@ -94,9 +102,9 @@ const DisplayStops = ({ stops, page, variant }) => {
 
                             {/* Only display the accordion details (Next bus arrivals) when that stop is active */}
                             {(activeStop === stop) &&
-                                <AccordionDetails>
+                                <AccordionDetails >
                                     <div className={DisplayStopsCSS.bus_times}>
-                                        <StopBusArrivals selectedStop={activeStop} waitingColor="dark" waitingSize="small" />
+                                        <StopBusArrivals selectedStop={activeStop} size={50} thickness={3} />
                                     </div>
                                 </AccordionDetails>}
 

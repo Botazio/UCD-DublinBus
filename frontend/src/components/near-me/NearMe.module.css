@@ -6,9 +6,9 @@
    position: relative;
 }
 .options {
-   margin-top: 3px;
    right: 17.5px;
    position: absolute;
+   top: 11px;
    z-index: 1;
 }
 .options > svg {
@@ -20,19 +20,6 @@
    align-items: center;
    justify-content: center;
 }
-.searchbar {
-   border: 1px solid lightgray;
-   line-height: 30px;
-   padding: 5px 10px;
-   width: 100%;
-   border-radius: 20px;
-   text-decoration: none;
-   outline: none;
-   font-size: 1rem;
-}
-.searchbar:focus {
-   box-shadow: 0 0 0 1pt #00B9FF;
-}
 .pagination {
-   margin-bottom: 15px;
+   margin-top: 15px;
 }

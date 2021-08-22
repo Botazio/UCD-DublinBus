@@ -3,11 +3,10 @@ import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
   Combobox,
-  ComboboxInput
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 import { useEffect } from "react";
-import MarkersCSS from "../Markers.module.css";
+import CustomComboboxInput from "../../../reusable-components/custom-combobox-input/CustomComboboxInput";
 
 // This component gives stop suggestions to the user while input is being entered
 const MarkerSearchBar = ({ markers, setVisibleMarkers }) => {
@@ -38,8 +37,8 @@ const MarkerSearchBar = ({ markers, setVisibleMarkers }) => {
 
   return (
     <Combobox>
-      <ComboboxInput
-        className={MarkersCSS.searchbar}
+      <CustomComboboxInput
+        margin="0px"
         autoComplete="off"
         value={term}
         onChange={handleChange}

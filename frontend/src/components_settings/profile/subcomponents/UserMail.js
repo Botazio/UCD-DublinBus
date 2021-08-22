@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useAuth } from "../../../providers/AuthContext";
 import ProfileCSS from "../Profile.module.css";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
-import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
 import ActionEmail from "../../../reusable-components/action/ActionEmail";
+import { Button } from "@material-ui/core";
 
 // This component renders a header and a button that allows the user 
 // to change his user mail. The function to change the email is passed 
@@ -28,9 +28,9 @@ const UserMail = () => {
          <div className={ProfileCSS.usermail_wrapper}>
             <SettingsHeader title={headerTitle} body={headerBody} />
             <p>Current email: {currentUser.email}</p> {/* is not defined yet */}
-            <SecondaryButton variant="outlined" size="small" onClick={() => setAction(true)} >
+            <Button color="primary" variant="outlined" size="small" onClick={() => setAction(true)} >
                change email
-            </SecondaryButton>
+            </Button>
          </div>
 
          {/* Display an action if it is active */}

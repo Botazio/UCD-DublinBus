@@ -9,11 +9,11 @@ import MyLocationRoundedIcon from '@material-ui/icons/MyLocationRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import CloudRoundedIcon from '@material-ui/icons/CloudRounded';
 import DepartureBoardRoundedIcon from '@material-ui/icons/DepartureBoardRounded';
-import { useTheme } from "@material-ui/core";
 import SectionButton from "../../reusable-components/section-button/SectionButton";
 import { useEffect } from "react";
 import { useGoogleMap } from "@react-google-maps/api";
 import geodist from "geodist";
+import { useTheme } from "@material-ui/core";
 
 // Main component of the bus page. Handles which section is active
 // Passes that state to the infobar
@@ -24,11 +24,11 @@ const SideBar = () => {
   // buttonActive allows to navigate around the different side bar features
   const [buttonActive, setButtonActive] = useState("");
 
-  // Grab the theme from the provider 
-  const theme = useTheme().theme;
-
   // Grab the map from the provider
   const mapRef = useGoogleMap();
+
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
 
   // Center the view in Dublin after changing sections if the distance is more than
   // 50km to the center of Dublin
@@ -61,14 +61,16 @@ const SideBar = () => {
       )}
 
       {/* The classname depends on the sidebar state */}
-      <div className={SidebarCSS.sidebar + " " + (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)}>
+      <div
+        className={SidebarCSS.sidebar + " " + (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)}
+        style={{ backgroundColor: theme.background_primary }}>
         {/* Render the section buttons */}
-        <SectionButton onClick={() => handleClick("directions")} text={"directions"} buttonActive={buttonActive} icon={<DirectionsRoundedIcon htmlColor={theme.icon_color} />} />
-        <SectionButton onClick={() => handleClick("stops")} text={"stops"} buttonActive={buttonActive} icon={<DepartureBoardRoundedIcon htmlColor={theme.icon_color} />} />
-        <SectionButton onClick={() => handleClick("lines")} text={"lines"} buttonActive={buttonActive} icon={<TimelineRoundedIcon htmlColor={theme.icon_color} />} />
-        <SectionButton onClick={() => handleClick("near me")} text={"near me"} buttonActive={buttonActive} icon={<MyLocationRoundedIcon htmlColor={theme.icon_color} />} />
-        <SectionButton onClick={() => handleClick("favorites")} text={"favorites"} buttonActive={buttonActive} icon={<FavoriteRoundedIcon htmlColor={theme.icon_color} />} />
-        <SectionButton onClick={() => handleClick("weather")} text={"weather"} buttonActive={buttonActive} icon={<CloudRoundedIcon htmlColor={theme.icon_color} />} />
+        <SectionButton onClick={() => handleClick("directions")} text={"directions"} buttonActive={buttonActive} icon={<DirectionsRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("stops")} text={"stops"} buttonActive={buttonActive} icon={<DepartureBoardRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("lines")} text={"lines"} buttonActive={buttonActive} icon={<TimelineRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("near me")} text={"near me"} buttonActive={buttonActive} icon={<MyLocationRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("favorites")} text={"favorites"} buttonActive={buttonActive} icon={<FavoriteRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("weather")} text={"weather"} buttonActive={buttonActive} icon={<CloudRoundedIcon />} />
       </div>
 
       {/* Render the infobar if it is active */}

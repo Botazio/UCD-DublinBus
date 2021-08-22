@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import SignIn from "./subcomponents/SignIn";
 import SignUp from "./subcomponents/SignUp";
 import { ReactComponent as Arrow } from "./fixtures/icon-arrow.svg";
+import { useTheme } from "@material-ui/core";
 
 // This is the main component for the authentication page
 // Provides a signin and singup forms
@@ -11,13 +12,16 @@ const Authentication = () => {
   // State that controls when to display sign in or sign up
   const [signInActive, setSignInActive] = useState(true);
 
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
+
   return (
     <div className={AuthenticationCSS.wrapper}>
 
       {/* Link to go back into the main page */}
       <Link to="/">
         <div className={AuthenticationCSS.back_home_button}>
-          <Arrow height={"30px"} fill={"white"} />
+          <Arrow height={"30px"} fill={theme.background_primary} />
         </div>
       </Link>
 

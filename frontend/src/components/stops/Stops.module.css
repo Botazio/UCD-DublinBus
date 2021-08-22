@@ -8,11 +8,6 @@
 .searchbar {
   width: 70%;
 }
-.searchbar > div > input {
-  line-height: 30px;
-  font-size: 1rem;
-  border-radius: 20px;
-}
 .submit_search {
   width: 100%;
 }
@@ -23,7 +18,7 @@
   right: 17.5px;
   position: absolute;
   z-index: 1;
-  margin-top: 3px;
+  top: 10px;
 }
 .options > svg {
   cursor: pointer;

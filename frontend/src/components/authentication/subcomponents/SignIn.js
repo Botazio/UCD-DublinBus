@@ -1,5 +1,4 @@
 import AuthenticationCSS from "../Authentication.module.css";
-import { Link } from "react-router-dom";
 import { ReactComponent as Person } from "../fixtures/icon-person.svg";
 import { ReactComponent as Lock } from "../fixtures/icon-lock.svg";
 import { useAuth } from "../../../providers/AuthContext";
@@ -65,9 +64,6 @@ const SignIn = () => {
             required=""
           ></input>
         </div>
-        <Link className={AuthenticationCSS.reset_password} to="/">
-          Forgot your password?
-        </Link>
         <button disabled={loading} className={AuthenticationCSS.submit_button}>
           <span>Sign in</span>
         </button>

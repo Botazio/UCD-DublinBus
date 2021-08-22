@@ -69,6 +69,7 @@ const materialTheme = (theme) => ({
       MuiInput: {
          input: {
             borderBottom: "1px solid " + theme.divider,
+            color: theme.font_color
          }
       }
    },
