@@ -138,6 +138,9 @@ else:
             'PASSWORD': env('AWS_MYSQL_PASSWORD'),
             'HOST': 'dublin-bus.caghf9c2wznv.eu-west-1.rds.amazonaws.com',
             'PORT': '3306',
+            'TEST': {
+                'NAME': BASE_DIR / 'db.sqlite3',
+                },
         }
     }
 
