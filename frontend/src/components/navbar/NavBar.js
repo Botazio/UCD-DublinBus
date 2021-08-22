@@ -4,10 +4,14 @@ import { useAuth } from "../../providers/AuthContext";
 import PopoverUser from "../popover-user/PopoverUser";
 import { useEffect } from "react";
 import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
+import { useTheme } from "@material-ui/core";
 
 const Navbar = () => {
   // Grab the functions and states from the authentication provider
   const { currentUser, logout, isAuthenticated } = useAuth();
+
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
 
   // When the component renders the first time checks if the user
   // has a token in local storage and if that token still valid
@@ -17,7 +21,13 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={NavbarCSS.navbar}>
+    <nav
+      className={NavbarCSS.navbar}
+      style={{
+        backgroundColor: theme.background_primary,
+        color: theme.font_color,
+      }}>
+
       {/* We use this div to insert the list icon */}
       <div id="icon" className={NavbarCSS.custom_icon}></div>
 

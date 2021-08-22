@@ -8,7 +8,7 @@ import SecondarySearchBarStops from "../../../../reusable-components/searchbar-s
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
 import { useStops } from "../../../../providers/StopsContext";
 import Waiting from "../../../../reusable-components/waiting/Waiting";
-import { Button } from "@material-ui/core";
+import { Button, useTheme } from "@material-ui/core";
 import ActionWrapper from "../../../../reusable-components/action/ActionWrapper";
 import ActionDeleteStops from "../../../../reusable-components/action/ActionDeleteStops";
 
@@ -29,6 +29,9 @@ const MyStops = () => {
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
    const favoriteStops = currentUser.favoritestops;
+
+   // Grab the theme from the provider
+   const theme = useTheme().theme;
 
    // Get the data from the provider
    const { data: stops, isPending, error } = useStops();
@@ -61,14 +64,14 @@ const MyStops = () => {
    if (error) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Wait for the data
-   if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
+   if (isPending) return <div style={{ padding: '15px' }}><Waiting size={50} thickness={3} /></div>;
 
 
    return (
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {(favoriteStops.length !== 0) && <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />}
+            {(favoriteStops.length !== 0) && <SecondarySearchBarStops stops={filteredStops} setVisibleStops={setVisibleStops} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (
@@ -79,7 +82,7 @@ const MyStops = () => {
             {(favoriteStops.length === 0) && <div className={FavoritesCSS.no_items_message}><h4>No saved stops</h4></div>}
 
             {/* Pagination for the results */}
-            {visibleStops && <div className={FavoritesCSS.pagination}>
+            {visibleStops && <div className={FavoritesCSS.pagination} style={{ borderTop: `1px solid ${theme.divider}` }}>
                <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 5)} color="primary" size="small" />
             </div>}
 

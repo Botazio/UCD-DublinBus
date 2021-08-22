@@ -9,6 +9,7 @@ import PrimaryPagination from "../../reusable-components/custom-pagination/Prima
 import { Button } from "@material-ui/core";
 import ActionWrapper from "../../reusable-components/action/ActionWrapper";
 import ActionMarkers from "../../reusable-components/action/ActionMarkers";
+import ContentBox from "../../reusable-components/content-box/ContentBox";
 
 // Messages to display in the header
 const markersTitle = "Markers preferences";
@@ -56,35 +57,27 @@ const Markers = () => {
          {/* Header for the section */}
          <SettingsHeader title={markersTitle} body={markersBody} />
 
-         <div className={MarkersCSS.markers_wrapper}>
-            {/* Header */}
-            <div className={MarkersCSS.markers_header}>
-               <h3>Select markers</h3>
-            </div>
+         <ContentBox title="Select markers">
+            {/* Search bar */}
+            {markers && <MarkerSearchBar markers={markers} setVisibleMarkers={setVisibleMarkers} />}
 
-            <div className={MarkersCSS.container}>
-               {/* Search bar */}
-               {markers && <MarkerSearchBar markers={markers} setVisibleMarkers={setVisibleMarkers} />}
+            {/* Map throught the markers and render a toogle marker button */}
+            {Object.keys(visibleMarkers).slice((page - 1) * 10, ((page - 1) * 10) + 10).map((key) => <SwitchMarker key={key} title={key} isActive={markers[key]} handleChange={handleChange} />)}
 
-               {/* Map throught the markers and render a toogle marker button */}
-               {Object.keys(visibleMarkers).slice((page - 1) * 10, ((page - 1) * 10) + 10).map((key) => <SwitchMarker key={key} title={key} isActive={markers[key]} handleChange={handleChange} />)}
+            {/* Pagination for the results */}
+            {visibleMarkers && <div className={MarkersCSS.pagination}>
+               <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} size="small" />
+            </div>}
 
-               {/* Pagination for the results */}
-               {visibleMarkers && <div className={MarkersCSS.pagination}>
-                  <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(Object.keys(visibleMarkers).length / 10)} size="small" />
-               </div>}
-
-               {/* If current user markers are not the same as the local state for markers 
+            {/* If current user markers are not the same as the local state for markers 
             render a button to save the changes displaying an action */}
-               {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
-                  <div className={MarkersCSS.action_button}>
-                     <Button
-                        fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change markers
-                     </Button>
-                  </div>}
-
-            </div>
-         </div>
+            {JSON.stringify(currentUser.markers) !== JSON.stringify(markers) &&
+               <div className={MarkersCSS.action_button}>
+                  <Button
+                     fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change markers
+                  </Button>
+               </div>}
+         </ContentBox>
 
          {/* Display an action if it is active */}
          {action && <ActionWrapper title={"Change markers"} setAction={setAction}>

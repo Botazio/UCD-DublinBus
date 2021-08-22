@@ -10,6 +10,7 @@ import CustomError from "../../reusable-components/error/CustomError";
 import Waiting from "../../reusable-components/waiting/Waiting";
 import { useAuth } from "../../providers/AuthContext";
 import { useEffect } from "react";
+import { useTheme } from "@material-ui/core";
 
 // Google map libraries
 const libraries = ["places"];
@@ -24,14 +25,14 @@ const containerStyle = {
 // Custom options for the map.
 const options = {
   mapTypeControl: false,
-  fullscreenControl: true,
+  fullscreenControl: false,
   streetViewControl: false,
 };
 
 // Default options for the map
 const defaultOptions = {
   mapTypeControl: false,
-  fullscreenControl: true,
+  fullscreenControl: false,
   streetViewControl: false,
   styles: lightTheme,
 };
@@ -55,6 +56,9 @@ const center = {
 export default function MapContainer(props) {
   // State to control the map theme
   const [theme, setTheme] = useState();
+
+  // Grab the current theme from the provider
+  const currentStyles = useTheme().theme;
 
   // Loads the map
   const { isLoaded, loadError } = useLoadScript({
@@ -82,12 +86,12 @@ export default function MapContainer(props) {
 
   // Error handling when loading the map
   if (loadError) return <CustomError message="Error loading maps" height="60" />;
-  if (!isLoaded) return <Waiting variant="dark" />;
+  if (!isLoaded) return <div style={{ height: "90vh" }}><Waiting size={80} thickness={3} /></div>;
 
   return (
     <>
       {/* If there is no user render a default map */}
-      {!currentUser && <div className={MapContainerCSS.map_container}>
+      {!currentUser && <div className={MapContainerCSS.map_container} style={{ color: currentStyles.font_color }}>
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
@@ -100,7 +104,7 @@ export default function MapContainer(props) {
       </div>}
 
       {/* If there is a user render a map with his preferences */}
-      {currentUser && theme && <div className={MapContainerCSS.map_container}>
+      {currentUser && theme && <div className={MapContainerCSS.map_container} style={{ color: currentStyles.font_color }}>
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}

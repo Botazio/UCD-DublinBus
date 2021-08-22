@@ -3,15 +3,15 @@ import { useThrottle } from "react-use";
 import { matchSorter } from "match-sorter";
 import {
   Combobox,
-  ComboboxInput
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 import { useEffect } from "react";
+import CustomComboboxInput from "../custom-combobox-input/CustomComboboxInput";
 
 // This component gives stop suggestions to the user while input is being entered
 // The suggestions are not given inside a combobox. It just sets the visible stops to these suggestions.
 // The higher order component is the one in charge of handling this info
-const SecondarySearchBarStops = ({ stops, setVisibleStops, classes }) => {
+const SecondarySearchBarStops = ({ stops, setVisibleStops }) => {
   // States
   const [term, setTerm] = React.useState("");
   const results = usePlaceMatch(term);
@@ -34,8 +34,7 @@ const SecondarySearchBarStops = ({ stops, setVisibleStops, classes }) => {
 
   return (
     <Combobox style={{ width: "100%" }}>
-      <ComboboxInput
-        className={classes}
+      <CustomComboboxInput
         autoComplete="off"
         value={term}
         onChange={handleChange}

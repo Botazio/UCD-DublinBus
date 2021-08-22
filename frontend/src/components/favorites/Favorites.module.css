@@ -5,6 +5,9 @@
    align-items: center;
    width: 100%;
 }
+.info_wrapper > div > div > input {
+   margin-bottom: 5px !important;
+}
 .pagination {
    width: 100%;
    display: flex;
@@ -13,19 +16,6 @@
    margin-top: 15px;
    overflow: hidden;
    text-overflow: ellipsis;
-}
-.searchbar {
-   border: 1px solid lightgray;
-   padding: 9px 10px;
-   width: 100%;
-   border-radius: 20px;
-   text-decoration: none;
-   outline: none;
-   font-size: 1rem;
-   margin-bottom: 5px;
-}
-.searchbar:focus {
-   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .no_items_message > h4 {
    font-weight: 500;
@@ -54,14 +44,6 @@
    align-items: center;
    max-width: 300px;
    flex-wrap: wrap;
-}
-.stop_lines > div {
-   padding: 3px;
-   border: 1px solid lightgray;
-   border-radius: 5px;
-   margin-right: 6px;
-   margin-top: 5px;
-   font-size: 0.8rem;
 }
 .action_button {
    width: 100%;

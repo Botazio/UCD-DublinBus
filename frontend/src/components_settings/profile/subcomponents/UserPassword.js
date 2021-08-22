@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ProfileCSS from "../Profile.module.css";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
-import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
 import ActionPassword from "../../../reusable-components/action/ActionPassword";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import { Button } from "@material-ui/core";
 
 // This component renders a header and a button that allows the user 
 // to change his password. The function to change the password is passed 
@@ -23,9 +23,9 @@ const UserPassword = () => {
       <>
          <div className={ProfileCSS.userpassword_wrapper}>
             <SettingsHeader title={headerTitle} body={headerBody} />
-            <SecondaryButton variant="outlined" size="small" onClick={() => setAction(true)}>
+            <Button color="primary" variant="outlined" size="small" onClick={() => setAction(true)}>
                change password
-            </SecondaryButton>
+            </Button>
          </div>
 
          {/* Display an action if it is active */}

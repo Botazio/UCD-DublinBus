@@ -7,6 +7,7 @@ import MapSwitch from "../map-switch/MapSwitch";
 import WeatherInfo from "../weather-info/WeatherInfo";
 import Favorites from "../favorites/Favorites";
 import Lines from "../lines/Lines";
+import { useTheme } from "@material-ui/core";
 
 // InfoBar is a subcomponent of SideBar
 // Renders section component depending which one is active 
@@ -18,6 +19,9 @@ const InfoBar = ({
   setButtonActive,
 }) => {
 
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
+
   return (
     <>
       <div className={InfobarCSS.map_switcher}>
@@ -26,7 +30,9 @@ const InfoBar = ({
       </div>
 
       {/* The styles for the infobar depends on the sidebar position */}
-      <div className={InfobarCSS.infobar + " " + (sideBar ? InfobarCSS.infobar_sidebar_active : InfobarCSS.infobar_sidebar_inactive)}>
+      <div
+        className={InfobarCSS.infobar + " " + (sideBar ? InfobarCSS.infobar_sidebar_active : InfobarCSS.infobar_sidebar_inactive)}
+        style={{ backgroundColor: theme.background_secondary }}>
 
         {/* Icon to close the infobar */}
         <div className={InfobarCSS.close_button} onClick={() => handleClose()}>

@@ -1,5 +1,6 @@
 .waiting_wrapper {
-  margin: 15px;
+  margin-top: 30px;
+  margin-bottom: 15px;
 }
 .arrival_slides {
   display: flex;
@@ -9,7 +10,6 @@
   margin-top: 5px;
   padding: 10px 0px;
   border-radius: 5px;
-  background-color: white;
 }
 .arrival_slides:first-child {
   margin-top: 0px;

@@ -30,9 +30,6 @@
   align-items: center;
   transition: 0.5s;
 }
-.close_button:hover {
-  background-color: #e8e7e2;
-}
 .close_button > svg {
   font-size: 30px;
 }

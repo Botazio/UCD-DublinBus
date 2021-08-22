@@ -1,21 +1,3 @@
-.markers_wrapper {
-   border: 1px solid lightgray;
-   border-radius: 5px;
-   margin-bottom: 15px;
-}
-.container {
-   padding: 15px;
-}
-.markers_header {
-   background-color: #fafafa;
-   padding: 15px;
-   border-radius: 5px 5px 0px 0px;
-   border-bottom: 1px solid lightgray;
-}
-.markers_header > h3 {
-   font-size: 1rem;
-   font-weight: 500;
-}
 .switch_container {
    display: flex;
    align-items: center;
@@ -31,18 +13,6 @@
    align-items: center;
    justify-content: center;
    margin-top: 10px;
-}
-.searchbar {
-   border: 1px solid lightgray;
-   padding: 9px 10px;
-   width: 100%;
-   border-radius: 20px;
-   text-decoration: none;
-   outline: none;
-   font-size: 1rem;
-}
-.searchbar:focus {
-   box-shadow: 0 0 0 1pt #00B9FF;
 }
 .action_button {
    width: 100%;

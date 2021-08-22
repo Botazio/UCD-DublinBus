@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PopoverUserCSS from "./PopoverUser.module.css";
 import PowerSettingsNewRoundedIcon from '@material-ui/icons/PowerSettingsNewRounded';
 import { useLocation } from "react-use";
-import { Button, Popover } from "@material-ui/core";
+import { Button, Popover, useTheme } from "@material-ui/core";
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import { useAuth } from "../../providers/AuthContext";
@@ -17,6 +17,9 @@ const PopoverUser = () => {
 
   // State to handle the popover
   const [anchorEl, setAnchorEl] = useState(null);
+
+  // Grab the theme from the provider
+  const theme = useTheme().theme;
 
   // State to handle how the popover opens
   const handlePopoverOpen = (event) => {
@@ -53,7 +56,13 @@ const PopoverUser = () => {
           horizontal: 'right',
         }}
         onClose={handlePopoverClose}>
-        <div className={PopoverUserCSS.popover_wrapper}>
+        <div
+          className={PopoverUserCSS.popover_wrapper}
+          style={{
+            backgroundColor: theme.background_primary,
+            color: theme.font_color,
+            border: `1px solid ${theme.divider}`
+          }}>
           {/* User avatar, name and link to the user profile */}
           <div className={PopoverUserCSS.popover_header}>
             <CustomAvatar />
@@ -72,7 +81,7 @@ const PopoverUser = () => {
           </div>
 
           {/* Logout button */}
-          <div className={PopoverUserCSS.popover_logout_wrapper}>
+          <div className={PopoverUserCSS.popover_logout_wrapper} style={{ borderTop: `1px solid ${theme.divider}` }}>
             <Button
               variant="outlined"
               color="secondary"

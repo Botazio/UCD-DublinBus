@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ProfileCSS from "../Profile.module.css";
 import SettingsHeader from "../../../reusable-components/settings-header.js/SettingsHeader";
-import SecondaryButton from "../../../reusable-components/custom-buttons/SecondaryButton";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
 import ActionUserName from "../../../reusable-components/action/ActionUserName";
+import { Button } from "@material-ui/core";
 
 // This component renders a header and a button that allows the user 
 // to change his user name. The function to change the name is passed 
@@ -23,9 +23,9 @@ const UserName = () => {
       <>
          <div className={ProfileCSS.username_wrapper}>
             <SettingsHeader title={headerTitle} body={headerBody} />
-            <SecondaryButton variant="outlined" size="small" onClick={() => setAction(true)}>
+            <Button color="primary" variant="outlined" size="small" onClick={() => setAction(true)}>
                change username
-            </SecondaryButton>
+            </Button>
          </div>
 
          {/* Display an action if it is active */}

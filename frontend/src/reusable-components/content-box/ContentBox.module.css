@@ -1,0 +1,33 @@
+.box {
+   flex: 1;
+   border-radius: 5px;
+   margin-top: 5px;
+   height: fit-content;
+}
+.box:first-child {
+   margin-right: 10px;
+}
+.header {
+   padding: 15px;
+   border-radius: 5px 5px 0 0;
+}
+.header > h3 {
+   font-size: 1rem;
+   font-weight: 500;
+}
+.info {
+   padding: 15px;
+   font-size: 0.9rem;
+   display: flex;
+   flex-direction: column;
+}
+.info > button {
+   margin-top: 15px;
+}
+
+@media screen and (max-width: 600px) {
+   .box:first-child {
+      margin-right: 0px;
+      margin-bottom: 15px;
+   }
+}

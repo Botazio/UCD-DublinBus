@@ -8,7 +8,7 @@ import FavoritesCSS from "../../Favorites.module.css";
 import StopContainer from "./StopContainer";
 import SecondarySearchBarStops from "../../../../reusable-components/searchbar-stops/SecondarySearchBarStops";
 import PrimaryPagination from "../../../../reusable-components/custom-pagination/PrimaryPagination";
-import { Button } from "@material-ui/core";
+import { Button, useTheme } from "@material-ui/core";
 import ActionWrapper from "../../../../reusable-components/action/ActionWrapper";
 import ActionAddStops from "../../../../reusable-components/action/ActionAddStops";
 
@@ -25,6 +25,9 @@ const AllStops = () => {
 
    // Get the data from the provider
    const { data: stops, isPending, error } = useStops();
+
+   // Grab the theme from the provider
+   const theme = useTheme().theme;
 
    // Get the user stops from the user provider
    const { currentUser } = useAuth();
@@ -52,14 +55,14 @@ const AllStops = () => {
    if (error) return <div style={{ padding: "15px" }}><CustomError height="50" message="Unable to fetch the data" messageSize="1.1rem" /></div>;
 
    // Wait for the data
-   if (isPending) return <div style={{ padding: '15px' }}><Waiting variant="dark" size="small" /></div>;
+   if (isPending) return <div style={{ padding: '15px' }}><Waiting size={50} thickness={3} /></div>;
 
 
    return (
       <>
          <div className={FavoritesCSS.info_wrapper}>
             {/* Search bar */}
-            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} classes={FavoritesCSS.searchbar} />}
+            {stops && <SecondarySearchBarStops stops={stops} setVisibleStops={setVisibleStops} />}
 
             {/* Loop through the visible stops and display them */}
             {visibleStops && visibleStops.slice((page - 1) * 5, ((page - 1) * 5) + 5).map((stop) => (
@@ -67,7 +70,7 @@ const AllStops = () => {
             ))}
 
             {/* Pagination for the results */}
-            {visibleStops && <div className={FavoritesCSS.pagination}>
+            {visibleStops && <div className={FavoritesCSS.pagination} style={{ borderTop: `1px solid ${theme.divider}` }}>
                <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 5)} color="primary" size="small" />
             </div>}
 

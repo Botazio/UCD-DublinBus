@@ -27,11 +27,15 @@ const SelectDepartureTime = ({ selectedDate, setSelectedDate, selectedHour, setS
 
             {/* Display a popover */}
             <PopoverOptions icon={<ArrowDropDownRoundedIcon />}>
-               <div className={DirectionsCSS.select_time_option} onClick={() => handleClick("leave now")}>
+               <div
+                  className={DirectionsCSS.select_time_option}
+                  onClick={() => handleClick("leave now")}>
                   <FiberManualRecordIcon fontSize="inherit" htmlColor={(active === "leave now") ? "" : "transparent"} />
                   <p>Leave now</p>
                </div>
-               <div className={DirectionsCSS.select_time_option} onClick={() => handleClick("leave at")}>
+               <div
+                  className={DirectionsCSS.select_time_option}
+                  onClick={() => handleClick("leave at")}>
                   <FiberManualRecordIcon fontSize="inherit" htmlColor={(active === "leave at") ? "" : "transparent"} />
                   <p>Leave at</p>
                </div>

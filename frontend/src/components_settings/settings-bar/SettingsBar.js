@@ -8,15 +8,19 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
 import FeedbackRoundedIcon from '@material-ui/icons/FeedbackRounded';
 import InfoBox from "../infobox/InfoBox";
+import SectionButton from "../../reusable-components/section-button/SectionButton";
+import { useTheme } from "@material-ui/core";
 
 // Main component of the settings page. Handles which section is active
 // Passes that state to the infobox
 const SettingsBar = () => {
    // States to control when to display the sideBar
    const [sideBar, setSideBar] = useState(false);
-
    // buttonActive allows to navigate around the different side bar features
    const [buttonActive, setButtonActive] = useState("profile");
+
+   // Grab the theme from the provider
+   const theme = useTheme().theme;
 
    // We need to create a portal for the settings icon that control the visibility of the sidebar.
    // This is because the settings icon is in the navbar
@@ -24,19 +28,6 @@ const SettingsBar = () => {
 
    // For phone we display the section the user is on instead of the application logo
    const domNodeLogo = document.getElementById("logo_navbar_phone");
-
-   // Buttons displayed on the sidebar 
-   const sectionButton = (text, icon) => {
-      return (
-         <div className={SettingsBarCSS.button + " " + (buttonActive === text ? SettingsBarCSS.active : "")}
-            value={text}
-            onClick={() => handleClick(text)}
-         >
-            {icon}
-            <p>{text}</p>
-         </div>
-      );
-   };
 
    return (
       <>
@@ -54,14 +45,22 @@ const SettingsBar = () => {
          )}
 
          {/* The classname depends on the sidebar state */}
-         <div className={SettingsBarCSS.sidebar + " " + (sideBar ? SettingsBarCSS.sidebar_active : SettingsBarCSS.sidebar_inactive)}>
-            <div className={SettingsBarCSS.sidebar_title}><p>Account Settings</p></div>
+         <div
+            className={SettingsBarCSS.sidebar + " " + (sideBar ? SettingsBarCSS.sidebar_active : SettingsBarCSS.sidebar_inactive)}
+            style={{ backgroundColor: theme.background_primary, borderColor: theme.divider }}>
+
+            <div
+               className={SettingsBarCSS.sidebar_title}
+               style={{ borderBottom: "1px solid " + theme.divider, backgroundColor: theme.background_secondary }}>
+               <p>Account Settings</p>
+            </div>
+
             {/* Render the section buttons */}
-            {sectionButton("profile", <PersonRoundedIcon />)}
-            {sectionButton("appearence", <PaletteRoundedIcon />)}
-            {sectionButton("favorites", <FavoriteRoundedIcon />)}
-            {sectionButton("markers", <RoomRoundedIcon />)}
-            {sectionButton("feedback", <FeedbackRoundedIcon />)}
+            <SectionButton onClick={() => handleClick("profile")} text={"profile"} buttonActive={buttonActive} icon={<PersonRoundedIcon />} />
+            <SectionButton onClick={() => handleClick("appearance")} text={"appearance"} buttonActive={buttonActive} icon={<PaletteRoundedIcon />} />
+            <SectionButton onClick={() => handleClick("favorites")} text={"favorites"} buttonActive={buttonActive} icon={<FavoriteRoundedIcon />} />
+            <SectionButton onClick={() => handleClick("markers")} text={"markers"} buttonActive={buttonActive} icon={<RoomRoundedIcon />} />
+            <SectionButton onClick={() => handleClick("feedback")} text={"feedback"} buttonActive={buttonActive} icon={<FeedbackRoundedIcon />} />
          </div>
 
 

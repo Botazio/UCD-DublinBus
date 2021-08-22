@@ -1,14 +1,6 @@
 .searchbar_lines {
   width: 70%;
 }
-.searchbar_lines > div > input {
-  line-height: 30px;
-  font-size: 1rem;
-  border-radius: 20px;
-}
-.searchbar_lines > div > input::first-letter {
-  text-transform: capitalize;
-}
 .header_dir_searcher {
   align-self: flex-start;
   display: flex;
@@ -38,13 +30,8 @@
 .searchbar_stops {
   width: 100%;
 }
-.searchbar_stops:last-child {
-  margin-top: 10px;
-}
-.searchbar_stops > div > input {
-  line-height: 25px;
-  font-size: 0.9rem;
-  border-radius: 20px;
+.searchbar_stops:last-child > div > input {
+  margin-bottom: 5px !important;
 }
 .select_time_container {
   display: flex;

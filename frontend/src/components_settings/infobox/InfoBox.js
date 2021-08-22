@@ -1,5 +1,5 @@
 import Profile from "../profile/Profile";
-import Appearence from "../appearence/Appearence";
+import Appearance from "../appearence/Appearance";
 import InfoBoxCSS from "./InfoBox.module.css";
 import Markers from "../markers/Markers";
 import Favorites from "../favorites/Favorites";
@@ -11,7 +11,7 @@ const InfoBox = ({ buttonActive }) => {
       <div className={InfoBoxCSS.infobox}>
          {/* Render a section depending on which one is active */}
          {buttonActive === "profile" && <Profile />}
-         {buttonActive === "appearence" && <Appearence />}
+         {buttonActive === "appearance" && <Appearance />}
          {buttonActive === "favorites" && <Favorites />}
          {buttonActive === "markers" && <Markers />}
          {buttonActive === "feedback" && <Feedback />}

@@ -33,10 +33,10 @@ const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
          return themeContext.theme.background_primary;
       }
       if (type === "add") {
-         return themeContext.theme.primary + 10;
+         return themeContext.theme.primary + 30;
       }
       if (type === "delete") {
-         return themeContext.palette.secondary.main + 10;
+         return themeContext.palette.secondary.main + 30;
       }
    }
 
@@ -45,13 +45,13 @@ const StopContainer = ({ stop, activeStops, setActiveStops, type }) => {
          className={FavoritesCSS.stop_wrapper}
          onClick={() => handleClick()}
          /* Change the background depending on the state */
-         style={{ backgroundColor: handleStyle() }}>
+         style={{ backgroundColor: handleStyle(), borderTop: `1px solid ${themeContext.theme.divider}` }}>
          <div className={FavoritesCSS.stop_header}>
             <div className={FavoritesCSS.stop_title}>
                <h4>{stop.stop_name}</h4>
             </div>
             <div className={FavoritesCSS.stop_lines}>
-               {stop.stop_lines.map((line, index) => (<div key={line + index}>{line}</div>))}
+               {stop.stop_lines.map((line, index) => (<div key={line + index} style={{ border: `1px solid ${themeContext.theme.divider}` }}>{line}</div>))}
             </div>
          </div>
 

@@ -19,9 +19,9 @@
   opacity: 1;
 }
 .button_bottom {
-  bottom: 100px;
+  top: 60px;
 }
 .button_top {
-  top: 60px
+  top: 10px
 }
 

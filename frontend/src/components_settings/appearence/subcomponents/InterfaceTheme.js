@@ -1,4 +1,3 @@
-import AppearenceCSS from "../Appearence.module.css";
 import CusThemesButtons from "./CusThemesButtons";
 import DisplayThemeBox from "./DisplayThemeBox";
 import PreThemesButtons from "./PreThemesButtons";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ActionTheme from "../../../reusable-components/action/ActionTheme";
 import ActionWrapper from "../../../reusable-components/action/ActionWrapper";
+import ContentBox from "../../../reusable-components/content-box/ContentBox";
 
 
 const InterfaceTheme = ({ title, info, type }) => {
@@ -29,29 +29,23 @@ const InterfaceTheme = ({ title, info, type }) => {
 
    return (
       <>
-         <div className={AppearenceCSS.theme_box}>
-            {/* Theme box header and info */}
-            <div className={AppearenceCSS.theme_header}>
-               <h3>{title}</h3>
-            </div>
-            <div className={AppearenceCSS.theme_info}>
-               <p>{info}</p>
+         <ContentBox title={title}>
+            <p>{info}</p>
 
-               {/* Displays a box theme using the current state colors */}
-               <DisplayThemeBox boxTheme={boxTheme} />
+            {/* Displays a box theme using the current state colors */}
+            <DisplayThemeBox boxTheme={boxTheme} />
 
-               {/* Render predefined buttons or custom buttons depending on the type */}
-               {type === "predefined" && <PreThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
-               {type === "custom" && <CusThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
+            {/* Render predefined buttons or custom buttons depending on the type */}
+            {type === "predefined" && <PreThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
+            {type === "custom" && <CusThemesButtons boxTheme={boxTheme} setBoxTheme={setBoxTheme} />}
 
-               {/* Compares the current theme to the box theme if they are not equal render 
+            {/* Compares the current theme to the box theme if they are not equal render 
                a primary button. This button triggers the action when clicked */}
-               {JSON.stringify(currentTheme.theme) !== JSON.stringify(boxTheme.theme) &&
-                  <Button
-                     fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
-                  </Button>}
-            </div>
-         </div>
+            {JSON.stringify(currentTheme.theme) !== JSON.stringify(boxTheme.theme) &&
+               <Button
+                  fullWidth={true} variant="outlined" color="primary" onClick={() => setAction(true)}>change theme
+               </Button>}
+         </ContentBox>
 
          {/* Display an action if it is active */}
          {action && <ActionWrapper title={"Change theme"} setAction={setAction}>
