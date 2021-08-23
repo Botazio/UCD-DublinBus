@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import { useGoogleMap } from "@react-google-maps/api";
 import geodist from "geodist";
 import { useTheme } from "@material-ui/core";
-import { Link } from "react-router-dom";
 
 // Main component of the bus page. Handles which section is active
 // Passes that state to the infobar
