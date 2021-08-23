@@ -21,3 +21,17 @@ value in more complex uncertainty visualisations.
 The report details the application, development
 and testing process and results, major contributions of each team member, weaknesses of the
 application, and future work.
+
+## Install the project
+
+To run the project locally you need to follow the steps described in the README.md files inside each folder:
+
+- [Backend instructions](backend/README.md)
+- [Frontend instructions](frontend/README.md)
+- [Data analytics instructions](data_analytics/README.md)
+
+## Application Images
+
+### Desktop view
+
+[](report/images/desktop-view.png)
