@@ -34,4 +34,5 @@ To run the project locally you need to follow the steps described in the README.
 
 ### Desktop view
 
-![Desktop view](report/images/desktop-view.png)
+| ![Desktop view](report/images/desktop-view.png) |
+-
