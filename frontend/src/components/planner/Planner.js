@@ -1,16 +1,16 @@
 import { useState } from "react";
-import DirectionsCSS from "./Directions.module.css";
+import PlannerCSS from "./Planner.module.css";
 import PrimarySearchBarLines from "../../reusable-components/searchbar-lines/PrimarySearchBarLines";
-import DirectionsSearcher from "./subcomponents/DirectionsSearcher";
+import PlannerSearcher from "./subcomponents/PlannerSearcher";
 import { useLines } from "../../providers/LinesContext";
 import Waiting from "../../reusable-components/waiting/Waiting";
 import CustomError from "../../reusable-components/error/CustomError";
 
-// This component is the main component for the directions section.
+// This component is the main component for the planner section.
 // The subcomponents are called from this component
-const Directions = () => {
+const Planner = () => {
   // This state controls if a line has been selected before displaying
-  // the directions system
+  // the planner system
   const [selectedLine, setSelectedLine] = useState();
 
   // Get the data from the provider
@@ -27,13 +27,13 @@ const Directions = () => {
   return (
     <>
       {/* Search bar for the lines */}
-      {!selectedLine && <div className={DirectionsCSS.searchbar_lines}>
+      {!selectedLine && <div className={PlannerCSS.searchbar_lines}>
         <PrimarySearchBarLines placeholder="Search line..." lines={lines} setSelectedLine={setSelectedLine} />
       </div>}
-      {/* Display the directions system */}
-      {selectedLine && <DirectionsSearcher selectedLine={selectedLine} setSelectedLine={setSelectedLine} />}
+      {/* Display the planner system */}
+      {selectedLine && <PlannerSearcher selectedLine={selectedLine} setSelectedLine={setSelectedLine} />}
     </>
   );
 };
 
-export default Directions;
+export default Planner;

@@ -1,6 +1,5 @@
 import InfobarCSS from "./Infobar.module.css";
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import Directions from "../directions/Directions";
 import Stops from "../stops/Stops";
 import NearMe from "../near-me/NearMe";
 import MapSwitch from "../map-switch/MapSwitch";
@@ -8,6 +7,7 @@ import WeatherInfo from "../weather-info/WeatherInfo";
 import Favorites from "../favorites/Favorites";
 import Lines from "../lines/Lines";
 import { useTheme } from "@material-ui/core";
+import Planner from "../planner/Planner";
 
 // InfoBar is a subcomponent of SideBar
 // Renders section component depending which one is active 
@@ -43,7 +43,7 @@ const InfoBar = ({
         <div className={InfobarCSS.dummy_div}></div>
 
         {/* Render a section depending on which one is active */}
-        {buttonActive === "directions" && <Directions />}
+        {buttonActive === "planner" && <Planner />}
         {buttonActive === "stops" && <Stops />}
         {buttonActive === "lines" && <Lines />}
         {buttonActive === "near me" && <NearMe />}

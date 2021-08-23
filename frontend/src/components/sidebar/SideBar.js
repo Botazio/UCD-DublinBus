@@ -3,7 +3,7 @@ import SidebarCSS from "./Sidebar.module.css";
 import InfoBar from "../infobar/InfoBar";
 import { useState } from "react";
 import SideBarSwitch from "./subcomponents/SideBarSwitch";
-import DirectionsRoundedIcon from '@material-ui/icons/DirectionsRounded';
+import EventRoundedIcon from '@material-ui/icons/EventRounded';
 import TimelineRoundedIcon from '@material-ui/icons/TimelineRounded';
 import MyLocationRoundedIcon from '@material-ui/icons/MyLocationRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { useGoogleMap } from "@react-google-maps/api";
 import geodist from "geodist";
 import { useTheme } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 // Main component of the bus page. Handles which section is active
 // Passes that state to the infobar
@@ -64,13 +65,19 @@ const SideBar = () => {
       <div
         className={SidebarCSS.sidebar + " " + (sideBar ? SidebarCSS.sidebar_active : SidebarCSS.sidebar_inactive)}
         style={{ backgroundColor: theme.background_primary }}>
+
         {/* Render the section buttons */}
-        <SectionButton onClick={() => handleClick("directions")} text={"directions"} buttonActive={buttonActive} icon={<DirectionsRoundedIcon />} />
+        <SectionButton onClick={() => handleClick("planner")} text={"planner"} buttonActive={buttonActive} icon={<EventRoundedIcon />} />
         <SectionButton onClick={() => handleClick("stops")} text={"stops"} buttonActive={buttonActive} icon={<DepartureBoardRoundedIcon />} />
         <SectionButton onClick={() => handleClick("lines")} text={"lines"} buttonActive={buttonActive} icon={<TimelineRoundedIcon />} />
         <SectionButton onClick={() => handleClick("near me")} text={"near me"} buttonActive={buttonActive} icon={<MyLocationRoundedIcon />} />
         <SectionButton onClick={() => handleClick("favorites")} text={"favorites"} buttonActive={buttonActive} icon={<FavoriteRoundedIcon />} />
         <SectionButton onClick={() => handleClick("weather")} text={"weather"} buttonActive={buttonActive} icon={<CloudRoundedIcon />} />
+
+        {/* Link to privacy policies */}
+        <div className={SidebarCSS.privacy_link}>
+          <a href="https://www.privacypolicies.com/live/7a8deea4-7564-4bd3-a0cb-db8d306f47d7" style={{ fontSize: "0.9rem" }}>Privacy policy</a>
+        </div>
       </div>
 
       {/* Render the infobar if it is active */}

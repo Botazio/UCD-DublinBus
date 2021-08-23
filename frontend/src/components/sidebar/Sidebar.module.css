@@ -18,6 +18,14 @@
   justify-content: center;
   align-items: center;
 }
+.privacy_link {
+  margin-top: auto;
+  margin-bottom: 15px;
+}
+.privacy_link > a {
+  text-decoration: none;
+  color: inherit;
+}
 
 
 @media screen and (max-width: 600px) {

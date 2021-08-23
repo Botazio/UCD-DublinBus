@@ -1,7 +1,7 @@
 import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
 import ArrowDropDownRoundedIcon from '@material-ui/icons/ArrowDropDownRounded';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
-import DirectionsCSS from "../Directions.module.css";
+import PlannerCSS from "../Planner.module.css";
 import { useTheme } from "@material-ui/core";
 import { useState } from 'react';
 import moment from "moment";
@@ -16,17 +16,17 @@ const ExpandedResults = ({ searchResults, selectedHour }) => {
    const theme = useTheme().theme;
 
    return (
-      <div className={DirectionsCSS.expanded_results} >
+      <div className={PlannerCSS.expanded_results} >
          {/* Departure div element */}
-         <div className={DirectionsCSS.departure}>
+         <div className={PlannerCSS.departure}>
             <RoomRoundedIcon />
             <h4>Stop {stopPairs[0].departure_stop}</h4>
             <p>{moment(selectedHour).format('HH:mm')}</p>
          </div>
 
          {/* Middle stations */}
-         {(stopPairs.length > 0) && <div className={DirectionsCSS.middle_stops}>
-            <div className={DirectionsCSS.middle_stops_header} onClick={() => setExpandMiddleStops(!expandMiddleStops)}>
+         {(stopPairs.length > 0) && <div className={PlannerCSS.middle_stops}>
+            <div className={PlannerCSS.middle_stops_header} onClick={() => setExpandMiddleStops(!expandMiddleStops)}>
                <ArrowDropDownRoundedIcon />
                <p>Ride {stopPairs.length - 1} stops</p>
             </div>
@@ -34,7 +34,7 @@ const ExpandedResults = ({ searchResults, selectedHour }) => {
          </div>}
 
          {/* Arrival div element */}
-         <div className={DirectionsCSS.arrival}>
+         <div className={PlannerCSS.arrival}>
             <RoomRoundedIcon htmlColor={theme.primary} />
             <h4>Stop {stopPairs[stopPairs.length - 1].arrival_stop}</h4>
             <p>{getDestinationTime()}</p>
@@ -46,7 +46,7 @@ const ExpandedResults = ({ searchResults, selectedHour }) => {
    function handleMiddleStops(stops) {
       return stops.slice(1).map((stop) => {
          return (
-            <div className={DirectionsCSS.middle_stops_data} key={stop.departure_stop}>
+            <div className={PlannerCSS.middle_stops_data} key={stop.departure_stop}>
                <FiberManualRecordRoundedIcon fontSize="inherit" />
                <p>Stop {stop.departure_stop}</p>
             </div>

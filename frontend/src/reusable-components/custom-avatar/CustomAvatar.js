@@ -18,7 +18,7 @@ const CustomAvatar = (props) => {
 
    return (
       <>
-         <Avatar src={userImage} style={{ backgroundColor: color }} {...props}>
+         <Avatar alt={currentUser.username.charAt(0)} src={userImage} style={{ backgroundColor: color }} {...props}>
             {currentUser.username.charAt(0)}
          </Avatar>
       </>

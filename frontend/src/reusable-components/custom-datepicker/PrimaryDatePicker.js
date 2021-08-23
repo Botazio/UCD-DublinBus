@@ -78,6 +78,7 @@ const PrimaryDatePicker = ({ selectedDate, setSelectedDate }) => {
       <ThemeProvider theme={styles}>
          <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
+               disablePast={true}
                value={selectedDate}
                onChange={handleDateChange}
                animateYearScrolling

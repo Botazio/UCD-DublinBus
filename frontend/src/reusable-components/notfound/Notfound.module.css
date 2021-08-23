@@ -1,10 +1,12 @@
+.wrapper {
+  height: calc(100vh - 60px);
+}
 .text {
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0%);
   margin-top: 35px;
   z-index: 10;
-  background-color: #ff8283;
   padding: 20px 30px;
   border-radius: 20px;
 }
@@ -15,3 +17,10 @@
   color: black;
   font-weight: bold;
 }
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    height: calc((var(--vh, 1vh) * (100) - 60px));
+  }
+}
+
