@@ -35,3 +35,7 @@ To run the project locally you need to follow the steps described in the README.
 ### Desktop view
 
 ![Desktop view](report/images/desktop-view.png)
+
+### Mobile view
+
+![Mobile view](report/images/mobile-view.png)
