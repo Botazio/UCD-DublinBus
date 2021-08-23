@@ -4,6 +4,7 @@ import {
    DatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import moment from "moment";
 
 
 const materialTheme = (theme) => ({
@@ -78,6 +79,7 @@ const PrimaryDatePicker = ({ selectedDate, setSelectedDate }) => {
       <ThemeProvider theme={styles}>
          <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <DatePicker
+               maxDate={moment().add(6, 'days')}
                disablePast={true}
                value={selectedDate}
                onChange={handleDateChange}

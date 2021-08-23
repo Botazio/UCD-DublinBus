@@ -10,6 +10,12 @@ Clones the github repository on your local machine.
 
 Installs the required npm packages. You need to be inside the frontend folder to run this command.
 
+## Fetch calls 
+
+The frontend application calls the backend for the data. 
+You will need to change the urls for the fetch calls to your own ones. 
+These are defined by the backend routes.
+
 ## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
