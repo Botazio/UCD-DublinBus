@@ -1,6 +1,6 @@
 # Dublin Bus Frontend 
 
-To locally run this project you need to:
+To locally run this project you need to run the following commands:
 
 ### `git clone https://github.com/Botazio/UCD-DublinBus.git`
 
@@ -10,7 +10,7 @@ Clones the github repository on your local machine.
 
 Installs the required npm packages. You need to be inside the frontend folder to run this command.
 
-# Getting Started with Create React App
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
