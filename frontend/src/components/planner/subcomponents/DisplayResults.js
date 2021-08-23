@@ -1,7 +1,7 @@
 import Card from "../../../reusable-components/card/Card";
 import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
 import MinimizeRoundedIcon from '@material-ui/icons/MinimizeRounded';
-import DirectionsCSS from "../Directions.module.css";
+import PlannerCSS from "../Planner.module.css";
 import { useTheme } from "@material-ui/core";
 import { useState } from "react";
 import ExpandedResults from "./ExpandedResults";
@@ -9,9 +9,9 @@ import DialogWrapper from "../../../reusable-components/dialog-feedback/DialogWr
 import FeedbackDefault from "../../../reusable-components/dialog-feedback/FeedbackDefault";
 import QuantileGraph from "./QuantileGraph";
 
-// This component displays the directions after the server
-// sends back the results
-const DisplayDirections = ({ searchResults, selectedHour, origin, destination }) => {
+// This component displays the results after the server
+// sends back the response
+const DisplayResults = ({ searchResults, selectedHour, origin, destination }) => {
    // State to control when the user clicks on the results
    const [expanded, setExpanded] = useState(false);
    // State to control the popup when the graph icon is clicked
@@ -61,11 +61,11 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
       }
 
       return (
-         <div className={DirectionsCSS.header_results} style={{ padding: "5px 0px" }}>
+         <div className={PlannerCSS.header_results} style={{ padding: "5px 0px" }}>
             <div onClick={() => setExpanded(!expanded)}>
                <h4 style={{ color: theme.primary }}>{resultTime}</h4>
                <div
-                  className={DirectionsCSS.expand_results_icon}>
+                  className={PlannerCSS.expand_results_icon}>
                   <MinimizeRoundedIcon fontSize="large" />
                </div>
             </div>
@@ -104,4 +104,4 @@ const DisplayDirections = ({ searchResults, selectedHour, origin, destination })
    }
 };
 
-export default DisplayDirections;
+export default DisplayResults;

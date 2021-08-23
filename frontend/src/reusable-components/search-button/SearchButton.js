@@ -11,7 +11,7 @@ const SearchButton = ({ searchAvailable, ...restProps }) => {
       {...restProps}
       className={SearchButtonCSS.search_button + " " + (searchAvailable ? SearchButtonCSS.active : "")}
       style={searchAvailable ?
-        { backgroundColor: theme.primary, color: theme.background_primary } :
+        { backgroundColor: theme.primary, color: theme.background_primary, boxShadow: `0 0 0 0 ${theme.primary + 90}` } :
         {}}>
       <h3>Search</h3>
     </div>

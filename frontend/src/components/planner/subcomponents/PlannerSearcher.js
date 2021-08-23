@@ -1,4 +1,4 @@
-import DirectionsCSS from "../Directions.module.css";
+import PlannerCSS from "../Planner.module.css";
 import PrimarySearchBarStops from "../../../reusable-components/searchbar-stops/PrimarySearchBarStops";
 import SearchButton from "../../../reusable-components/search-button/SearchButton";
 import Card from "../../../reusable-components/card/Card";
@@ -10,13 +10,13 @@ import Waiting from "../../../reusable-components/waiting/Waiting";
 import { useState } from "react";
 import { useEffect } from "react";
 import CustomMarker from "../../../reusable-components/custom-marker/CustomMarker";
-import DisplayDirections from "./DisplayDirections";
+import DisplayResults from "./DisplayResults";
 import moment from "moment";
 import DisplayLine from "../../display-line/DisplayLine";
 
-// This is a subcomponent from the direction search system.
+// This is a subcomponent from the planner search system.
 // Allows the user to enter the Origin stop and the Destination stop
-const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
+const PlannerSearcher = ({ selectedLine, setSelectedLine }) => {
   // States for the different fields the user has to enter 
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
@@ -73,7 +73,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
     <>
       {/* Card with the header information */}
       <Card variant="no_margin">
-        <div className={DirectionsCSS.header_dir_searcher}>
+        <div className={PlannerCSS.header_dir_searcher}>
           <div>
             <h4>Line {selectedLine.route__route_short_name}</h4>
             <p>{selectedLine.trip_headsign}</p>
@@ -86,16 +86,16 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
 
       {/* Card to select origin and destination */}
       <Card>
-        <div className={DirectionsCSS.searchbar_stops_header}>
+        <div className={PlannerCSS.searchbar_stops_header}>
           <h4>Select stops</h4>
           <div>
             <RefreshRoundedIcon onClick={() => cleanSearch()} />
           </div>
         </div>
-        <div className={DirectionsCSS.searchbar_stops}>
+        <div className={PlannerCSS.searchbar_stops}>
           <PrimarySearchBarStops placeholder={"Origin stop..."} stops={validOriginStops} selectedStop={origin} setSelectedStop={setOrigin} />
         </div>
-        <div className={DirectionsCSS.searchbar_stops}>
+        <div className={PlannerCSS.searchbar_stops}>
           <PrimarySearchBarStops placeholder={"Destination stop..."} stops={validDestinationStops} selectedStop={destination} setSelectedStop={setDestination} />
         </div>
       </Card>
@@ -140,7 +140,7 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
         />}
 
       {/* Display the results from the search */}
-      {searchResults && <DisplayDirections searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}
+      {searchResults && <DisplayResults searchResults={searchResults} selectedHour={selectedHour} origin={origin} destination={destination} />}
 
       {/* Display a message if an error occurs during the search */}
       {searchError && <Card variant="margin_bottom"><CustomError height="50" message="Error performing the search" messageSize="1rem" /></Card>}
@@ -208,4 +208,4 @@ const DirectionsSearcher = ({ selectedLine, setSelectedLine }) => {
 
 };
 
-export default DirectionsSearcher;
+export default PlannerSearcher;

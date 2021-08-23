@@ -1,7 +1,7 @@
 import HelpIcon from '@material-ui/icons/Help';
 import Collapsible from 'react-collapsible';
 import { Dialog, useTheme } from "@material-ui/core";
-import DirectionsCSS from "../Directions.module.css";
+import PlannerCSS from "../Planner.module.css";
 
 const QuantileGraph = ({ open, handleClose, origin, destination }) => {
 
@@ -13,7 +13,7 @@ const QuantileGraph = ({ open, handleClose, origin, destination }) => {
 
    return (
       <Dialog open={open} onClose={handleClose}>
-         <div className={DirectionsCSS.quantile_graph}>
+         <div className={PlannerCSS.quantile_graph}>
             <img src={dotplotFile} alt="Quantile Dot Plot Unavailable" />
             <Collapsible trigger={<HelpIcon></HelpIcon>}>
                <p>

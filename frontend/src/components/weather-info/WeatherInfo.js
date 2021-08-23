@@ -210,7 +210,7 @@ export default function WeatherInfo() {
         <div className={WeatherInfoCSS.hourly_icon}>{hourlyIcon}</div>
         <div className={WeatherInfoCSS.hourly_pop}>
           <p>
-            <WaterDrop height="10px" />
+            <WaterDrop fill={theme.font_color} height="10px" />
             {Math.round(weatherData.hourly[x].pop * 100)}%
           </p>
         </div>
@@ -235,29 +235,29 @@ export default function WeatherInfo() {
       <Card variant="details_weather">
         <div className={WeatherInfoCSS.details_items}>
           <Ultraviolet height={"22"} fill="yellow" />
-          <div>
+          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
             <p>UV index</p>
             <p>{uvIndex}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Sunrise height={"22"} fill="red" />
-          <div>
+          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
             <p>Sunrise</p>
             <p>{sunrise}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Sunset height={"22"} fill="rgb(79, 83, 162)" />
-          <div>
+          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
             <p>Sunset</p>
             <p>{sunset}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Humidity height={"22"} fill="lightblue" />
-          <div>
-            <p>Humidiy</p>
+          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
+            <p>Humidity</p>
             <p>{weatherData.current.humidity}%</p>
           </div>
         </div>

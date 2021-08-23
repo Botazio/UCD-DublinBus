@@ -89,7 +89,10 @@ const PrimaryHourPicker = ({ selectedHour, setSelectedHour }) => {
    return (
       <ThemeProvider theme={styles}>
          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <TimePicker autoOk value={selectedHour} onChange={handleHourChange} />
+            <TimePicker
+               autoOk
+               value={selectedHour}
+               onChange={handleHourChange} />
          </MuiPickersUtilsProvider>
       </ThemeProvider>
    );
