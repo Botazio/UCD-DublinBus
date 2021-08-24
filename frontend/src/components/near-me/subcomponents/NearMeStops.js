@@ -17,7 +17,7 @@ const NearMeStops = ({ position }) => {
    // State for the pagination in the results
    const [page, setPage] = useState(1);
    // State that the user decides on the settings popover
-   const [distance, setDistance] = useState(1);
+   const [distance, setDistance] = useState(10);
    const [resultsDisplayed, setResultsDisplayed] = useState(20);
    // Stops to be displayed on the page. They are filtered by the search bar 
    const [visibleStops, setVisibleStops] = useState([]);
@@ -43,28 +43,26 @@ const NearMeStops = ({ position }) => {
    // Wait for the data
    if (isPending) return <Waiting size={80} thickness={3} />;
 
-   // If there are no stops around display an error
-   if (nearStops === "no stops") {
-      return <CustomError message="No stops around" height={60} />;
-   }
-
    return (
       <>
          {/* Searchbar and options */}
          <div className={NearMeCSS.header}>
-            {(nearStops !== "no stops") && <NearMeOptions distance={distance} setDistance={setDistance} resultsDisplayed={resultsDisplayed} setResultsDisplayed={setResultsDisplayed} />}
+            {<NearMeOptions distance={distance} setDistance={setDistance} resultsDisplayed={resultsDisplayed} setResultsDisplayed={setResultsDisplayed} />}
             {(nearStops !== "no stops") && <NearMeSearchBar stops={nearStops} setVisibleStops={setVisibleStops} />}
          </div>
 
-         <Card variant="last">
+         {/* If there are no stops around display an error*/}
+         {(nearStops === "no stops") && <CustomError message="No stops around" height={60} />}
+
+         {(nearStops !== "no stops") && <Card variant="last">
             {/* Do not display any data if there are not results */}
-            {(nearStops !== "no stops") && <DisplayStops stops={visibleStops} page={page} variant="near me" />}
+            <DisplayStops stops={visibleStops} page={page} variant="near me" />
 
             {/* Pagination for the results */}
-            {(nearStops !== "no stops") && <div className={NearMeCSS.pagination}>
+            <div className={NearMeCSS.pagination}>
                <PrimaryPagination onChange={handlePage} page={page} count={Math.ceil(visibleStops.length / 10)} color="primary" size="small" />
-            </div>}
-         </Card>
+            </div>
+         </Card>}
       </>
    );
 
