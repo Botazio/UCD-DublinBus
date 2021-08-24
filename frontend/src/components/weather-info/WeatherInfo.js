@@ -235,28 +235,28 @@ export default function WeatherInfo() {
       <Card variant="details_weather">
         <div className={WeatherInfoCSS.details_items}>
           <Ultraviolet height={"22"} fill="yellow" />
-          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
+          <div style={{ borderBottom: `2px solid ${theme.font_color}` }}>
             <p>UV index</p>
             <p>{uvIndex}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Sunrise height={"22"} fill="red" />
-          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
+          <div style={{ borderBottom: `2px solid ${theme.font_color}` }}>
             <p>Sunrise</p>
             <p>{sunrise}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Sunset height={"22"} fill="rgb(79, 83, 162)" />
-          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
+          <div style={{ borderBottom: `2px solid ${theme.font_color}` }}>
             <p>Sunset</p>
             <p>{sunset}</p>
           </div>
         </div>
         <div className={WeatherInfoCSS.details_items}>
           <Humidity height={"22"} fill="lightblue" />
-          <div style={{ borderBottom: `2px solid ${theme.divider}` }}>
+          <div style={{ borderBottom: `2px solid ${theme.font_color}` }}>
             <p>Humidity</p>
             <p>{weatherData.current.humidity}%</p>
           </div>
