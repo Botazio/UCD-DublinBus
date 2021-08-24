@@ -17,7 +17,7 @@ const NearMeStops = ({ position }) => {
    // State for the pagination in the results
    const [page, setPage] = useState(1);
    // State that the user decides on the settings popover
-   const [distance, setDistance] = useState(1);
+   const [distance, setDistance] = useState(10);
    const [resultsDisplayed, setResultsDisplayed] = useState(20);
    // Stops to be displayed on the page. They are filtered by the search bar 
    const [visibleStops, setVisibleStops] = useState([]);
